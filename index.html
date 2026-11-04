@@ -783,27 +783,33 @@ function learnGreen(r,i){if(!gpsFresh()||GPS.acc>25)return;const C=courseOf(r),n
 const OSM_EP=['https://overpass-api.de/api/interpreter','https://overpass.private.coffee/api/interpreter','https://maps.mail.ru/osm/tools/overpass/api/interpreter'];
 let osmBusy=false;
 async function fetchCourse(){
-  const {r}=curHole();if(!r||!gpsFresh()||osmBusy)return;const C=courseOf(r);if(C.osmAt&&Date.now()-C.osmAt<(C.osmN?30:1)*864e5)return;
+  const {r}=curHole();if(!r||!gpsFresh()||osmBusy)return;const C=courseOf(r);if(C.osmN&&Date.now()-C.osmAt<30*864e5)return;if(C.osmAt&&C.osmN===0&&Date.now()-C.osmAt<864e5)return;if(C.osmFail&&Date.now()-C.osmFail<3*6e4)return;
   osmBusy=true;const [la,lo]=GPS.pos;
-  const q=`[out:json][timeout:30];(way["golf"="hole"](around:3000,${la},${lo});way["golf"="green"](around:3000,${la},${lo});way["leisure"="golf_course"](around:3000,${la},${lo}););out geom;`;
+  const q=`[out:json][timeout:60];(way["golf"="hole"](around:2000,${la},${lo});way["golf"="green"](around:2000,${la},${lo});););out geom;`;
   let j=null;
-  for(const ep of OSM_EP){try{const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),35000);const res=await fetch(ep,{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'},signal:ctl.signal});clearTimeout(tm);if(res.ok){j=await res.json();break;}}catch(e){}}
-  C.osmAt=Date.now();
-  if(j){
+  for(const ep of OSM_EP){try{const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),60000);const res=await fetch(ep,{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'},signal:ctl.signal});clearTimeout(tm);if(res.ok){j=await res.json();break;}}catch(e){}}
+  if(!j)C.osmFail=Date.now();
+  if(j){C.osmAt=Date.now();C.osmFail=null;
     const els=j.elements||[],P=g=>g.map(p=>[p.lat,p.lon]);
     const inPoly=(pt,poly)=>{let c=false;for(let a=0,b=poly.length-1;a<poly.length;b=a++){const [ya,xa]=poly[a],[yb,xb]=poly[b];if((ya>pt[0])!==(yb>pt[0])&&pt[1]<(xb-xa)*(pt[0]-ya)/(yb-ya)+xa)c=!c;}return c;};
     const courses=els.filter(e=>e.tags&&e.tags.leisure==='golf_course'&&e.geometry).map(e=>P(e.geometry));
     const home=courses.find(p=>inPoly(GPS.pos,p))||courses.sort((a,b)=>Math.min(...a.map(p=>hav(p,GPS.pos)))-Math.min(...b.map(p=>hav(p,GPS.pos))))[0]||null;
     const greens=els.filter(e=>e.tags&&e.tags.golf==='green'&&e.geometry).map(e=>{const pts=P(e.geometry);return{pts,c:[pts.reduce((s,p)=>s+p[0],0)/pts.length,pts.reduce((s,p)=>s+p[1],0)/pts.length]};});
-    const holes={};
-    els.filter(e=>e.tags&&e.tags.golf==='hole'&&e.geometry&&parseInt(e.tags.ref,10)).forEach(e=>{
-      const g=P(e.geometry),n=parseInt(e.tags.ref,10),tee=g[0],end=g[g.length-1];
+    const cand=[];
+    els.filter(e=>e.tags&&e.tags.golf==='hole'&&e.geometry).forEach(e=>{
+      const ref=String(e.tags.ref||''),m=ref.match(/(\d+)\s*$/);if(!m)return;
+      const g=P(e.geometry),tee=g[0],end=g[g.length-1];
       if(home&&!inPoly(tee,home)&&!inPoly(end,home))return;
       let best=null,bd=1e9;greens.forEach(x=>{const d=hav(x.c,end);if(d<bd){bd=d;best=x;}});
       let len=0;for(let k=1;k<g.length;k++)len+=hav(g[k-1],g[k]);
-      const cand={c:best&&bd<80?best.c:end,pts:best&&bd<80?best.pts.filter((p,k,a)=>k%Math.max(1,Math.ceil(a.length/24))===0):null,par:parseInt(e.tags.par,10)||null,len:Math.round(len)};
-      if(!holes[n]||hav(tee,GPS.pos)<hav(holes[n].c,GPS.pos))holes[n]=cand;
+      cand.push({n:+m[1],pre:ref.slice(0,m.index).replace(/[-–:#\s]+$/,'').trim().toLowerCase(),tee,end,
+        c:best&&bd<80?best.c:end,pts:best&&bd<80?best.pts.filter((p,k,a)=>k%Math.max(1,Math.ceil(a.length/24))===0):null,par:parseInt(e.tags.par,10)||null,len:Math.round(len)});
     });
+    /* One complex can hold several courses ("Black - 1", "Red - 1"): use the one named like your round, else the one you're standing on */
+    const groups={};cand.forEach(x=>(groups[x.pre]=groups[x.pre]||[]).push(x));
+    const nm=(r.course||'').toLowerCase();let gk=Object.keys(groups).find(k=>k&&nm.includes(k));
+    if(gk==null){let bd=1e9;cand.forEach(x=>{const d=Math.min(hav(x.tee,GPS.pos),hav(x.end,GPS.pos));if(d<bd){bd=d;gk=x.pre;}});}
+    const holes={};(groups[gk]||[]).forEach(x=>{if(!holes[x.n]||hav(x.tee,GPS.pos)<hav(holes[x.n].tee,GPS.pos))holes[x.n]={c:x.c,pts:x.pts,par:x.par,len:x.len,tee:x.tee};});
     C.holes=holes;C.osmN=Object.keys(holes).length;
     if(C.osmN){let filled=0;r.h.forEach((h,k)=>{const o=holes[k+1];if(!o||(h.sh&&h.sh.length)||h.s!=null)return;if(o.par&&!h.parSet){h.par=o.par;filled++;}if(o.len&&!h.len)h.len=o.len;});
       touch(S.cur);if(!S.sheet)render();toast(`Course map found: ${C.osmN} holes${filled?', pars filled in':''}`,false);}
