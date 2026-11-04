@@ -59,7 +59,7 @@
 
 /* One size scale for every part: text, control heights, corners and gaps come only from these tokens */
 :root{
-  --t-micro:11.5px;--t-cap:13px;--t-small:14px;--t-body:15px;--t-label:16px;--t-title:17px;--t-h2:21px;--t-h1:27px;--t-num:24px;--t-num-l:34px;
+  --t-micro:11.5px;--t-cap:13px;--t-small:14px;--t-body:15px;--t-label:16px;--t-title:17px;--t-h2:22px;--t-h1:28px;--t-num:24px;--t-num-l:34px;
   --h-chip:36px;--h-ctl:42px;--h-btn:48px;--h-act:54px;--h-act-l:62px;
   --r-s:10px;--r-m:14px;--r-l:18px;--r-xl:22px;
   --g-s:8px;--g-m:12px;--g-l:16px;
@@ -118,7 +118,9 @@ button{font-family:var(--f-ui);-webkit-tap-highlight-color:transparent}
 .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .pl{min-height:var(--h-chip);border:0;border-radius:999px;background:var(--c-fill);color:var(--c-ink);font:600 var(--t-small) var(--f-ui);padding:0 13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-align:center}
 .pl[aria-pressed="true"]{background:var(--c-ink);color:var(--c-bg)}
-.pl.wchip{flex-direction:column;align-items:flex-start;border-radius:var(--r-m);padding:7px 11px;line-height:1.2}
+.pl.wchip{flex-direction:column;align-items:flex-start;border-radius:var(--r-m);padding:7px 11px;line-height:1.2;width:100%}
+.pills:has(.wchip){display:grid;grid-template-columns:1fr 1fr}
+.pills .wchip:nth-of-type(1){grid-column:1/-1}.pills .wchip:nth-of-type(2){order:1}.pills .wchip:nth-of-type(4){order:2}.pills .wchip:nth-of-type(3){order:3}.pills .wchip:nth-of-type(5){order:4}
 .pl.wchip small{font-size:var(--t-micro);opacity:.75;font-weight:500}
 .wf{width:18px;height:18px;vertical-align:-4px;margin-right:5px}
 .inp{min-height:var(--h-ctl);border:0;border-radius:var(--r-m);background:var(--c-fill);color:var(--c-ink);font:500 var(--t-label) var(--f-ui);padding:0 14px;width:100%}
@@ -433,11 +435,14 @@ table.dt{width:100%;border-collapse:collapse;font-size:var(--t-small);font-varia
   body { font-size: 16px; line-height: 1.5; letter-spacing: -0.011em; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
   ::selection { background: color-mix(in srgb, var(--path) 26%, transparent); }
   h1, h2, h3 { font-family: var(--display); text-transform: none; text-wrap: balance; }
-  h1 { font-size: clamp(2.6rem, 6.6vw, 4.4rem); font-weight: 700; letter-spacing: -0.038em; line-height: 1.03; }
-  h2 { font-size: clamp(1.8rem, 3.8vw, 2.7rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.07; }
-  h3 { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.018em; line-height: 1.22; }
+  /* One size scale on every golf page: the Pocket Stat Card uses the same numbers */
+  :root { --t-micro: 11.5px; --t-cap: 13px; --t-small: 14px; --t-body: 15px; --t-label: 16px; --t-title: 17px; --t-h3: 18px; --t-h2: 22px; --t-h1: 28px; --t-num: 24px; --t-num-l: 34px;
+    --h-chip: 36px; --h-ctl: 42px; --h-btn: 48px; }
+  h1 { font-size: clamp(var(--t-h1), 3.4vw, 2.4rem); font-weight: 700; letter-spacing: -0.032em; line-height: 1.08; }
+  h2 { font-size: clamp(var(--t-h2), 2.2vw, 1.75rem); font-weight: 700; letter-spacing: -0.026em; line-height: 1.12; }
+  h3 { font-size: var(--t-h3); font-weight: 600; letter-spacing: -0.016em; line-height: 1.25; }
   .eyebrow { font: 600 0.84rem/1.3 var(--body); letter-spacing: -0.006em; text-transform: none; }
-  .lead { font-size: clamp(1.06rem, 1.5vw, 1.24rem); line-height: 1.48; letter-spacing: -0.017em; }
+  .lead { font-size: clamp(1rem, 1.3vw, 1.12rem); line-height: 1.48; letter-spacing: -0.015em; }
   .note { font-size: 0.86rem; line-height: 1.45; }
   a { color: var(--link); text-decoration: none; }
   a:not([class]):hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
@@ -453,7 +458,21 @@ table.dt{width:100%;border-collapse:collapse;font-size:var(--t-small);font-varia
   .facts strong, .mid, .fc-prog, .boxes b, .s-num, .s-huge, .fc-meta b, .step {
     text-transform: none; letter-spacing: -0.012em;
   }
-  .verdict b { font-weight: 700; letter-spacing: -0.032em; }
+  .verdict b { font-weight: 700; letter-spacing: -0.03em; font-size: clamp(1.45rem, 3vw, 1.9rem); }
+  .grab b { font-size: clamp(2rem, 8vw, 2.6rem) !important; }
+  .grab .or { font-size: 1.05rem; }
+  .yds input { font-size: 2.5rem; }
+  .yds span { font-size: 1rem; }
+  ol.routine li::before { font-size: 1.2rem; }
+  .fault { padding: 8px 10px; }
+  .seg:has(.wbtn) { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .seg:has(.wbtn) .lbl { grid-column: 1 / -1; width: auto; }
+  .seg .wbtn { padding: 6px 10px; border-radius: 14px; line-height: 1.2; text-align: left; display: block; min-height: 0; }
+  /* Calm across the top, then into-wind and with-wind side by side */
+  .seg .wbtn:nth-of-type(1) { grid-column: 1 / -1; }
+  .seg .wbtn:nth-of-type(2) { order: 1; } .seg .wbtn:nth-of-type(4) { order: 2; }
+  .seg .wbtn:nth-of-type(3) { order: 3; } .seg .wbtn:nth-of-type(5) { order: 4; }
+  .fault .nm { font-size: 1rem; }
   .readouts b, .facts strong, .move .val, .yc-num b { font-weight: 600; letter-spacing: -0.028em; font-variant-numeric: tabular-nums; }
   .tag { font: 600 0.74rem/1.35 var(--body); padding: 3px 10px; }
   th { font-weight: 600; color: var(--muted); }
@@ -500,7 +519,7 @@ table.dt{width:100%;border-collapse:collapse;font-size:var(--t-small);font-varia
   /* "Why?" panels open with a smooth slide where the browser supports it */
   .why5 { transition: box-shadow 0.35s var(--ease-out); }
   .why5[open] { border-color: transparent; box-shadow: var(--shadow-card), 0 0 0 1.5px color-mix(in srgb, var(--accent) 45%, transparent); }
-  .why5 > summary { padding: 13px 16px; }
+  .why5 > summary { padding: 10px 14px; }
   .why5 .body { padding: 0 16px 16px; }
   .why5 .ask::before { font-family: var(--body); }
   @supports selector(::details-content) {
@@ -521,8 +540,8 @@ table.dt{width:100%;border-collapse:collapse;font-size:var(--t-small);font-varia
   /* Phones (iPhone Air is 420 pt wide): every control is a 44 pt target, small print stays readable, and inputs never trigger iOS zoom */
   button, a, input, select, label, summary { touch-action: manipulation; }
   @media (max-width: 600px), (pointer: coarse) {
-    .btn { min-height: 44px; padding: 10px 16px; font-size: 0.95rem; }
-    .chip { min-height: 40px; display: inline-flex; align-items: center; padding: 8px 14px; }
+    .btn { min-height: var(--h-ctl); padding: 8px 15px; font-size: 0.94rem; }
+    .chip { min-height: var(--h-chip); display: inline-flex; align-items: center; padding: 6px 13px; }
     .tag { font-size: 0.78rem !important; padding: 3px 10px !important; }
     .readouts span, .readouts small, .note, small { font-size: max(0.82rem, 13px); }
     .eyebrow { font-size: 0.86rem; }
@@ -530,6 +549,11 @@ table.dt{width:100%;border-collapse:collapse;font-size:var(--t-small);font-varia
     input[type="range"] { min-height: 32px; }
     .s-label, .w-lab, .h-lab-s { font-size: 13px; }
     .s-label-ink { font-size: 14px; }
+    /* Diagrams that shrink to fit the phone get bigger labels so nothing drops under 10.5 pt */
+    #loftView .s-label-ink { font-size: 15px; }
+    .why5 .body svg .s-label-ink { font-size: 16.5px; }
+    #postureView .s-label-acc { font-size: 13px; }
+    #chainView .c-num { font-size: 12.5px; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
