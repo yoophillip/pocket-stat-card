@@ -23,9 +23,9 @@
   --c-fill:rgba(20,40,26,.065);--c-fill-2:rgba(20,40,26,.16);--c-seg-on:#FFFFFF;
   --c-accent:#14864A;--c-accent-ink:#FFFFFF;--c-accent-soft:#DCF0E2;--c-link:#11733E;
   --c-bad:#D33B2C;--c-bad-soft:#FBE3DF;--c-warn:#A86B0C;--c-warn-soft:#F7EBD2;
-  --c-glass:rgba(255,255,255,.74);--c-glass-edge:rgba(255,255,255,.75);--c-glass-hi:rgba(255,255,255,.8);
-  --c-sheet:rgba(247,249,246,.94);--c-scrim:rgba(8,14,10,.32);
-  --c-shadow:0 .5px 1px rgba(16,23,18,.05),0 8px 24px -12px rgba(16,23,18,.22);
+  --c-glass:rgba(252,253,252,.97);--c-glass-edge:rgba(255,255,255,.75);--c-glass-hi:rgba(255,255,255,.8);
+  --c-sheet:#F7F9F6;--c-scrim:rgba(8,14,10,.32);
+  --c-shadow:0 .5px 1px rgba(16,23,18,.06),0 3px 10px -6px rgba(16,23,18,.18);
   --m-rough:#86AC5E;--m-fair:#A9D57D;--m-stripe:#B6DE8E;--m-fringe:#BDE39A;--m-green:#84DC5C;--m-green-hi:#93E56C;
   --m-sand:#EDDCAF;--m-sand-edge:#D9C48E;--m-trees:#4E7A42;--m-tree:#3B6533;--m-line:#FFFFFF;--m-ball:#FFFFFF;
   --m-label:#10260F;--m-chip:rgba(255,255,255,.86);
@@ -38,8 +38,8 @@
   --c-fill:rgba(220,240,226,.085);--c-fill-2:rgba(220,240,226,.2);--c-seg-on:#2B352E;
   --c-accent:#36D06E;--c-accent-ink:#03140A;--c-accent-soft:#11301C;--c-link:#5BDD8B;
   --c-bad:#FF6F5E;--c-bad-soft:#3A1612;--c-warn:#F2B650;--c-warn-soft:#33260E;
-  --c-glass:rgba(26,33,28,.72);--c-glass-edge:rgba(255,255,255,.1);--c-glass-hi:rgba(255,255,255,.07);
-  --c-sheet:rgba(20,26,22,.94);--c-scrim:rgba(0,0,0,.55);
+  --c-glass:rgba(24,30,26,.97);--c-glass-edge:rgba(255,255,255,.1);--c-glass-hi:rgba(255,255,255,.07);
+  --c-sheet:#141A16;--c-scrim:rgba(0,0,0,.55);
   --c-shadow:0 0 0 .5px rgba(255,255,255,.07),0 14px 30px -14px rgba(0,0,0,.85);
   --m-rough:#33522A;--m-fair:#4C7D35;--m-stripe:#56883C;--m-fringe:#5C9140;--m-green:#62B843;--m-green-hi:#6EC54E;
   --m-sand:#8F7D50;--m-sand-edge:#7A6A42;--m-trees:#1E361C;--m-tree:#172C16;--m-line:#FFFFFF;--m-ball:#FFFFFF;
@@ -49,8 +49,8 @@
   --c-fill:rgba(220,240,226,.085);--c-fill-2:rgba(220,240,226,.2);--c-seg-on:#2B352E;
   --c-accent:#36D06E;--c-accent-ink:#03140A;--c-accent-soft:#11301C;--c-link:#5BDD8B;
   --c-bad:#FF6F5E;--c-bad-soft:#3A1612;--c-warn:#F2B650;--c-warn-soft:#33260E;
-  --c-glass:rgba(26,33,28,.72);--c-glass-edge:rgba(255,255,255,.1);--c-glass-hi:rgba(255,255,255,.07);
-  --c-sheet:rgba(20,26,22,.94);--c-scrim:rgba(0,0,0,.55);
+  --c-glass:rgba(24,30,26,.97);--c-glass-edge:rgba(255,255,255,.1);--c-glass-hi:rgba(255,255,255,.07);
+  --c-sheet:#141A16;--c-scrim:rgba(0,0,0,.55);
   --c-shadow:0 0 0 .5px rgba(255,255,255,.07),0 14px 30px -14px rgba(0,0,0,.85);
   --m-rough:#33522A;--m-fair:#4C7D35;--m-stripe:#56883C;--m-fringe:#5C9140;--m-green:#62B843;--m-green-hi:#6EC54E;
   --m-sand:#8F7D50;--m-sand-edge:#7A6A42;--m-trees:#1E361C;--m-tree:#172C16;--m-line:#FFFFFF;--m-ball:#FFFFFF;
@@ -185,7 +185,7 @@ button{font-family:var(--f-ui);-webkit-tap-highlight-color:transparent}
 /* Bottom sheets */
 .sheetw{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center}
 .scrim{position:absolute;inset:0;background:var(--c-scrim)}
-.sheet{position:relative;width:min(560px,100%);max-height:calc(100% - 36px - env(safe-area-inset-top,0px));overflow-y:auto;overscroll-behavior:contain;background:var(--c-sheet);-webkit-backdrop-filter:saturate(180%) blur(30px);backdrop-filter:saturate(180%) blur(30px);border-radius:30px 30px 0 0;padding-top:10px;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px;box-shadow:0 -20px 60px -20px rgba(0,0,0,.35)}
+.sheet{position:relative;width:min(560px,100%);max-height:calc(100% - 36px - env(safe-area-inset-top,0px));overflow-y:auto;overscroll-behavior:contain;background:var(--c-sheet);border-radius:30px 30px 0 0;padding-top:10px;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px;box-shadow:0 -20px 60px -20px rgba(0,0,0,.35)}
 .sheet::before{content:"";width:38px;height:5px;border-radius:3px;background:var(--c-fill-2);align-self:center;flex:none}
 @media (prefers-reduced-motion:no-preference){.sheet{animation:sup .45s var(--spring) both}.scrim{animation:sfade .25s ease both}}
 @keyframes sup{from{transform:translateY(100%)}}@keyframes sfade{from{opacity:0}}
@@ -212,15 +212,15 @@ button{font-family:var(--f-ui);-webkit-tap-highlight-color:transparent}
 .ydp{margin:0;font-size:16px;line-height:1.45}
 
 /* Toast with undo */
-.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:35;display:flex;align-items:center;gap:12px;padding:7px 7px 7px 16px;border-radius:999px;background:var(--c-ink);color:var(--c-bg);font:600 15px var(--f-ui);box-shadow:0 10px 30px -10px rgba(0,0,0,.45);max-width:calc(100% - 32px);white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:calc(152px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:35;display:flex;align-items:center;gap:12px;padding:7px 7px 7px 16px;border-radius:999px;background:var(--c-ink);color:var(--c-bg);font:600 15px var(--f-ui);box-shadow:0 10px 30px -10px rgba(0,0,0,.45);max-width:calc(100% - 32px);white-space:nowrap}
 .toast span{overflow:hidden;text-overflow:ellipsis}
 .toast button{border:0;border-radius:999px;background:var(--c-accent);color:var(--c-accent-ink);font:700 14px var(--f-ui);min-height:36px;padding:0 14px;cursor:pointer;flex:none}
 @media (prefers-reduced-motion:no-preference){.toast{animation:tin .4s var(--spring) both}}
 @keyframes tin{from{transform:translate(-50%,24px);opacity:0}}
 
 /* Floating glass tab bar */
-.tabbar{position:fixed;z-index:30;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0px));width:min(400px,calc(100% - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)));display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px;border-radius:30px;background:var(--c-glass);-webkit-backdrop-filter:saturate(180%) blur(24px);backdrop-filter:saturate(180%) blur(24px);border:.5px solid var(--c-glass-edge);box-shadow:0 12px 32px -12px rgba(0,0,0,.35),inset 0 1px 0 var(--c-glass-hi)}
-.tabbar button{border:0;background:transparent;color:var(--c-muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;border-radius:24px;font:600 11.5px/1 var(--f-ui);cursor:pointer;transition:background-color .25s,color .25s,transform .35s var(--spring)}
+.tabbar{position:fixed;z-index:30;left:50%;transform:translateX(-50%);bottom:calc(8px + env(safe-area-inset-bottom,0px));width:min(400px,calc(100% - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)));display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:6px;border-radius:30px;background:var(--c-glass);border:.5px solid var(--c-glass-edge);box-shadow:0 12px 32px -12px rgba(0,0,0,.35),inset 0 1px 0 var(--c-glass-hi)}
+.tabbar button{border:0;background:transparent;color:var(--c-muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:48px;border-radius:24px;font:600 11.5px/1 var(--f-ui);cursor:pointer;transition:background-color .25s,color .25s,transform .35s var(--spring)}
 .tabbar svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .tabbar button[aria-current="page"]{color:var(--c-accent);background:var(--c-accent-soft)}
 .tabbar button:active{transform:scale(.92)}
@@ -297,6 +297,47 @@ table.dt{width:100%;border-collapse:collapse;font-size:15px;font-variant-numeric
 .dt th{font-size:12px;color:var(--c-muted);font-weight:600}
 .dt .l{text-align:left}
 .src{font-size:13px;color:var(--c-muted);margin:0;line-height:1.4}
+
+/* Play fits one screen: header, shot bar, the map takes whatever height is left, actions sit above the tab bar */
+html{height:100%}body{min-height:100%}
+body[data-view="play"]{height:100%;overflow:hidden;overscroll-behavior:none}
+body[data-view="play"] .topline{display:none}
+body[data-view="play"] .app{height:100%;padding-block:6px calc(74px + env(safe-area-inset-bottom,0px));gap:8px}
+body[data-view="play"] #main{flex:1 1 auto;min-height:0}
+.play{display:flex;flex-direction:column;gap:8px;height:100%;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.play>*{flex:none}
+.play .hd{align-items:center;min-height:44px;gap:8px}
+.play .hd-t{font-size:30px}
+.hd-pill{font:600 13px var(--f-ui);color:var(--c-muted);background:var(--c-fill);border-radius:999px;padding:5px 10px;white-space:nowrap}
+.hd-pill b{color:var(--c-ink);font-size:14px;margin-right:2px}.hd-pill.u b{color:var(--c-accent)}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--c-muted);flex:none}.sdot.ok{background:var(--c-accent)}.sdot.warn{background:var(--c-warn)}
+.hd .seg.par{margin-left:auto}
+.hd .seg.par button{min-width:44px;padding:0 10px}
+.play .strip{padding:7px;gap:8px;border-radius:20px}
+.play .sn{width:50px;height:50px;border-radius:15px}
+.play .sn .num{font-size:25px}
+.sp{flex:1;min-width:0;border:0;background:var(--c-fill);border-radius:15px;min-height:50px;padding:5px 12px;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px;color:inherit;cursor:pointer;transition:transform .35s var(--spring)}
+.sp:active{transform:scale(.97)}
+.sp b{font:700 17px/1.2 var(--f-ui);letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp small{font-size:13px;color:var(--c-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sp small .num{font-size:14px;color:var(--c-ink)}
+.sp.gps small{color:var(--c-link)}
+.sp.set{background:var(--c-accent-soft)}.sp.set b{color:var(--c-accent)}
+.mapw.fit{flex:1 1 0;min-height:200px;position:relative;display:flex;align-items:center;justify-content:center}
+.mapw.fit>svg{width:100%;height:100%}
+.mapw.fit.mini{flex:1 1 0;min-height:120px;width:100%;border-radius:20px}
+.res:has(.mapw.fit){flex:1 1 0;min-height:0}
+.maphint{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:2;pointer-events:none;font:600 13px var(--f-ui);padding:5px 12px;border-radius:999px;background:var(--m-chip);color:var(--m-label);white-space:nowrap;line-height:1.2}
+.teeclubs{position:absolute;left:50%;top:8px;transform:translateX(-50%);z-index:2;display:flex;gap:2px;padding:3px;border-radius:999px;background:var(--m-chip);box-shadow:0 4px 12px -6px rgba(0,0,0,.35)}
+.teeclubs button{border:0;background:transparent;color:var(--m-label);font:600 14px var(--f-ui);min-height:40px;padding:0 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.teeclubs button[aria-pressed="true"]{background:var(--c-accent);color:var(--c-accent-ink)}
+.acts.three{grid-template-columns:repeat(3,1fr);gap:8px}
+.acts.three .act{min-height:58px;border-radius:18px}.acts.three .act b{font-size:16px}.acts.three .act small{font-size:12px}
+.acts.three .act.big{min-height:72px}.acts.three .act.big b{font-size:20px}
+.greenw.fitg{flex:1 1 0;min-height:110px;display:flex}.greenw.fitg>svg{width:100%;height:100%}
+.play .res{padding:14px;gap:10px;border-radius:24px}
+.play .mk.big{width:72px;height:72px;font-size:38px}
+.play .stale{padding:12px;gap:8px}
 
 /* Hole plan: the yards and the club, one tap from the map */
 .plan{width:100%;border:0;border-radius:22px;background:var(--c-surface);box-shadow:var(--c-shadow);display:flex;align-items:center;gap:12px;padding:9px 14px 9px 9px;text-align:left;color:inherit;cursor:pointer;transition:transform .35s var(--spring)}
@@ -707,9 +748,9 @@ function planOutHTML(r,h,pl,tee){
 }
 function planBarHTML(r,h){
   const p=pos(h),c=strokesOf(h),tee=c.n===0&&p==='T',rem=remainingYd(h);
-  if(!rem)return `<button class="plan set" id="planbar" data-act="plan"><span class="plan-y">${IC.ruler}</span><span class="plan-t"><b>${tee?'How long is this hole?':'How far to the green?'}</b><small>Slide the yards, get a club for every shot</small></span>${IC.chevR}</button>`;
+  if(!rem)return `<button class="sp set" id="planbar" data-act="plan"><b>${tee?'Set hole yards':'Set yards'}</b><small>Get a club for this shot ›</small></button>`;
   const pl=planFor(h,rem.yd),rest=pl.steps.slice(1).map(s=>SHORTN[s.k]).join(' → ');
-  return `<button class="plan${rem.src==='gps'?' gps':''}" id="planbar" data-act="plan" aria-label="Plan: ${rem.yd} yards, ${esc(stepName(pl.steps[0]))}"><span class="plan-y"><span class="num">${rem.yd}</span><small>${rem.src==='gps'?'GPS':rem.src==='est'?'about':'yd'}</small></span><span class="plan-t"><b>${stepName(pl.steps[0])}</b><small>${rest?'then '+rest:'to the green'}</small></span>${IC.chevR}</button>`;
+  return `<button class="sp${rem.src==='gps'?' gps':''}" id="planbar" data-act="plan" aria-label="Plan: ${rem.yd} yards, ${esc(stepName(pl.steps[0]))}"><b>${stepName(pl.steps[0])}</b><small><span class="num">${rem.yd}</span> ${rem.src==='gps'?'yd · GPS':rem.src==='est'?'yd, about':'yd'}${rest?' · then '+rest:''}</small></button>`;
 }
 function planHTML(r,i,h){
   const c=strokesOf(h),p=pos(h),tee=c.n===0&&p==='T',cond=h.cond||defCond(h),yd=S.planYd;
@@ -877,7 +918,7 @@ function saveLocal(){try{localStorage.setItem('psc.rounds',JSON.stringify(S.roun
 
 /* ---------- saving to your account ---------- */
 let writing=false,flushTimer=null,retryTimer=null;
-function setSync(kind,text){const el=$('sync');el.className='sync '+(kind||'');el.querySelector('span').textContent=text;}
+function setSync(kind,text){const el=$('sync');el.className='sync '+(kind||'');el.querySelector('span').textContent=text;const d=$('sdot');if(d){d.className='sdot '+(kind||'');d.title=text;}}
 function syncLabel(){
   if(HOSTED){setSync('ok','Saved on this phone');return;}
   if(!S.db){setSync('warn',S.dbState==='loading'?'Connecting…':'On this phone only');return;}
@@ -977,28 +1018,29 @@ function mapPts(h){
   });
   return{pts,cur,pen};
 }
-function mapSVG(h,mode){
+function mapSVG(h,mode,kk){
+  const k=kk||S.mapK||1,Y=v=>+(v*k).toFixed(1),VH=Y(330),rk=Math.min(k,1.2);
   const live=mode==='shot'||mode==='drop',act=mode==='drop'?'drop':'res';
   const Z=(v,label,shape)=>live&&!(mode==='drop'&&v==='G')?`<g class="z" data-act="${act}" data-v="${v}" role="button" tabindex="0" aria-label="${label}">${shape}</g>`:shape;
-  let trees='';for(let y=12;y<330;y+=26){trees+=`<circle class="m-tree" cx="${y%52<26?17:20}" cy="${y}" r="14"/><circle class="m-tree" cx="${y%52<26?323:320}" cy="${y+13}" r="14"/>`;}
-  let stripes='';for(let y=152;y<330;y+=26)stripes+=`<rect class="m-stripe" x="100" y="${y}" width="140" height="13"/>`;
-  const {pts,cur,pen}=mapPts(h);
-  const done=pos(h)==='H';
-  const path=pts.length>1?`<path class="tr" d="M${pts.map(p=>p.join(' ')).join(' L')}"/>`+pts.slice(0,-1).map(p=>`<circle class="td" cx="${p[0]}" cy="${p[1]}" r="3.4"/>`).join(''):'';
+  const FW=`M112 ${VH}V${Y(214)}Q112 ${Y(152)} 170 ${Y(152)}Q228 ${Y(152)} 228 ${Y(214)}V${VH}Z`;
+  let trees='';for(let y=12,j=0;y<VH+14;y+=26,j++){trees+=`<circle class="m-tree" cx="${j%2?20:17}" cy="${y}" r="14"/><circle class="m-tree" cx="${j%2?320:323}" cy="${y+13}" r="14"/>`;}
+  let stripes='';for(let y=Y(152);y<VH;y+=26)stripes+=`<rect class="m-stripe" x="100" y="${y.toFixed(1)}" width="140" height="13"/>`;
+  const {pts,cur,pen}=mapPts(h),done=pos(h)==='H',P=q=>[q[0],Y(q[1])],cu=P(cur);
+  const path=pts.length>1?`<path class="tr" d="M${pts.map(q=>P(q).join(' ')).join(' L')}"/>`+pts.slice(0,-1).map(q=>`<circle class="td" cx="${q[0]}" cy="${Y(q[1])}" r="3.4"/>`).join(''):'';
   const pop=S.justTapped?' pop':'';
-  const ball=done?'':`<circle class="halo${pop}" cx="${cur[0]}" cy="${cur[1]}" r="13"/><circle class="ball${pop}" cx="${cur[0]}" cy="${cur[1]}" r="7"/>`;
-  const penb=pen?`<g class="penb"><rect x="${cur[0]+10}" y="${cur[1]-26}" width="32" height="20" rx="10"/><text x="${cur[0]+26}" y="${cur[1]-11.5}">+1</text></g>`:'';
-  return `<svg class="map" viewBox="0 0 340 330" role="group" aria-label="Map of the hole. Tap where your ball is.">
-    ${Z('L','Left rough','<rect class="m-rough" x="36" y="0" width="134" height="330"/>')}
-    ${Z('R','Right rough','<rect class="m-rough" x="170" y="0" width="134" height="330"/>')}
-    ${Z('X','Trees','<rect class="m-trees" x="0" y="0" width="36" height="330"/><rect class="m-trees" x="304" y="0" width="36" height="330"/>'+trees)}
-    ${Z('F','Fairway',`<path class="m-fair" d="${FAIRWAY}"/><clipPath id="fwc"><path d="${FAIRWAY}"/></clipPath><g clip-path="url(#fwc)">${stripes}</g><rect class="m-tee deco" x="150" y="312" width="40" height="14" rx="5"/>`)}
-    ${Z('B','Fairway bunker','<ellipse class="m-sand" cx="236" cy="228" rx="23" ry="14"/><ellipse class="m-sand" cx="104" cy="284" rx="21" ry="13"/>')}
-    ${Z('N','Near the green','<ellipse class="m-fringe" cx="170" cy="80" rx="128" ry="66"/>')}
-    ${Z('GS','Greenside bunker','<ellipse class="m-sand" cx="80" cy="98" rx="24" ry="15"/><ellipse class="m-sand" cx="262" cy="56" rx="24" ry="15"/>')}
-    ${Z('G','Green','<ellipse class="m-green" cx="170" cy="76" rx="72" ry="41"/><ellipse class="m-green-hi" cx="160" cy="68" rx="44" ry="22"/>')}
-    <g class="deco"><circle class="cup" cx="188" cy="72" r="3.6"/><path class="pin" d="M188 72V40"/><path class="flag" d="M188.8 40.5 205 46 188.8 51.5z"/></g>
-    ${live?pill(152,90,'Green')+pill(170,134,'Near the green')+pill(80,98,'Bunker')+pill(262,56,'Bunker')+pill(170,268,'Fairway')+pill(236,228,'Bunker')+pill(74,190,'Rough')+pill(266,190,'Rough')+pill(18,250,'Trees',1)+pill(322,250,'Trees',1):''}
+  const ball=done?'':`<circle class="halo${pop}" cx="${cu[0]}" cy="${cu[1]}" r="13"/><circle class="ball${pop}" cx="${cu[0]}" cy="${cu[1]}" r="7"/>`;
+  const penb=pen?`<g class="penb"><rect x="${cu[0]+10}" y="${cu[1]-26}" width="32" height="20" rx="10"/><text x="${cu[0]+26}" y="${cu[1]-11.5}">+1</text></g>`:'';
+  return `<svg class="map" viewBox="0 0 340 ${VH}" role="group" aria-label="Map of the hole. Tap where your ball is.">
+    ${Z('L','Left rough',`<rect class="m-rough" x="36" y="0" width="134" height="${VH}"/>`)}
+    ${Z('R','Right rough',`<rect class="m-rough" x="170" y="0" width="134" height="${VH}"/>`)}
+    ${Z('X','Trees',`<rect class="m-trees" x="0" y="0" width="36" height="${VH}"/><rect class="m-trees" x="304" y="0" width="36" height="${VH}"/>`+trees)}
+    ${Z('F','Fairway',`<path class="m-fair" d="${FW}"/><clipPath id="fwc"><path d="${FW}"/></clipPath><g clip-path="url(#fwc)">${stripes}</g><rect class="m-tee deco" x="150" y="${Y(316)-4}" width="40" height="14" rx="5"/>`)}
+    ${Z('B','Fairway bunker',`<ellipse class="m-sand" cx="236" cy="${Y(228)}" rx="23" ry="${14*rk}"/><ellipse class="m-sand" cx="104" cy="${Y(284)}" rx="21" ry="${13*rk}"/>`)}
+    ${Z('N','Near the green',`<ellipse class="m-fringe" cx="170" cy="${Y(80)}" rx="128" ry="${66*k}"/>`)}
+    ${Z('GS','Greenside bunker',`<ellipse class="m-sand" cx="80" cy="${Y(98)}" rx="24" ry="${15*rk}"/><ellipse class="m-sand" cx="262" cy="${Y(56)}" rx="24" ry="${15*rk}"/>`)}
+    ${Z('G','Green',`<ellipse class="m-green" cx="170" cy="${Y(76)}" rx="72" ry="${41*rk}"/><ellipse class="m-green-hi" cx="160" cy="${Y(68)}" rx="44" ry="${22*rk}"/>`)}
+    <g class="deco"><circle class="cup" cx="188" cy="${Y(72)}" r="3.6"/><path class="pin" d="M188 ${Y(72)}v-32"/><path class="flag" d="M188.8 ${Y(72)-31.5}l16.2 5.5-16.2 5.5z"/></g>
+    ${live?pill(152,Y(90),'Green')+pill(170,Y(134),'Near the green')+pill(80,Y(98),'Bunker')+pill(262,Y(56),'Bunker')+pill(170,Y(268),'Fairway')+pill(236,Y(228),'Bunker')+pill(74,Y(190),'Rough')+pill(266,Y(190),'Rough')+pill(18,Y(250),'Trees',1)+pill(322,Y(250),'Trees',1):''}
     <g class="deco">${path}${ball}${penb}</g>
   </svg>`;
 }
@@ -1006,7 +1048,7 @@ function greenSVG(h){
   const k=h.putts||0,P=[[92,104],[196,86],[222,76],[232,73],[236,72]];
   const b=P[Math.min(k,P.length-1)],prev=P.slice(0,Math.min(k,P.length-1)+1);
   const pop=S.justTapped?' pop':'';
-  return `<svg class="map" viewBox="0 0 340 160" role="img" aria-label="${k?k+' putts missed so far':'On the green'}">
+  return `<svg class="map" viewBox="0 0 340 160" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${k?k+' putts missed so far':'On the green'}">
     <rect class="m-fringe" x="0" y="0" width="340" height="160"/>
     <ellipse class="m-green" cx="170" cy="82" rx="156" ry="70"/><ellipse class="m-green-hi" cx="150" cy="70" rx="96" ry="36"/>
     <g class="deco"><circle class="cup" cx="240" cy="72" r="5"/><path class="pin" d="M240 72V22"/><path class="flag" d="M241 22.5 264 30 241 37.5z"/>
@@ -1014,7 +1056,16 @@ function greenSVG(h){
     <circle class="halo${pop}" cx="${b[0]}" cy="${b[1]}" r="14"/><circle class="ball${pop}" cx="${b[0]}" cy="${b[1]}" r="7.5"/></g>
   </svg>`;
 }
-function svgPt(svg,ev){if(!ev||!ev.detail||!svg.getScreenCTM)return null;const m=svg.getScreenCTM();if(!m)return null;const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const q=p.matrixTransform(m.inverse());return[Math.round(q.x),Math.round(q.y)];}
+function svgPt(svg,ev){if(!ev||!ev.detail||!svg.getScreenCTM)return null;const m=svg.getScreenCTM();if(!m)return null;const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const q=p.matrixTransform(m.inverse()),k=(svg.viewBox&&svg.viewBox.baseVal&&svg.viewBox.baseVal.height||330)/330;return[Math.round(q.x),Math.round(q.y/k)];}
+/* Size the map to the space left on screen, so Play never needs a scroll */
+function fitMap(){
+  const box=document.querySelector('.mapw.fit');if(!box)return;
+  const w=box.clientWidth,hh=box.clientHeight;if(!w||!hh)return;
+  const k=Math.max(.7,Math.min(1.7,(hh/w)*(340/330)));
+  const svg=box.querySelector('svg.map');if(!svg)return;
+  const cur=(svg.viewBox.baseVal.height||330)/330;if(Math.abs(k-cur)<.02){S.mapK=k;return;}
+  S.mapK=k;const {h}=curHole();if(h)svg.outerHTML=mapSVG(h,box.dataset.mode,k);
+}
 
 /* ---------- views ---------- */
 function setView(v){S.view=v;if(location.hash!=='#'+v)history.replaceState(null,'','#'+v);render();window.scrollTo(0,0);}
@@ -1028,6 +1079,7 @@ function render(){
   else if(S.view==='summary')m.innerHTML=viewSummary();
   else m.innerHTML=viewRounds();
   m.querySelectorAll('.hist').forEach(t=>{t.scrollLeft=t.scrollWidth;});
+  fitMap();syncLabel();
 }
 function renderBanner(){
   const b=$('banner');let t='';
@@ -1051,15 +1103,17 @@ function viewPlay(){
   else if(p==='P')body=dropHTML(h);
   else if(p==='G')body=puttHTML(h);
   else body=shotHTML(r,i,h);
-  return `<header class="hd">
-      <button class="hd-hole" data-act="holes" aria-haspopup="dialog" aria-label="Hole ${i+1}. Show all holes"><span class="hd-k">${esc(r.course||'Round')} · ${o.n?`thru ${o.n} · <b class="tp${o.score-o.par<0?' u':''}">${vsPar(o.score-o.par)}</b>`:'no scores yet'}</span><span class="hd-t">Hole ${i+1}${IC.chev}</span></button>
-      <div class="seg" role="group" aria-label="Par">${[3,4,5].map(v=>`<button data-act="par" data-v="${v}" aria-pressed="${h.par===v}">Par ${v}</button>`).join('')}</div>
-    </header>${body}`;
+  const tp=o.n?`<span class="hd-pill${o.score-o.par<0?' u':''}"><b class="num">${vsPar(o.score-o.par)}</b> thru ${o.n}</span>`:'';
+  return `<div class="play"><header class="hd">
+      <button class="hd-hole" data-act="holes" aria-haspopup="dialog" aria-label="Hole ${i+1}. Show all holes"><span class="hd-t">Hole ${i+1}${IC.chev}</span></button>
+      ${tp}<span class="sdot" id="sdot" aria-hidden="true"></span>
+      <div class="seg par" role="group" aria-label="Par">${[3,4,5].map(v=>`<button data-act="par" data-v="${v}" aria-pressed="${h.par===v}" aria-label="Par ${v}">${h.par===v?'Par '+v:v}</button>`).join('')}</div>
+    </header>${body}</div>`;
 }
 function strip(n,title,sub,h,opt){
   opt=opt||{};const any=(h.sh||[]).length;
   return `<div class="strip"><div class="sn${opt.pen?' pen':''}"><span class="num">${n}</span><small>shot</small></div>
-    <div class="st"><b>${title}</b><span>${sub}</span></div>
+    ${opt.mid||`<div class="st"><b>${title}</b><span>${sub}</span></div>`}
     ${any?`<button class="ib" data-act="undo" aria-label="Undo last tap">${IC.undo}</button>`:''}
     ${opt.plus===false?'':`<button class="ib" data-act="plus1" aria-label="Add a shot you forgot to tap">+1</button>`}</div>`;
 }
@@ -1073,26 +1127,25 @@ function staleHTML(i,h){
 function shotHTML(r,i,h){
   const p=pos(h),c=strokesOf(h),n=c.n+c.p+1,tee=c.n===0&&p==='T';
   const tc=teeClubFor(r,h);
-  const club=tee&&h.par>=4?`<div class="seg full" role="group" aria-label="Club off the tee">${TCLUB.map(([v,l])=>`<button data-act="tclub" data-v="${v}" aria-pressed="${tc===v}">${l}</button>`).join('')}</div>`:'';
+  const clubs=tee&&h.par>=4?`<div class="teeclubs" role="group" aria-label="Club off the tee">${TCLUB.map(([v,l])=>`<button data-act="tclub" data-v="${v}" aria-pressed="${tc===v}">${v==='3W'?'3-wood':l}</button>`).join('')}</div>`:'';
   const askMiss=h.pickOn===false&&h.pickAt!=null&&c.n===h.pickAt+1&&YNAME[h.pick]?`<div class="ask"><span class="cap">Your ${YNAME[h.pick]} missed the green. Which way? Optional</span><div class="pills">${MISS.map(([v,l])=>`<button class="pl" data-act="miss" data-v="${v}" aria-pressed="${h.miss===v}">${l}</button>`).join('')}</div></div>`:'';
-  return `${staleHTML(i,h)}${strip(n,'Tap where it ended up',tee?'Tee shot':'From '+LBL[p].toLowerCase(),h)}${askMiss}${planBarHTML(r,h)}${club}
-    <div class="mapw">${mapSVG(h,'shot')}</div>
-    <div class="acts"><button class="act bad" data-act="res" data-v="P"><b>Penalty</b><small>water, OB or lost</small></button><button class="act good" data-act="res" data-v="H"><b>Holed it</b><small>from off the green</small></button></div>
-    <div class="links"><button class="lk" data-act="qs">Lost count? Enter the score</button></div>`;
+  return `${staleHTML(i,h)}${strip(n,'','',h,{mid:planBarHTML(r,h)})}${askMiss}
+    <div class="mapw fit" data-mode="shot">${clubs||`<span class="maphint">Tap where it ended up</span>`}${mapSVG(h,'shot')}</div>
+    <div class="acts three"><button class="act bad" data-act="res" data-v="P"><b>Penalty</b><small>water, OB, lost</small></button><button class="act good" data-act="res" data-v="H"><b>Holed it</b><small>off the green</small></button><button class="act" data-act="qs"><b>Lost count</b><small>enter score</small></button></div>`;
 }
 function dropHTML(h){
   const c=strokesOf(h);
   return `${strip(c.n+c.p+1,'Penalty, 1 stroke added','Tap where you play from now',h,{plus:false,pen:true})}
-    <div class="mapw">${mapSVG(h,'drop')}</div>
+    <div class="mapw fit" data-mode="drop">${mapSVG(h,'drop')}</div>
     <div class="acts one"><button class="act" data-act="drop" data-v="same"><b>Same spot again</b><small>re-tee or replay the shot</small></button></div>`;
 }
 function puttHTML(h){
   const c=strokesOf(h),k=(h.putts||0)+1,first=k===1;
   return `${strip(c.n+c.p+1,'On the green',first?'First putt':'Putt '+k,h)}
-    <div class="greenw">${greenSVG(h)}</div>
-    ${first?`<div class="ask"><span class="cap">How long is it? Optional</span><div class="pgrid">${PUTT_LEN.map(([v,l])=>`<button class="pl" data-act="fp" data-v="${v}" aria-pressed="${h.fp===v}">${l}</button>`).join('')}</div></div>`:''}
-    <div class="acts"><button class="act big" data-act="putt" data-v="miss"><b>Missed</b></button><button class="act big go" data-act="putt" data-v="made"><b>Made it</b></button></div>
-    <div class="links"><button class="lk" data-act="qs">Lost count? Enter the score</button></div>`;
+    <div class="greenw fitg">${greenSVG(h)}</div>
+    ${first?`<div class="pgrid" role="group" aria-label="First putt length, optional">${PUTT_LEN.map(([v,l])=>`<button class="pl" data-act="fp" data-v="${v}" aria-pressed="${h.fp===v}">${l}</button>`).join('')}</div>`:''}
+    <div class="acts three"><button class="act big" data-act="putt" data-v="miss"><b>Missed</b></button><button class="act big go" data-act="putt" data-v="made" style="grid-column:span 2"><b>Made it</b></button></div>
+    <button class="lk" data-act="qs" style="align-self:center;margin-top:-6px">Lost count? Enter the score</button>`;
 }
 function historyHTML(h){
   const a=h.sh||[];if(!a.length)return '';
@@ -1111,7 +1164,7 @@ function doneHTML(r,i,h){
   return `<section class="res">
       <div class="res-top"><div class="mk big ${markCls(d)} num" aria-label="Score ${h.s}">${h.s}</div>
         <div class="res-t"><span class="pillx ${toneCls(d)}">${scoreName(d)}</span><span class="sub">${info}</span></div></div>
-      ${quick?'':`<div class="mapw mini">${mapSVG(h,'view')}</div>${historyHTML(h)}`}
+      ${quick?'':`<div class="mapw fit mini" data-mode="view">${mapSVG(h,'view')}</div>${historyHTML(h)}`}
     </section>
     ${last?`<button class="cta" data-act="finish">Finish round ${IC.arrow}</button>`:`<div class="nx"><span class="t3">Hole ${i+2}</span><div class="seg big" role="group" aria-label="Hole ${i+2} par">${[3,4,5].map(v=>`<button data-act="npar" data-v="${v}" aria-pressed="${nx.par===v}">Par ${v}</button>`).join('')}</div></div>
     <button class="cta" data-act="next">Next hole ${IC.arrow}</button>`}
@@ -1360,6 +1413,7 @@ document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='visible'&&S.view==='play'&&!S.sheet&&!editingText())render();
 });
 window.addEventListener('online',()=>{clearTimeout(flushTimer);flush();});
+let fitT=null;window.addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fitMap,120);});
 loadLocal();
 let hv=location.hash.slice(1);if(hv==='patterns')hv='stats';
 S.view=ROUTES.includes(hv)?hv:(S.cur&&S.rounds[S.cur]&&S.rounds[S.cur].status!=='done'?'play':'rounds');
