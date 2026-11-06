@@ -360,6 +360,61 @@ table.dt{width:100%;border-collapse:collapse;font-size:var(--t-small);font-varia
 .dt th,.dt td{padding:8px 6px;border-bottom:.5px solid var(--c-hair);text-align:center}
 .dt th{font-size:12px;color:var(--c-muted);font-weight:600}
 .dt .l{text-align:left}
+/* caddy-css:start */
+:root{--m-water:#8EC9E6;--m-water-edge:#5FA9CF}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--m-water:#2B5F7A;--m-water-edge:#3D7C9C}}
+:root[data-theme="dark"]{--m-water:#2B5F7A;--m-water-edge:#3D7C9C}
+.tabbar{grid-template-columns:repeat(5,1fr);width:min(420px,calc(100% - 24px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)))}
+.cadl{display:flex;align-items:center;gap:6px;min-height:var(--h-chip);padding:6px 12px;border:0;border-radius:var(--r-m);background:var(--c-accent-soft);color:var(--c-ink);font:500 var(--t-cap)/1.3 var(--f-ui);text-align:left;cursor:pointer;overflow:hidden}
+.cadl b{color:var(--c-accent);font-weight:700;white-space:nowrap}
+.cadl span.t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.cadl::before{content:"Caddy";flex:none;font:700 var(--t-micro)/1 var(--f-ui);letter-spacing:.02em;color:var(--c-accent-ink);background:var(--c-accent);border-radius:999px;padding:4px 7px}
+.cd-head{background:var(--c-surface);box-shadow:var(--c-shadow)}
+.cd-head .seg button{flex-direction:column;gap:1px}
+.cd-head .seg button small,.ngb .seg button small{display:block;font-size:var(--t-micro);font-weight:500;color:var(--c-muted)}
+.cd-head .pl small{font-size:var(--t-micro);color:var(--c-muted);font-weight:500}
+.cd-keys{background:var(--c-accent-soft)}
+.cd-keys ul{margin:0;padding-left:1.1em;display:grid;gap:6px;font-size:var(--t-small);line-height:1.45}
+.cd-nine{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:var(--g-s)}
+.cd-btn{display:block;width:100%;padding:0;border:0;background:none;text-align:left;color:inherit;font:inherit;cursor:pointer;border-radius:var(--r-xl)}
+.cd-btn:active .cd-card{transform:scale(.985)}
+.cd-card{display:grid;grid-template-columns:auto minmax(0,1fr);gap:var(--g-m);padding:10px;border-radius:var(--r-xl);background:var(--c-surface);box-shadow:var(--c-shadow);transition:transform .2s}
+.cd-card.cur{box-shadow:0 0 0 2px var(--c-accent),var(--c-shadow)}
+.cd-map{border-radius:var(--r-m);overflow:hidden;align-self:start;line-height:0}
+.hmap{display:block;height:200px;width:auto;max-width:112px}
+.cd-card.big{grid-template-columns:minmax(0,auto) minmax(0,1fr);box-shadow:none;padding:0;background:none}
+.cd-card.big .hmap{height:min(380px,52vh);max-width:170px}
+.cd-b{display:flex;flex-direction:column;gap:6px;min-width:0}
+.cd-t{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.cd-t b.num{font-size:var(--t-h2);line-height:1}
+.cd-t span{font:600 var(--t-label)/1.2 var(--f-ui)}
+.cd-t small{font-size:var(--t-micro);color:var(--c-muted)}
+.cd-plan{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px;font-size:var(--t-small);color:var(--c-muted)}
+.cd-plan b{color:var(--c-accent);font-size:var(--t-label)}
+.cd-plan i{font-style:normal;opacity:.5}
+.cd-tr{margin:0;padding:0;list-style:none;display:grid;gap:4px}
+.cd-tr li{display:grid;gap:1px;font-size:var(--t-cap);line-height:1.35;padding-left:14px;position:relative}
+.cd-tr li::before{content:"";position:absolute;left:0;top:.42em;width:8px;height:8px;border-radius:50%;background:var(--m-sand-edge)}
+.cd-tr li.water::before{background:var(--m-water-edge)}
+.cd-tr li.trees::before{background:var(--m-trees)}
+.cd-tr li small{color:var(--c-muted);font-size:var(--t-micro)}
+.cd-s{margin:0;font-size:var(--t-cap);line-height:1.4;color:var(--c-muted)}
+.cd-aim{margin:0;font:600 var(--t-cap)/1.35 var(--f-ui);color:var(--c-accent)}
+.cd-tip{margin:0;font-size:var(--t-cap);line-height:1.4}
+.cd-foot{margin-top:var(--g-s)}
+.ngb{display:flex;flex-direction:column;gap:var(--g-s);padding:var(--g-m);border-radius:var(--r-l);background:var(--c-accent-soft)}
+.ngb .seg button{flex-direction:column;gap:1px}
+.hm-r{fill:var(--m-rough)}
+.hm-f{fill:var(--m-fair)}
+.hm-g{fill:var(--m-green)}
+.hm-t{fill:var(--m-fringe)}
+.hm-b{fill:var(--m-sand);stroke:var(--m-sand-edge);stroke-width:1}
+.hm-w{fill:var(--m-water);stroke:var(--m-water-edge);stroke-width:1}
+.hm-l{fill:none;stroke:var(--m-line);opacity:.85}
+.hm-tee{fill:var(--m-ball);stroke:var(--m-label);stroke-width:1.5}
+.hm-dot{fill:var(--m-ball);stroke:var(--m-label);stroke-width:1.5}
+.hm-lab{fill:var(--m-label);font-family:var(--f-ui);font-weight:700;paint-order:stroke;stroke:var(--m-chip);stroke-width:3px}
+/* caddy-css:end */
 </style>
 <style id="apple-skin">
   /* Shared skin for all golf pages (loads after each page's own styles).
@@ -570,6 +625,7 @@ table.dt{width:100%;border-collapse:collapse;font-size:var(--t-small);font-varia
 <div id="sheet" class="sheetw" hidden><div class="scrim" data-act="close"></div><div class="sheet" id="sheetBody" role="dialog" aria-modal="true" aria-label="Details"></div></div>
 <nav class="tabbar" aria-label="Sections">
   <button id="tab-play" data-go="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V3.5"/><path d="M6.6 4h10.6l-2.6 4 2.6 4H6.6"/></svg><span>Play</span></button>
+  <button id="tab-caddy" data-go="caddy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4.5 4 6.5v13l5-2 6 2 5-2v-13l-5 2-6-2z"/><path d="M9 4.5v13M15 6.5v13"/></svg><span>Course</span></button>
   <button id="tab-rounds" data-go="rounds"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="3.5"/><path d="M8 8.5h8M8 12h8M8 15.5h5"/></svg><span>Rounds</span></button>
   <button id="tab-stats" data-go="stats"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-6"/></svg><span>Stats</span></button>
   <button id="tab-pages" data-act="pages"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="2"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="2"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="2"/></svg><span>Pages</span></button>
@@ -587,7 +643,7 @@ const TEEMAP={F:'fw',N:'fw',G:'fw',H:'fw',L:'left',R:'right',B:'sand',GS:'sand',
 const INPLAY=new Set(['F','L','R','Ro','N','G','H']);
 const CLUBN={D:'Driver','3W':'3-wood','3H':'Hybrid',iron:'Iron'};
 /* clubs:start */
-const YC={"Driver":{"mid":176.4,"band":24.7,"side":26.7},"3Wood":{"mid":199.5,"band":20.7,"side":-12.4},"3Hybrid":{"mid":186.1,"band":17.7,"side":-15.3},"5Iron":{"mid":157.3,"band":15.3,"side":-2.1},"6Iron":{"mid":151.2,"band":15.1,"side":-7.5},"7Iron":{"mid":130.2,"band":11.6,"side":-0.6},"8Iron":{"mid":131.2,"band":11.8,"side":-17.4},"9Iron":{"mid":121.1,"band":16.3,"side":-20.3},"PitchingWedge":{"mid":108.9,"band":13.5,"side":-15.3},"56Wedge":{"mid":87.4,"band":12.1,"side":-11.9},"56Partial":{"mid":66.1,"band":11.5,"side":-6.8}};const YC_THRU="Nov 5";
+const YC={"Driver":{"mid":176.4,"band":24.7,"side":26.7,"ss":26.2},"3Wood":{"mid":199.5,"band":20.7,"side":-12.4,"ss":16},"3Hybrid":{"mid":186.1,"band":17.7,"side":-15.3,"ss":20.9},"5Iron":{"mid":157.3,"band":15.3,"side":-2.1,"ss":15.3},"6Iron":{"mid":151.2,"band":15.1,"side":-7.5,"ss":13.2},"7Iron":{"mid":130.2,"band":11.6,"side":-0.6,"ss":12},"8Iron":{"mid":131.2,"band":11.8,"side":-17.4,"ss":7.4},"9Iron":{"mid":121.1,"band":16.3,"side":-20.3,"ss":10.5},"PitchingWedge":{"mid":108.9,"band":13.5,"side":-15.3,"ss":10.3},"56Wedge":{"mid":87.4,"band":12.1,"side":-11.9,"ss":7.9},"56Partial":{"mid":66.1,"band":11.5,"side":-6.8,"ss":3.8}};const YC_THRU="Nov 5";
 /* clubs:end */
 const YNAME={Driver:'Driver','3Wood':'3-wood','3Hybrid':'3-hybrid','5Iron':'5-iron','6Iron':'6-iron','7Iron':'7-iron','8Iron':'8-iron','9Iron':'9-iron',PitchingWedge:'PW','56Wedge':'56°','56Partial':'56°, 3 o’clock swing'};
 const YCODE={'3Wood':'3W','3Hybrid':'3H','5Iron':'5i','6Iron':'6i','7Iron':'7i','8Iron':'8i','9Iron':'9i',PitchingWedge:'PW','56Wedge':'56','56Partial':'56'};
@@ -674,14 +730,16 @@ function solve(R,lie,ctx,depth,memo){
 function planFor(h,yd){
   const ctx=planCtx(),p=pos(h),c=h.cond||defCond(h);
   let lie=LIE_OF(p);if(['tee','fw','rough'].includes(lie)&&c.l)lie=c.l;
-  const Reff=Math.max(1,Math.round(yd*(WINDF[c.w]||1)*ctx.lean+(SLOPEY[c.s]||0)));
-  let steps;
-  if(lie==='green')steps=[{k:'putt',d:yd}];
+  const G=gFor(h),tf=tempF(S.rounds[S.cur]);
+  const Reff=Math.max(1,Math.round(yd*(WINDF[c.w]||1)*ctx.lean/tf+(SLOPEY[c.s]||0)));
+  let steps,cad=null;
+  if(lie==='tee'&&G&&G.hd.par>=4&&c.w==='calm'&&c.s==='flat'&&Math.abs(yd-ydOf(G.c,G.hd,G.tee))<=15&&(cad=caddyTee(G)))steps=[{k:cad.k,d:cad.mid,mid:cad.mid}].concat(cad.rest.steps);
+  else if(lie==='green')steps=[{k:'putt',d:yd}];
   else if(lie==='near')steps=[{k:Reff<=25?'chip':'pitch',d:Reff}];
   else if(lie==='gsand')steps=[{k:'blast',d:Reff}];
   else if(lie==='trees'){const out=Math.min(40,Reff);steps=[{k:'punch',d:out}].concat(Reff-out>0?solve(Reff-out,'fw',ctx,1,{}).steps:[]);}
   else steps=solve(Reff,lie,ctx,0,{}).steps;
-  return{yd,Reff,lie,steps,ctx};
+  return{yd,Reff,lie,steps,ctx,G,cad};
 }
 function stepName(s){return s.k==='chip'?'Chip or putt':s.k==='pitch'?'Pitch with the 56°':s.k==='punch'?'Punch out to the fairway':s.k==='blast'?'Splash it out':s.k==='putt'?'Putt':YNAME[s.k]+(s.soft?', soft swing':'');}
 function stepDist(s){return Math.round(s.mid!=null&&s.k!=='chip'&&s.k!=='pitch'?s.mid:s.d);}
@@ -730,7 +788,8 @@ function planOutHTML(r,h,pl,tee){
   const list=pl.steps.map((s,j)=>{const d=j<shots-1?stepDist(s):Math.max(0,pl.Reff-used);used+=d;const left=Math.max(0,pl.Reff-used);
     return `<li><span><b>${stepName(s)}</b> <small>${R(d)} yd</small></span><small>${j<shots-1?R(left)+' left':'on the green'}</small></li>`;}).join('');
   const notes=[];
-  if(pl.Reff!==pl.yd)notes.push(`${pl.yd} yd plays like ${pl.Reff} yd today.`);
+  if(pl.cad)troubleLines(pl.G,pl.cad).slice(0,3).forEach(t=>notes.push(t.t+(t.why?'. '+t.why:'.')));
+  if(pl.Reff!==pl.yd)notes.push(`${pl.yd} yd plays like ${pl.Reff} yd today${tempF(S.rounds[S.cur])<1?', counting the cold':''}.`);
   if(tee&&pl.lie==='tee'&&YC.Driver&&s0.k!=='Driver'&&y&&h.par>=4){const D=YC.Driver,sd=x=>Math.abs(x.side)<5?'about straight':`about ${R(Math.abs(x.side))} yd ${x.side<0?'left':'right'}`;
     notes.push(`Driver: middle ${R(D.mid)}, finishing ${sd(D)}. ${YNAME[s0.k]}: middle ${R(y.mid)}, ${sd(y)}. Right now the ${YNAME[s0.k].toLowerCase()} costs you fewer strokes.`);}
   const last=pl.steps[shots-1];if(shots>1&&FAV.has(last.k))notes.push(last.k==='56Partial'?'The layup leaves your 3 o’clock 56° swing, a distance you’ve measured.':`The layup leaves a full ${YNAME[last.k]}, your most repeatable kind of shot.`);
@@ -756,10 +815,11 @@ function planHTML(r,i,h){
       <button class="ghost" data-act="pstep" data-d="5" aria-label="5 yards more">+5</button></div>
     <input type="range" id="pl-r" min="5" max="${tee?650:450}" step="1" value="${yd}" aria-label="Slide to set the yards">
     ${gpsOn()?`<div class="gpsline" id="gpsline">${gpsLineHTML()}</div>`:''}
-    <details class="cond"${S.condOpen?' open':''} id="condd"><summary>Wind, lie, slope <span>${({calm:'Calm',into:'Into',into2:'Strong into',behind:'Behind',behind2:'Strong behind'})[cond.w]} · ${(LIE.find(x=>x[0]===cond.l)||[0,''])[1]} · ${(SLOPE.find(x=>x[0]===cond.s)||[0,''])[1]}</span></summary><div class="cond-b">
+    <details class="cond"${S.condOpen?' open':''} id="condd"><summary>Wind, lie, slope, temp <span>${({calm:'Calm',into:'Into',into2:'Strong into',behind:'Behind',behind2:'Strong behind'})[cond.w]} · ${(LIE.find(x=>x[0]===cond.l)||[0,''])[1]} · ${(SLOPE.find(x=>x[0]===cond.s)||[0,''])[1]}</span></summary><div class="cond-b">
       <div class="pills">${WIND.map(([v,l])=>`<button class="pl wchip" data-act="cond" data-k="w" data-v="${v}" aria-pressed="${cond.w===v}">${l}</button>`).join('')}</div>
       <div class="r2"><div class="seg" role="group" aria-label="Lie">${LIE.map(([v,l])=>`<button data-act="cond" data-k="l" data-v="${v}" aria-pressed="${cond.l===v}">${l}</button>`).join('')}</div>
-      <div class="seg" role="group" aria-label="Slope">${SLOPE.map(([v,l])=>`<button data-act="cond" data-k="s" data-v="${v}" aria-pressed="${cond.s===v}">${l}</button>`).join('')}</div></div></div></details>
+      <div class="seg" role="group" aria-label="Slope">${SLOPE.map(([v,l])=>`<button data-act="cond" data-k="s" data-v="${v}" aria-pressed="${cond.s===v}">${l}</button>`).join('')}</div></div>
+      <div class="seg" role="group" aria-label="Temperature">${TEMPS.map(([v,l])=>`<button data-act="rtemp" data-v="${v}" aria-pressed="${(r.temp||'warm')===v}">${l}</button>`).join('')}</div></div></details>
     <div id="plan-out" class="planout">${planOutHTML(r,h,planFor(h,yd),tee)}</div>
     ${!HOSTED?`<a class="lnk" href="${GPS_URL}" target="_blank" rel="noopener">Want GPS yards? Open the GPS version ↗</a>`:''}`;
 }
@@ -864,7 +924,7 @@ function learnedDist(){
 function exportCode(){const rounds={};Object.entries(S.rounds).forEach(([id,r])=>{if(!r.example)rounds[id]=r;});return 'PSC1.'+btoa(unescape(encodeURIComponent(JSON.stringify({v:1,rounds}))));}
 function importCode(txt){const m=String(txt||'').replace(/\s+/g,'').match(/PSC1\.([A-Za-z0-9+/=]+)/);if(!m)return -1;let j;try{j=JSON.parse(decodeURIComponent(escape(atob(m[1]))));}catch(e){return -1;}
   let n=0;Object.entries(j.rounds||{}).forEach(([id,r])=>{if(!r||!Array.isArray(r.h)||!/^[A-Za-z0-9_-]{1,40}$/.test(id))return;const loc=S.rounds[id];if(!loc||(r.updated||0)>(loc.updated||0)){S.rounds[id]=r;touch(id);n++;}});return n;}
-const S={rounds:{},cur:null,hole:0,view:'rounds',db:null,dbState:'loading',canWrite:true,confirmDel:null,sheet:null,qs:{s:null,p:null},newHoles:18,newCourse:'',staleOk:null,justTapped:false};
+const S={cad:{},ng:null,cadHole:null,rounds:{},cur:null,hole:0,view:'rounds',db:null,dbState:'loading',canWrite:true,confirmDel:null,sheet:null,qs:{s:null,p:null},newHoles:18,newCourse:'',staleOk:null,justTapped:false};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -1065,11 +1125,12 @@ function setView(v){S.view=v;if(location.hash!=='#'+v)history.replaceState(null,
 function render(){
   document.body.dataset.view=S.view;
   if(gpsOn()){if(S.view==='play'&&document.visibilityState!=='hidden')gpsStart();else gpsStop();const d=$('gpsdot');if(d)d.innerHTML=S.view==='play'?gpsDotHTML():'';}
-  [['play','play'],['rounds','rounds'],['stats','stats']].forEach(([v,id])=>{const b=$('tab-'+id);if(b)b.setAttribute('aria-current',(S.view===v||(v==='rounds'&&S.view==='summary'))?'page':'false');});
+  [['play','play'],['caddy','caddy'],['rounds','rounds'],['stats','stats']].forEach(([v,id])=>{const b=$('tab-'+id);if(b)b.setAttribute('aria-current',(S.view===v||(v==='rounds'&&S.view==='summary'))?'page':'false');});
   const m=$('main');
   if(S.view==='play')m.innerHTML=viewPlay();
   else if(S.view==='stats')m.innerHTML=viewStats();
   else if(S.view==='summary')m.innerHTML=viewSummary();
+  else if(S.view==='caddy')m.innerHTML=viewCaddy();
   else m.innerHTML=viewRounds();
   m.querySelectorAll('.hist').forEach(t=>{t.scrollLeft=t.scrollWidth;});
   fitMap();syncLabel();
@@ -1122,7 +1183,8 @@ function shotHTML(r,i,h){
   const tc=teeClubFor(r,h);
   const clubs=tee&&h.par>=4?`<div class="teeclubs" role="group" aria-label="Club off the tee">${TCLUB.map(([v,l])=>`<button data-act="tclub" data-v="${v}" aria-pressed="${tc===v}">${v==='3W'?'3-wood':l}</button>`).join('')}</div>`:'';
   const askMiss=h.pickOn===false&&h.pickAt!=null&&c.n===h.pickAt+1&&YNAME[h.pick]?`<div class="ask"><span class="cap">Your ${YNAME[h.pick]} missed the green. Which way? Optional</span><div class="pills">${MISS.map(([v,l])=>`<button class="pl" data-act="miss" data-v="${v}" aria-pressed="${h.miss===v}">${l}</button>`).join('')}</div></div>`:'';
-  return `${staleHTML(i,h)}${strip(n,'','',h,{mid:planBarHTML(r,h)})}${askMiss}
+  const G=gHole(r,i),cl=G?caddyLine(G,h):'';
+  return `${staleHTML(i,h)}${strip(n,'','',h,{mid:planBarHTML(r,h)})}${cl?`<button class="cadl" data-act="cad"><span class="t">${cl}</span></button>`:''}${askMiss}
     <div class="mapw fit" data-mode="shot">${clubs||`<span class="maphint">Tap where it ended up</span>`}${mapSVG(h,'shot')}</div>
     <div class="acts three"><button class="act bad" data-act="res" data-v="P"><b>Penalty</b><small>water, OB, lost</small></button><button class="act good" data-act="res" data-v="H"><b>Holed it</b><small>off the green</small></button><button class="act" data-act="qs"><b>Lost count</b><small>enter score</small></button></div>`;
 }
@@ -1168,12 +1230,13 @@ function doneHTML(r,i,h){
 function renderSheet(){
   const w=$('sheet'),b=$('sheetBody');
   if(!S.sheet){w.hidden=true;b.innerHTML='';return;}
-  const {r,i,h}=curHole();if(!r&&S.sheet!=='import'&&S.sheet!=='export'){S.sheet=null;w.hidden=true;return;}
+  const {r,i,h}=curHole();if(!r&&S.sheet!=='import'&&S.sheet!=='export'&&S.sheet!=='cad'){S.sheet=null;w.hidden=true;return;}
   if(S.sheet==='qs')b.innerHTML=qsHTML(r,i,h);
   else if(S.sheet==='holes')b.innerHTML=holesHTML(r,i);
   else if(S.sheet==='plan')b.innerHTML=planHTML(r,i,h);
   else if(S.sheet==='import')b.innerHTML=importHTML();
   else if(S.sheet==='export')b.innerHTML=exportHTML();
+  else if(S.sheet==='cad')b.innerHTML=cadHoleSheet();
   w.hidden=false;
 }
 function sheetHead(cap,title){return `<div class="sh-h"><div><span class="cap">${cap}</span><h2 class="t2">${title}</h2></div><button class="x" data-act="close" aria-label="Close">${IC.x}</button></div>`;}
@@ -1210,7 +1273,7 @@ function toast(msg,undo){const t=$('toast');t.innerHTML=`<span>${esc(msg)}</span
 function viewRounds(){
   const rows=sortedRounds();
   const live=rows.find(([,r])=>r.status!=='done'&&!r.example);
-  const recent=[...new Set(rows.filter(([,r])=>!r.example&&r.course).map(([,r])=>r.course.trim()))].slice(0,4);
+  const recent=[...new Set(rows.filter(([,r])=>!r.example&&r.course).map(([,r])=>r.course.trim()).concat(Object.values(GUIDES).map(c=>c.name)))].slice(0,5);
   const resume=live?(()=>{const [id,r]=live;const j=r.h.findIndex(x=>!holeDone(x));return `<button class="resume" data-act="open" data-id="${id}"><span><b>Keep playing</b><small>${esc(r.course||'Round')} · hole ${(j<0?r.h.length-1:j)+1}</small></span>${IC.arrow}</button>`;})():'';
   const list=rows.map(([id,r])=>{const o=roundStats(r),done=r.h.filter(holeDone).length;
     return `<button class="lr" data-act="summary" data-id="${id}"><span><b>${esc(r.course||'Unnamed course')}${r.example?'<span class="tagx">Example</span>':''}</b><small>${esc(r.date||'')} · ${done===r.h.length?r.h.length+' holes':done+' of '+r.h.length+' holes'}</small></span><span class="num">${o.n?o.score:'–'}</span><span class="pillx ${o.n?toneCls(Math.sign(o.score-o.par)*Math.min(2,Math.abs(o.score-o.par))):''}">${o.n?vsPar(o.score-o.par):'–'}</span></button>`;}).join('');
@@ -1220,8 +1283,9 @@ function viewRounds(){
       ${recent.length?`<div class="pills">${recent.map(c=>`<button class="pl" data-act="pickcourse" data-v="${esc(c)}" aria-pressed="${S.newCourse===c}">${esc(c)}</button>`).join('')}</div>`:''}
       <div class="r2"><div class="seg big" role="group" aria-label="Holes"><button data-act="nh" data-v="18" aria-pressed="${S.newHoles!==9}">18 holes</button><button data-act="nh" data-v="9" aria-pressed="${S.newHoles===9}">9 holes</button></div>
         <input class="inp sm" type="date" id="f-date" value="${today()}" aria-label="Date"></div>
+      <div id="ng-box">${newGuideHTML()}</div>
       <button class="cta" data-act="start">Start round</button>
-      <p class="sub">Pars copy over from your last round at the same course.</p></section>
+      <p class="sub">Pars copy over from your last round at the same course, or from its course guide.</p></section>
     ${rows.length?`<h2 class="t3">Past rounds</h2><div class="list">${list}</div>`:`<section class="empty"><p class="sub">Your rounds show up here after you start one.</p></section>`}
     ${HOSTED?`<section class="box"><h2 class="t3">Send rounds to your account</h2><p class="sub">This GPS version saves on this phone. After a round, copy your rounds and paste them into your Stat Card so Claude can read them.</p>
       <div class="r2"><button class="cta" data-act="copyx">Copy rounds</button><a class="cta sec" href="${STAT_URL}" target="_blank" rel="noopener" style="text-decoration:none">Open Stat Card ↗</a></div></section>`
@@ -1317,6 +1381,194 @@ function cardCheck(list){
     <div class="tw"><table class="dt"><thead><tr><th class="l">Club</th><th>Shots</th><th>On</th><th>Short</th><th>Long</th><th>Side</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 
+/* courses:start */
+const GUIDES={"bunker-hills":{"id":"bunker-hills","name":"Bunker Hills","full":"Bunker Hills Golf Club","place":"Coon Rapids, MN · 27 holes","match":["bunker hills","bunkerhills"],"tees":[{"k":"red","name":"Red","short":"Red"},{"k":"gold","name":"Gold","short":"Gold"},{"k":"wg","name":"White/Gold","short":"W/Gold"},{"k":"white","name":"White","short":"White"},{"k":"blue","name":"Blue","short":"Blue"}],"rec":"gold","recWhy":"the shortest men’s tees (rating 67.1, slope 117 for West/North). Your driver carries about 170 in this cold, and even Gold is longer than the Tee It Forward chart suggests for you.","keys":["Trees line nearly every fairway, so a missed fairway costs more here. The plans pick the club you keep in play.","Water on 7 of your 18: West 2 right, West 3 front-right, West 7 right, West 8 across, North 7 front-left, North 8 left, North 9 left of the tee.","Big greens that slope, mostly back to front. Stay below the hole; three-putts are the real danger.","Fall: leaves hide balls in the rough, so hit a provisional when it’s close. Frost delays are decided each morning: 763-755-4141."],"src":"Scorecard: the club’s Jan 2025 card. Hole tips: the club’s course tour. Hazard yards: OpenStreetMap, measured to about ±5 yd.","nines":{"West":[{"n":1,"par":4,"hcp":1,"yd":{"red":333,"gold":333,"wg":333,"white":402,"blue":413},"line":409,"dl":[{"at":259,"s":"L","deg":28}],"green":{"front":391,"back":429,"left":-15,"right":13},"fw":[[120,-5,16],[240,-13,14],[260,-15,12],[320,-12,12],[360,-9,13]],"hz":[{"k":"bunker","s":"R","a":243,"b":258,"edge":21},{"k":"bunker","s":"L","a":394,"b":408,"edge":-8,"gs":1},{"k":"bunker","s":"R","a":395,"b":419,"edge":13,"gs":1}],"tip":"Hardest on the West: dogleg left with a fairway bunker right. The green runs away from you and there's no bail-out long, so miss short.","m":{"f":[[38,124,36,114,27,107,19,112,17,122,31,243,27,269,4,359,4,374,0,383,-19,400,-17,408,-13,413,-2,419,4,415,19,391,18,382,24,366,29,342,37,322,57,254,58,239,38,124]],"g":[[-1,385,10,382,16,386,16,393,1,416,-4,417,-10,414,-16,404,-16,399,-1,385]],"b":[[66,247,68,250,73,249,78,243,79,238,68,234,65,239,66,247],[-9,388,-17,391,-21,387,-12,380,-6,380,-4,384,-9,388],[30,393,31,397,25,404,17,411,10,411,12,404,18,401,22,391,30,393]],"w":[],"t":[[-2,-19,-4,-16,-8,-18,-6,-22,-3,-22,-2,-19],[-6,-2,-3,-11,3,-8,7,7,6,11,2,13,-3,11,-6,-2],[21,77,27,74,25,69,19,72,21,77]],"line":[0,0,46,255,0,398]}},{"n":2,"par":5,"hcp":5,"yd":{"red":430,"gold":430,"wg":430,"white":500,"blue":530},"line":518,"dl":[{"at":245,"s":"R","deg":23}],"green":{"front":502,"back":532,"left":-12,"right":11},"fw":[[140,-6,15],[160,-11,18],[220,-17,8],[240,-17,8],[260,-12,7],[320,-17,10],[440,-13,19],[460,-13,13]],"hz":[{"k":"water","s":"R","a":215,"b":261,"edge":17},{"k":"bunker","s":"L","a":264,"b":286,"edge":-15},{"k":"bunker","s":"R","a":486,"b":501,"edge":5,"gs":1},{"k":"bunker","s":"L","a":497,"b":515,"edge":-7,"gs":1},{"k":"bunker","s":"R","a":510,"b":537,"edge":14,"gs":1}],"tip":"Pond right of the fairway: favor the left. Three shots; lay up to a full wedge. Trouble just past the green, so not long.","m":{"f":[[-10,490,-8,498,-13,511,-12,517,-4,522,4,523,10,520,13,513,10,496,0,488,-5,473,-5,462,4,434,4,424,-26,318,-43,245,-39,223,-15,157,-17,148,-20,145,-32,142,-37,144,-45,156,-57,190,-67,231,-54,273,-55,308,-50,338,-23,454,-10,490]],"g":[[1,521,-8,519,-11,511,-5,494,4,492,10,499,11,516,6,521,1,521]],"b":[[16,515,14,502,20,496,26,497,27,501,24,508,30,519,22,523,17,520,16,515],[-21,508,-26,502,-24,494,-20,490,-14,491,-11,493,-10,499,-16,507,-21,508],[8,487,2,484,0,480,0,476,3,474,14,476,21,481,20,486,17,488,8,487],[-68,284,-75,286,-82,278,-77,265,-70,262,-61,267,-61,273,-68,284]],"w":[[-29,249,-15,248,-9,242,-7,230,-14,217,-24,215,-26,218,-24,227,-33,243,-29,249]],"t":[[-33,112,-36,110,-38,116,-34,116,-33,112],[-9,19,-7,-1,-2,-18,1,-21,5,-21,7,-17,7,4,-5,22,-8,22,-9,19],[5,-35,2,-37,0,-35,1,-31,5,-32,5,-35]],"line":[0,0,-51,240,0,507]},"miss":"short of the middle"},{"n":3,"par":3,"hcp":8,"yd":{"red":140,"gold":140,"wg":140,"white":165,"blue":165},"line":167,"dl":[],"green":{"front":149,"back":181,"left":-16,"right":12},"fw":[[100,-25,-1],[120,-26,-3]],"hz":[{"k":"water","s":"R","a":111,"b":136,"edge":3,"gs":1},{"k":"bunker","s":"R","a":125,"b":143,"edge":0,"gs":1},{"k":"bunker","s":"L","a":146,"b":163,"edge":-7,"gs":1},{"k":"bunker","s":"R","a":151,"b":180,"edge":12,"gs":1},{"k":"water","s":"R","a":152,"b":195,"edge":55,"gs":1},{"k":"bunker","s":"L","a":177,"b":194,"edge":0,"gs":1}],"tip":"Sand all around and a pond front-right. The green plays small: aim at the middle for an easy two-putt. Left pins are tight.","m":{"f":[[-1,89,-4,129,-10,138,-19,140,-25,131,-26,82,-20,77,-8,77,-3,80,-1,89],[9,148,1,148,-16,168,-18,175,-14,180,-3,183,6,179,9,175,14,158,14,153,9,148]],"g":[[1,150,-16,170,-15,176,-7,181,6,177,11,168,11,151,7,149,1,150]],"b":[[-3,194,3,191,3,186,-1,183,-11,184,-24,177,-30,181,-30,184,-24,190,-3,194],[-18,163,-9,157,-7,153,-9,147,-16,147,-23,151,-24,157,-18,163],[4,129,17,125,23,130,22,133,11,138,6,143,0,143,-2,136,4,129],[27,173,24,177,17,180,12,175,20,154,25,151,27,151,29,156,27,173]],"w":[[61,184,76,193,96,194,103,190,110,167,88,154,76,152,55,170,55,177,61,184],[36,136,26,122,18,119,5,120,4,116,9,112,15,111,22,114,26,119,37,118,44,128,42,133,36,136]],"t":[[-22,36,-27,34,-28,26,-26,22,-23,20,-14,21,-12,24,-13,33,-17,36,-22,36],[25,17,21,27,13,26,7,8,-9,4,-11,-2,-6,-6,14,-4,22,4,25,17],[-32,-15,-32,-23,-29,-25,-19,-22,-22,-14,-29,-13,-32,-15]],"line":[0,0,0,167]},"miss":""},{"n":4,"par":4,"hcp":9,"yd":{"red":282,"gold":312,"wg":338,"white":338,"blue":351},"line":348,"dl":[{"at":236,"s":"L","deg":9}],"green":{"front":334,"back":362,"left":-11,"right":13},"fw":[[120,-3,17],[140,-11,17],[180,-18,12],[240,-11,10],[260,-10,12],[280,-15,13],[300,-15,13]],"hz":[{"k":"bunker","s":"L","a":217,"b":254,"edge":-19},{"k":"bunker","s":"L","a":319,"b":339,"edge":-5,"gs":1},{"k":"bunker","s":"R","a":320,"b":340,"edge":5,"gs":1},{"k":"bunker","s":"R","a":344,"b":360,"edge":14,"gs":1}],"tip":"Easiest on the West. Favor the right, away from the left fairway bunker. Small green, back to front: stay below the hole.","m":{"f":[[10,319,4,331,15,345,12,356,4,362,-2,363,-8,360,-12,354,-13,339,-10,333,-2,327,0,321,0,317,-10,297,2,241,-9,186,-9,170,3,120,6,115,11,113,19,116,22,120,23,128,20,206,22,253,18,302,16,311,10,319]],"g":[[11,342,13,350,9,356,-1,361,-4,361,-9,356,-11,340,-8,334,-2,332,11,342]],"b":[[17,348,19,346,25,347,22,359,18,361,13,358,17,348],[29,339,29,342,23,342,19,337,10,336,7,330,25,322,29,339],[-17,318,-7,317,-2,322,-4,326,-13,325,-15,327,-15,335,-19,337,-22,334,-22,325,-21,321,-17,318],[-11,248,-19,251,-25,243,-27,225,-26,221,-22,218,-18,220,-16,227,-8,232,-11,248]],"w":[],"t":[[5,66,4,70,2,70,0,66,3,64,5,66],[5,-6,6,9,3,13,0,13,-4,10,-4,-8,0,-11,5,-6],[6,-25,2,-21,2,-27,6,-25]],"line":[0,0,12,236,0,347]}},{"n":5,"par":5,"hcp":6,"yd":{"red":430,"gold":430,"wg":430,"white":520,"blue":545},"line":538,"dl":[{"at":268,"s":"R","deg":19}],"green":{"front":523,"back":551,"left":-16,"right":13},"fw":[[100,-1,22],[120,-1,25],[140,-2,30],[160,-5,30],[180,-8,27],[200,-11,21],[220,-17,11],[240,-21,10],[260,-21,15],[280,-17,15],[320,-16,16],[440,-17,12],[480,-16,12]],"hz":[{"k":"bunker","s":"R","a":507,"b":519,"edge":3,"gs":1},{"k":"bunker","s":"L","a":517,"b":536,"edge":-9,"gs":1}],"tip":"Three shots, bending right between trees. Keep the second in the fairway. Wild green that falls back to front: never long.","m":{"f":[[-19,106,-14,97,-8,94,-2,95,3,100,5,121,5,154,-3,175,-26,220,-30,237,-28,283,-16,333,2,472,3,483,1,492,-5,499,-5,503,-2,510,9,517,15,528,13,539,-3,547,-14,547,-17,541,-10,516,-22,495,-62,264,-63,243,-60,229,-31,157,-19,106]],"g":[[-8,520,-3,515,5,516,13,526,12,537,2,543,-13,543,-14,537,-8,520]],"b":[[7,510,-2,503,0,499,5,499,11,505,11,509,7,510],[-27,516,-19,512,-15,512,-12,515,-12,522,-19,532,-31,528,-35,523,-35,521,-27,516]],"w":[],"t":[[-8,19,-9,6,-6,-19,-5,-23,2,-27,9,-22,8,-6,10,4,4,10,0,22,-6,23,-8,19],[-25,95,-24,90,-29,88,-31,94,-29,97,-25,95]],"line":[0,0,-45,264,0,531]},"miss":"short-right"},{"n":6,"par":4,"hcp":4,"yd":{"red":368,"gold":368,"wg":368,"white":405,"blue":420},"line":414,"dl":[],"green":{"front":397,"back":432,"left":-13,"right":13},"fw":[[100,-13,9],[120,-13,10],[160,-12,10],[220,-14,14],[280,-15,15],[320,-17,14],[360,-16,13]],"hz":[{"k":"bunker","s":"R","a":393,"b":420,"edge":13,"gs":1},{"k":"bunker","s":"L","a":404,"b":431,"edge":-10,"gs":1}],"tip":"Long and downhill; the landing area slopes right, so aim left-center. Big sloped green: short and below the hole is fine.","m":{"f":[[-15,128,-15,103,-10,91,-3,88,4,91,8,98,11,226,11,379,9,396,15,422,8,433,2,434,-6,431,-15,413,-14,399,-20,321,-15,128]],"g":[[5,398,9,403,13,422,10,429,3,432,-6,428,-12,417,-13,407,-7,398,5,398]],"b":[[-24,406,-27,414,-26,424,-11,431,-9,428,-17,416,-19,406,-24,406],[22,417,18,419,15,416,14,393,23,393,27,398,27,407,22,417]],"w":[],"t":[[8,-12,7,18,4,23,0,23,-3,20,-10,0,0,-26,5,-25,7,-22,8,-12],[-5,73,-6,68,-9,68,-10,73,-5,73]],"line":[0,0,-4,283,0,414]}},{"n":7,"par":4,"hcp":2,"yd":{"red":310,"gold":360,"wg":370,"white":370,"blue":380},"line":381,"dl":[],"green":{"front":366,"back":394,"left":-15,"right":13},"fw":[[100,-12,8],[120,-17,11],[140,-16,11],[200,-20,11],[220,-21,11],[240,-19,11],[300,-17,11],[340,-18,10]],"hz":[{"k":"water","s":"R","a":180,"b":232,"edge":22},{"k":"bunker","s":"R","a":358,"b":371,"edge":9,"gs":1},{"k":"bunker","s":"L","a":363,"b":382,"edge":-11,"gs":1},{"k":"bunker","s":"R","a":375,"b":389,"edge":16,"gs":1}],"tip":"One of the toughest drives: anything right runs down a hill into a pond. Aim left. Green tilts to the front-left; long is trouble.","m":{"f":[[4,359,5,365,13,373,15,379,11,391,-4,396,-14,391,-16,386,-11,374,-11,362,-21,340,-22,328,-21,269,-25,245,-26,196,-25,179,-17,163,-16,155,-20,136,-19,114,-15,106,-10,103,-2,103,5,107,8,130,5,208,7,344,4,359]],"g":[[2,366,12,374,13,383,10,389,4,393,-9,393,-14,387,-14,382,-6,367,2,366]],"b":[[22,375,25,383,20,387,16,385,16,376,18,374,22,375],[-25,366,-24,372,-16,365,-12,367,-14,375,-21,383,-26,382,-32,368,-29,364,-25,366],[20,368,14,369,8,364,8,359,10,357,21,359,22,365,20,368]],"w":[[51,270,60,305,55,310,50,310,42,305,30,286,27,274,27,225,41,212,52,216,60,223,75,242,79,252,76,259,59,258,52,260,51,270]],"t":[[3,16,3,20,-2,25,-8,20,-9,-17,-8,-20,-1,-23,2,-21,10,0,3,16]],"line":[0,0,-7,273,0,381]},"miss":"short"},{"n":8,"par":3,"hcp":3,"yd":{"red":180,"gold":180,"wg":180,"white":200,"blue":220},"line":215,"dl":[],"green":{"front":200,"back":229,"left":-15,"right":16},"fw":[[140,-27,-15],[160,-27,-1]],"hz":[{"k":"water","s":"C","a":71,"b":168,"edge":0,"cy":146},{"k":"bunker","s":"R","a":185,"b":197,"edge":0,"gs":1},{"k":"bunker","s":"L","a":193,"b":215,"edge":-15,"gs":1},{"k":"bunker","s":"R","a":198,"b":207,"edge":14,"gs":1}],"tip":"Hardest par 3 at Bunker Hills: water right, sand left and back-right. Aim center-left. Short-left beats anything right.","m":{"f":[[-27,154,-25,147,-18,146,-2,166,-3,195,17,212,16,221,7,228,-8,231,-15,228,-17,222,-12,208,-12,198,-26,175,-27,154]],"g":[[-10,206,-8,201,-3,200,13,209,16,213,16,219,6,227,-2,229,-12,228,-15,225,-15,219,-10,206]],"b":[[5,185,8,185,14,191,13,195,8,197,-1,193,1,187,5,185],[15,200,20,198,23,203,22,205,20,207,15,206,15,200],[-20,215,-27,213,-29,210,-26,197,-20,193,-16,196,-15,200,-16,213,-20,215]],"w":[[16,111,5,77,9,71,23,75,31,84,40,105,44,129,44,154,40,161,31,168,26,168,12,159,-9,135,-10,131,-7,124,-2,122,3,124,14,123,18,117,16,111]],"t":[[-7,5,-12,-2,-9,-12,-5,-15,7,-15,13,-6,8,2,5,18,2,20,-5,16,-7,5],[-9,46,-10,52,-13,52,-12,43,-9,46]],"line":[0,0,0,215]},"miss":"short-left"},{"n":9,"par":4,"hcp":7,"yd":{"red":294,"gold":294,"wg":350,"white":350,"blue":370},"line":369,"dl":[{"at":220,"s":"L","deg":26}],"green":{"front":354,"back":383,"left":-11,"right":13},"fw":[[120,-11,13],[200,-13,11],[220,-12,17],[240,-1,18],[260,-8,15],[280,-9,18],[300,-10,19]],"hz":[{"k":"bunker","s":"L","a":237,"b":255,"edge":-3},{"k":"bunker","s":"R","a":249,"b":274,"edge":16},{"k":"bunker","s":"R","a":349,"b":363,"edge":8,"gs":1},{"k":"bunker","s":"L","a":352,"b":373,"edge":-12,"gs":1},{"k":"bunker","s":"R","a":370,"b":391,"edge":3,"gs":1}],"tip":"Short dogleg left: stay right of the left fairway bunker. Green guarded all round, back to front: middle, below the hole.","m":{"f":[[11,123,16,113,22,111,27,112,36,122,43,155,54,237,37,262,38,298,30,321,24,332,10,345,10,350,15,360,13,366,-5,375,-12,372,-14,366,-13,357,-4,341,16,269,22,259,36,244,40,232,28,214,24,203,17,174,11,123]],"g":[[-11,359,-7,350,2,345,9,351,13,361,9,368,-7,373,-12,369,-11,359]],"b":[[24,231,31,231,32,236,25,242,13,245,11,240,14,232,24,231],[56,275,47,274,44,269,44,263,49,260,57,264,62,254,70,255,70,262,61,273,56,275],[-15,357,-18,359,-22,355,-21,340,-17,337,-11,340,-9,345,-15,357],[18,355,12,350,14,345,18,344,30,350,24,359,18,355],[19,378,6,383,-2,381,0,375,9,373,17,367,24,369,19,378]],"w":[],"t":[[-12,-17,-10,-26,-4,-26,10,-1,11,5,5,23,-1,23,-4,19,-9,3,-8,-11,-12,-17],[25,66,23,63,17,67,20,74,26,70,25,66]],"line":[0,0,40,217,0,360]}}],"North":[{"n":1,"par":4,"hcp":4,"yd":{"red":327,"gold":327,"wg":327,"white":391,"blue":402},"line":402,"dl":[{"at":239,"s":"R","deg":8}],"green":{"front":385,"back":416,"left":-16,"right":12},"fw":[[140,-17,5],[160,-20,7],[240,-14,12],[260,-11,10],[280,-6,14],[300,-4,18],[340,-12,19],[360,-12,19]],"hz":[{"k":"bunker","s":"R","a":227,"b":261,"edge":16},{"k":"bunker","s":"L","a":269,"b":282,"edge":-10},{"k":"bunker","s":"L","a":370,"b":390,"edge":-5,"gs":1},{"k":"bunker","s":"R","a":390,"b":408,"edge":15,"gs":1}],"tip":"Driving range runs down the left: not out of bounds, but stay right of it. The green tilts to the front, so below the hole is your birdie look.","m":{"f":[[-30,-40,-24,-34,-24,-22,-35,-9,-39,-8,-43,-8,-57,-17,-73,-17,-82,-22,-93,-24,-97,-36,-97,-39,-91,-42,-83,-39,-60,-38,-41,-42,-30,-40],[-2,156,5,205,-2,235,-2,251,10,304,15,356,11,378,14,406,11,413,1,417,-14,409,-18,401,-18,398,-7,387,-5,381,-8,369,-16,356,-12,311,-17,271,-24,256,-26,246,-30,163,-29,152,-26,146,-19,142,-6,144,-3,148,-2,156]],"g":[[11,392,12,408,4,415,-4,414,-12,408,-17,400,0,384,7,385,11,392],[-32,-36,-33,-17,-35,-13,-42,-11,-57,-19,-75,-19,-81,-23,-91,-25,-96,-37,-89,-40,-83,-37,-71,-38,-61,-36,-39,-41,-32,-36]],"b":[[16,253,11,259,6,258,4,255,3,247,8,241,6,232,11,228,18,231,19,234,16,253],[-24,270,-21,272,-20,277,-29,283,-30,273,-24,270],[-8,375,-8,387,-14,391,-18,389,-25,375,-19,371,-16,371,-13,375,-8,375],[19,405,26,392,23,387,18,388,15,394,16,404,19,405]],"w":[],"t":[[-7,-19,-6,-23,-3,-23,-2,-19,-7,-19],[4,-5,1,-10,-5,-6,-4,12,2,13,5,9,4,-5],[5,79,3,75,7,73,9,77,5,79]],"line":[0,0,-14,238,0,401]},"miss":"short, below the hole"},{"n":2,"par":4,"hcp":2,"yd":{"red":332,"gold":332,"wg":332,"white":337,"blue":385},"line":399,"dl":[{"at":258,"s":"R","deg":36}],"green":{"front":384,"back":412,"left":-15,"right":12},"fw":[[160,-10,14],[180,-12,15],[200,-16,14],[220,-20,10],[240,-21,12],[260,-13,15],[300,-22,7],[320,-24,7],[340,-23,5]],"hz":[{"k":"bunker","s":"L","a":379,"b":387,"edge":-5,"gs":1}],"tip":"Narrow dogleg right, trees on both sides: fairway first. Wide green, so aim at the pin's half. Short beats long; it runs off the back.","m":{"f":[[-47,166,-44,159,-39,156,-30,157,-25,162,-25,181,-38,213,-42,238,-30,296,-19,327,6,361,12,374,13,381,7,394,-6,399,-11,397,-14,392,-14,385,-6,366,-7,363,-27,355,-36,348,-51,326,-59,303,-71,250,-72,224,-47,166]],"g":[[-3,367,0,365,5,366,11,377,11,385,0,396,-9,395,-12,391,-9,376,-3,367]],"b":[[-12,372,-19,377,-23,375,-18,367,-14,365,-11,367,-12,372]],"w":[],"t":[[12,-21,12,-13,6,-2,0,22,-3,26,-7,27,-12,24,-14,19,-13,11,0,-11,1,-23,7,-24,12,-21],[-18,87,-20,83,-23,90,-19,90,-18,87]],"line":[0,0,-57,252,0,381]}},{"n":3,"par":4,"hcp":3,"yd":{"red":293,"gold":293,"wg":350,"white":350,"blue":360},"line":356,"dl":[{"at":254,"s":"R","deg":30}],"green":{"front":340,"back":371,"left":-17,"right":15},"fw":[[100,-20,-3],[120,-21,-1],[160,-19,1],[180,-18,5],[200,-16,5],[240,-16,9],[260,-15,8],[280,-11,8],[300,-10,10]],"hz":[{"k":"bunker","s":"R","a":368,"b":374,"edge":3,"gs":1}],"tip":"A shorter North 2: find the fairway. Big two-tier green; get on the pin's tier. Grass hollows guard both front corners.","m":{"f":[[-2,321,11,329,14,343,11,350,-1,364,-7,365,-14,361,-16,356,-7,330,-34,289,-52,251,-38,108,-32,101,-24,102,-19,108,-28,244,-27,257,-17,282,-9,295,-9,307,-2,321]],"g":[[0,361,-4,363,-10,362,-14,355,-6,336,4,327,11,333,13,341,11,348,0,361]],"b":[[11,360,8,357,13,354,14,358,11,360]],"w":[],"t":[[7,8,2,12,-3,12,-11,2,-10,-3,-2,-12,4,-12,8,-9,9,2,7,8],[-20,63,-20,69,-23,71,-28,71,-31,68,-28,59,-22,59,-20,63],[16,-14,17,-18,21,-17,19,-13,16,-14]],"line":[0,0,-38,251,0,346]}},{"n":4,"par":5,"hcp":7,"yd":{"red":429,"gold":429,"wg":429,"white":470,"blue":500},"line":463,"dl":[{"at":231,"s":"R","deg":64}],"green":{"front":448,"back":479,"left":-19,"right":15},"fw":[[120,-16,3],[160,-19,10],[180,-19,10],[200,-22,9],[220,-21,20],[260,-18,16],[280,-15,10],[300,-10,3],[320,-18,4],[340,-17,5],[360,-13,5],[400,-20,1],[420,-20,0]],"hz":[{"k":"bunker","s":"L","a":437,"b":445,"edge":-7,"gs":1},{"k":"bunker","s":"R","a":451,"b":458,"edge":15,"gs":1},{"k":"bunker","s":"R","a":463,"b":472,"edge":18,"gs":1}],"tip":"Almost a 90° turn right. Don't cut the corner: hit to it, lay up, then wedge in. Huge green, so aim at the pin's section.","m":{"f":[[-10,370,-6,374,9,380,23,399,20,405,13,408,-14,405,-20,401,-19,389,-14,383,-13,377,-20,372,-30,373,-42,364,-60,318,-83,292,-95,258,-103,246,-121,232,-127,218,-133,192,-133,177,-129,163,-81,100,-74,95,-65,97,-63,101,-64,107,-78,143,-100,171,-102,179,-91,237,-81,262,-60,287,-30,345,-10,370]],"g":[[-16,402,-19,397,-17,389,-8,379,-2,376,3,377,18,394,16,401,10,405,-16,402]],"b":[[16,384,17,382,23,383,25,387,22,388,16,384],[7,376,7,374,12,374,14,377,11,379,7,376],[-29,385,-25,378,-22,376,-18,377,-17,379,-24,387,-29,385]],"w":[],"t":[[-47,32,-46,27,-40,27,-41,33,-45,34,-47,32],[9,0,6,7,0,9,-7,5,-9,-2,8,-18,15,-30,17,-30,20,-29,21,-24,12,-14,9,0]],"line":[0,0,-123,196,0,392]}},{"n":5,"par":4,"hcp":1,"yd":{"red":340,"gold":358,"wg":358,"white":410,"blue":420},"line":415,"dl":[{"at":234,"s":"L","deg":33}],"green":{"front":398,"back":433,"left":-14,"right":14},"fw":[[100,4,16],[120,0,21],[140,3,25],[160,1,25],[220,-22,14],[240,-24,12],[260,-24,9],[280,-22,10],[300,-18,9],[320,-7,3],[340,-4,7]],"hz":[{"k":"bunker","s":"R","a":227,"b":245,"edge":14},{"k":"bunker","s":"L","a":402,"b":410,"edge":-18,"gs":1}],"tip":"Hardest hole on the North. Dogleg left: start it up the left side. The course's toughest green, so two putts is a win.","m":{"f":[[6,368,3,379,-4,383,-16,397,-19,403,-18,408,-13,415,-2,416,7,411,18,397,19,390,14,381,17,374,28,362,30,353,30,319,50,280,59,252,69,231,66,188,60,151,61,140,47,108,37,103,31,106,28,112,39,137,40,158,29,235,21,268,24,305,22,320,6,368]],"g":[[-15,411,-17,406,-14,397,-3,384,4,382,11,384,17,390,15,398,4,412,-7,415,-15,411]],"b":[[-22,383,-18,379,-14,383,-18,387,-22,383]],"w":[],"t":[[41,83,47,85,48,82,44,75,40,77,41,83],[35,48,37,51,35,56,30,51,32,46,35,48],[0,8,-9,6,-12,4,-12,1,0,-8,5,-8,11,-2,8,4,0,8],[7,-26,5,-22,1,-24,3,-28,7,-26]],"line":[0,0,57,227,0,399]}},{"n":6,"par":3,"hcp":9,"yd":{"red":141,"gold":141,"wg":165,"white":165,"blue":165},"line":158,"dl":[],"green":{"front":137,"back":219,"left":-15,"right":52},"fw":[],"hz":[{"k":"bunker","s":"R","a":134,"b":144,"edge":6,"gs":1},{"k":"bunker","s":"L","a":171,"b":178,"edge":-8,"gs":1}],"tip":"Easiest hole here. Long, narrow green on a diagonal with sand right, 52 yd deep: club for the pin. Left-middle is safe.","m":{"f":[[37,240,33,234,36,226,35,220,25,206,22,197,11,182,3,178,-15,161,-16,143,2,115,7,114,11,118,10,122,1,132,0,137,17,155,17,170,44,189,53,208,53,216,46,222,44,234,37,240]],"g":[[-14,143,-8,137,1,141,14,156,16,172,21,177,41,188,51,209,52,213,49,218,38,218,16,185,-13,161,-14,143]],"b":[[-11,171,-8,174,-9,178,-14,176,-14,171,-11,171],[11,143,6,138,8,134,15,140,14,144,11,143]],"w":[],"t":[[-7,11,-11,-8,-3,-24,1,-24,7,-14,11,-1,13,6,12,14,7,22,1,22,-3,20,-7,11]],"line":[0,0,0,158]},"miss":"left"},{"n":7,"par":4,"hcp":5,"yd":{"red":301,"gold":301,"wg":350,"white":350,"blue":365},"line":362,"dl":[{"at":187,"s":"L","deg":16}],"green":{"front":348,"back":374,"left":-21,"right":21},"fw":[[100,-5,9],[140,-6,19],[200,-11,10],[280,-11,13],[300,-11,10],[320,-4,7]],"hz":[{"k":"water","s":"L","a":317,"b":346,"edge":-6,"gs":1},{"k":"bunker","s":"R","a":368,"b":382,"edge":14,"gs":1},{"k":"bunker","s":"L","a":375,"b":387,"edge":-4,"gs":1}],"tip":"Downhill between big trees. Pond front-left of a shallow green (23 yd deep): distance matters most. Miss middle-right, never long.","m":{"f":[[15,146,9,102,11,94,19,93,40,150,25,274,23,285,15,304,11,340,11,343,22,347,24,350,21,360,12,368,-9,371,-19,367,-23,357,-18,349,-2,343,5,319,-1,291,5,263,15,186,15,146]],"g":[[15,363,11,367,-9,370,-19,364,-21,357,-18,350,-5,347,17,346,20,347,22,355,15,363]],"b":[[-22,376,-27,373,-27,369,-24,368,-10,375,-8,380,-10,382,-16,377,-22,376],[12,373,20,367,25,371,24,374,15,380,11,378,12,373]],"w":[[-20,333,-11,315,-5,312,-2,314,-1,322,-6,338,-17,339,-20,337,-20,333]],"t":[[-8,-11,-4,14,-2,17,4,17,7,-5,-1,-16,-7,-15,-8,-11],[14,77,21,80,24,76,20,66,12,67,11,72,14,77]],"line":[0,0,26,185,0,358]},"miss":"middle-right"},{"n":8,"par":3,"hcp":6,"yd":{"red":140,"gold":140,"wg":140,"white":155,"blue":170},"line":159,"dl":[],"green":{"front":142,"back":173,"left":-13,"right":16},"fw":[[100,-15,20]],"hz":[{"k":"water","s":"L","a":48,"b":263,"edge":-12,"gs":1},{"k":"bunker","s":"R","a":133,"b":151,"edge":9,"gs":1},{"k":"bunker","s":"L","a":140,"b":177,"edge":-13,"gs":1},{"k":"bunker","s":"R","a":165,"b":184,"edge":2,"gs":1}],"tip":"Plays harder than it looks. Water down the left; sand left, front-right and back. Aim at the middle, never left.","m":{"f":[[17,123,5,140,8,149,17,158,17,165,5,175,-3,175,-14,160,-14,150,-11,143,-16,123,-14,102,-10,96,-5,94,6,93,12,95,17,99,20,107,21,113,17,123]],"g":[[15,164,8,171,1,173,-6,171,-13,157,-8,143,-1,142,3,145,15,158,15,164]],"b":[[19,144,19,148,14,151,9,146,9,139,14,134,19,133,23,136,18,141,19,144],[-28,143,-27,141,-17,140,-13,144,-22,150,-19,160,-13,164,-14,176,-21,175,-22,171,-32,161,-34,155,-28,143],[25,175,23,180,15,179,6,184,2,180,8,174,16,171,21,165,27,169,25,175]],"w":[[8,70,-22,81,-27,90,-22,114,-24,121,-34,136,-40,156,-35,170,-7,202,-6,206,-9,214,-18,221,-23,232,-21,258,-25,263,-35,263,-43,256,-47,242,-47,216,-60,171,-60,141,-43,100,-43,74,-37,58,-25,49,-10,50,-1,53,10,61,11,65,8,70]],"t":[[6,13,16,-2,7,-12,0,-26,-8,-28,-14,-20,-15,-3,-6,9,-6,15,-1,24,3,24,6,20,6,13]],"line":[0,0,0,159]},"miss":"right-middle"},{"n":9,"par":5,"hcp":8,"yd":{"red":430,"gold":430,"wg":430,"white":500,"blue":535},"line":522,"dl":[],"green":{"front":505,"back":541,"left":-11,"right":12},"fw":[[160,-5,23],[200,-8,23],[300,-14,19],[360,-16,17],[400,-15,16],[460,-20,12],[480,-21,10]],"hz":[{"k":"water","s":"L","a":31,"b":160,"edge":-10},{"k":"bunker","s":"R","a":185,"b":219,"edge":27},{"k":"bunker","s":"R","a":492,"b":507,"edge":4,"gs":1},{"k":"bunker","s":"L","a":507,"b":547,"edge":-7,"gs":1},{"k":"bunker","s":"R","a":514,"b":532,"edge":13,"gs":1}],"tip":"Widest fairway on the North, so swing freely; the pond sits left by the tee. Big raised green with sand on both sides.","m":{"f":[[20,162,14,153,7,151,-5,155,-8,160,-19,260,-24,362,-26,465,-22,483,-8,508,-12,522,-11,532,-6,539,1,542,9,539,12,531,12,508,0,497,-1,491,5,478,6,470,7,389,20,162]],"g":[[-9,531,-10,524,-5,509,2,504,8,505,11,511,9,537,1,540,-9,531]],"b":[[34,186,41,186,49,191,50,194,44,210,35,219,29,220,23,216,24,210,36,206,39,202,39,199,31,191,32,186,34,186],[8,492,13,493,18,498,18,503,15,505,1,495,2,491,8,492],[22,513,25,525,19,530,13,524,14,516,18,512,22,513],[-10,547,-18,541,-23,527,-29,521,-30,518,-23,509,-12,508,-10,510,-18,519,-9,539,-5,543,-6,546,-10,547]],"w":[[-25,34,-34,30,-39,31,-43,36,-44,42,-35,70,-51,117,-42,154,-37,159,-28,156,-26,152,-25,134,-17,102,5,70,7,64,5,55,-25,34],[153,44,153,12,146,5,122,1,112,-7,100,-22,87,-29,73,-30,55,-21,30,-14,23,-20,16,-35,-15,-46,-18,-50,-15,-60,-5,-65,1,-65,13,-63,27,-57,81,-53,101,-48,118,-37,141,-14,167,-5,180,6,184,20,179,34,162,49,155,47,153,44]],"t":[[-16,-13,-22,-21,-23,-27,-20,-34,-14,-31,-9,-11,8,-5,10,4,6,15,15,23,14,28,7,27,4,24,1,11,-10,3,-12,-8,-16,-13],[21,114,19,118,16,115,19,112,21,114]],"line":[0,0,-9,416,0,522]}}],"East":[{"n":1,"par":4,"hcp":2,"yd":{"red":312,"gold":336,"wg":336,"white":399,"blue":412},"line":407,"dl":[{"at":270,"s":"L","deg":13}],"green":{"front":391,"back":421,"left":-15,"right":14},"fw":[[120,-21,6],[160,-21,14],[180,-16,14],[200,-14,20],[240,-2,22],[260,-9,22],[340,-16,20],[360,-14,22]],"hz":[{"k":"bunker","s":"R","a":206,"b":234,"edge":26},{"k":"bunker","s":"L","a":235,"b":278,"edge":-11},{"k":"bunker","s":"R","a":374,"b":403,"edge":13,"gs":1},{"k":"bunker","s":"L","a":376,"b":389,"edge":-9,"gs":1},{"k":"bunker","s":"L","a":396,"b":411,"edge":-15,"gs":1}],"tip":"","m":{"f":[[1,112,10,115,16,125,36,204,41,248,29,363,25,373,11,390,16,407,15,412,12,416,0,420,-13,418,-17,413,-18,407,-4,385,-2,378,-6,343,0,287,4,270,17,245,17,234,13,224,6,216,2,202,-12,138,-11,127,-7,117,1,112]],"g":[[-1,418,7,417,11,414,14,407,10,395,4,389,-4,390,-16,407,-16,412,-12,416,-1,418]],"b":[[-8,382,-12,384,-15,379,-11,373,-6,372,-5,377,-8,382],[17,390,14,398,15,401,17,403,23,402,34,385,35,379,32,376,27,377,22,388,17,390],[-23,405,-30,395,-29,389,-18,390,-14,396,-16,402,-19,405,-23,405],[-10,269,-14,272,-18,270,-20,266,-19,256,-6,239,3,236,8,240,8,245,-4,264,-10,269],[45,216,45,210,51,202,57,205,59,207,56,215,57,228,48,230,43,222,45,216]],"w":[],"t":[[-6,-4,-3,11,4,10,4,-6,2,-9,-2,-10,-6,-4],[-4,-22,-6,-20,-8,-23,-5,-25,-4,-22],[16,74,20,72,17,69,14,71,16,74]],"line":[0,0,21,269,0,405]}},{"n":2,"par":4,"hcp":6,"yd":{"red":278,"gold":278,"wg":335,"white":335,"blue":348},"line":343,"dl":[{"at":231,"s":"R","deg":21}],"green":{"front":325,"back":363,"left":-16,"right":11},"fw":[[120,-11,11],[140,-11,11],[160,-10,11],[180,-14,9],[200,-14,8],[240,-13,8],[260,-14,7],[280,-13,7],[300,-11,7]],"hz":[{"k":"bunker","s":"R","a":315,"b":329,"edge":5,"gs":1},{"k":"bunker","s":"L","a":349,"b":359,"edge":-8,"gs":1}],"tip":"","m":{"f":[[-4,122,-9,166,-15,193,-17,240,-16,252,-6,285,-5,314,-2,319,8,325,15,343,13,353,4,360,1,360,-4,347,-15,342,-19,336,-13,320,-33,267,-38,232,-37,188,-28,152,-25,118,-23,114,-12,110,-4,117,-4,122]],"g":[[13,344,4,325,-4,321,-13,323,-18,333,-16,339,-4,346,2,357,10,355,13,344]],"b":[[7,312,1,309,-1,315,11,321,13,317,7,312],[-14,353,-8,357,-5,354,-5,350,-13,347,-16,349,-14,353]],"w":[],"t":[[0,-22,2,-25,6,-24,6,-9,10,-2,9,7,1,12,-6,9,-10,0,0,-22],[1,66,5,63,6,65,4,73,1,70,1,66]],"line":[0,0,-28,230,0,338]}},{"n":3,"par":3,"hcp":9,"yd":{"red":96,"gold":130,"wg":140,"white":140,"blue":140},"line":132,"dl":[],"green":null,"fw":[],"hz":[{"k":"bunker","s":"R","a":104,"b":117,"edge":7},{"k":"bunker","s":"L","a":122,"b":136,"edge":-16},{"k":"bunker","s":"R","a":132,"b":146,"edge":19},{"k":"bunker","s":"L","a":146,"b":155,"edge":-7}],"tip":"","m":{"f":[],"g":[],"b":[[11,104,20,105,17,116,10,116,7,107,11,104],[-19,122,-16,126,-17,132,-19,135,-25,136,-27,130,-25,125,-19,122],[-17,146,-10,147,-7,150,-8,154,-18,153,-21,148,-17,146],[25,133,27,143,21,146,19,134,25,133]],"w":[],"t":[[0,-9,3,-21,7,-22,9,-20,11,-16,10,3,6,5,-11,4,-13,1,-12,-3,0,-9],[-1,32,-1,44,-9,48,-13,40,-13,33,-10,28,-6,27,-1,32]],"line":[0,0,0,132]}},{"n":4,"par":5,"hcp":8,"yd":{"red":405,"gold":405,"wg":446,"white":446,"blue":470},"line":456,"dl":[{"at":237,"s":"L","deg":20}],"green":{"front":436,"back":473,"left":-12,"right":10},"fw":[[100,-4,17],[160,-1,24],[180,-1,26],[200,-5,25],[220,-5,22],[240,-14,18],[360,-11,15],[380,-13,12],[400,-15,7]],"hz":[{"k":"bunker","s":"L","a":427,"b":436,"edge":-5,"gs":1}],"tip":"","m":{"f":[[12,406,10,423,16,434,10,452,4,460,-5,466,-13,465,-16,460,2,425,1,418,-5,407,-5,390,17,306,25,233,30,208,30,184,13,103,15,96,19,92,25,92,30,94,34,101,56,177,58,192,56,242,32,356,25,381,12,406]],"g":[[5,456,-6,465,-12,463,-14,458,-1,434,4,430,8,430,11,432,12,437,5,456],[-9,437,-10,442,-15,444,-16,437,-13,431,-9,437]],"b":[[-3,419,-10,418,-14,421,-14,424,-10,427,-2,426,0,422,-3,419]],"w":[],"t":[[20,35,23,32,27,36,23,40,20,39,20,35],[-13,50,-11,45,-6,52,-8,55,-13,50],[10,6,10,10,7,13,3,13,-2,9,-10,-9,-7,-12,2,-10,10,6]],"line":[0,0,39,234,0,449]}},{"n":5,"par":4,"hcp":4,"yd":{"red":330,"gold":330,"wg":330,"white":350,"blue":365},"line":353,"dl":[],"green":{"front":338,"back":368,"left":-13,"right":16},"fw":[[120,-14,6],[140,-19,7],[200,-15,16],[220,-1,20],[240,1,22],[300,-12,21]],"hz":[{"k":"bunker","s":"L","a":227,"b":250,"edge":-6},{"k":"bunker","s":"R","a":333,"b":350,"edge":11,"gs":1},{"k":"bunker","s":"L","a":345,"b":378,"edge":0,"gs":1}],"tip":"","m":{"f":[[8,338,8,343,18,363,14,369,0,368,-9,362,-15,351,-11,337,-13,284,-3,252,-1,235,-18,193,-21,141,-20,132,-15,125,-9,123,-1,123,5,129,5,167,21,247,20,302,17,322,9,331,8,338]],"g":[[-11,357,-13,346,-10,341,1,338,5,341,15,358,16,364,14,367,-1,365,-11,357]],"b":[[13,347,11,335,17,332,23,348,15,350,13,347],[4,370,8,373,4,378,-8,377,-15,373,-23,363,-23,346,-18,348,-13,364,-1,370,4,370],[-13,248,-15,250,-22,248,-30,235,-29,230,-20,228,-8,233,-13,248]],"w":[[82,89,76,94,54,103,50,113,57,136,43,172,45,187,48,193,79,222,80,226,78,234,69,242,67,247,66,253,70,279,67,284,57,285,48,279,43,265,41,240,23,195,21,166,27,142,35,124,32,97,40,76,48,71,63,70,79,76,85,84,82,89]],"t":[[6,11,3,22,-2,23,-10,2,-5,-13,-10,-30,-7,-36,1,-35,4,-32,6,-11,12,-4,6,11]],"line":[0,0,-2,204,0,353]}},{"n":6,"par":5,"hcp":7,"yd":{"red":475,"gold":475,"wg":475,"white":500,"blue":515},"line":491,"dl":[],"green":{"front":475,"back":505,"left":-14,"right":15},"fw":[[100,-17,15],[140,-16,14],[160,-16,13],[180,-23,14],[200,-23,14],[220,-15,13],[260,-12,13],[300,-13,15],[320,-13,16],[340,-15,16],[360,-16,16],[380,-17,16],[420,-18,16],[440,-19,15]],"hz":[{"k":"bunker","s":"L","a":224,"b":246,"edge":-17},{"k":"bunker","s":"R","a":459,"b":490,"edge":1,"gs":1},{"k":"bunker","s":"L","a":470,"b":487,"edge":-14,"gs":1}],"tip":"","m":{"f":[[-13,493,-15,484,-11,472,-15,459,-15,423,1,259,0,233,-13,186,-7,152,-7,133,-12,101,-8,89,1,85,9,85,18,91,21,100,26,262,24,361,18,438,14,450,2,458,1,461,1,470,15,491,15,502,6,506,-1,505,-13,493]],"g":[[-11,494,-14,487,-13,482,-11,478,-2,474,4,477,12,488,14,497,6,505,-6,500,-11,494]],"b":[[-25,483,-27,480,-25,474,-18,468,-15,469,-13,473,-18,479,-18,484,-23,485,-25,483],[14,487,12,475,4,470,3,463,8,458,15,468,22,463,26,466,21,476,22,488,17,490,14,487],[-8,228,-15,225,-18,227,-18,231,-12,237,-11,243,-7,247,-4,244,-4,237,-8,228]],"w":[[240,122,238,114,239,90,237,86,232,82,208,79,181,52,174,49,159,49,141,57,116,64,109,59,106,48,102,43,71,33,68,28,69,24,75,16,87,13,99,15,113,21,167,25,187,30,204,41,228,64,244,71,253,72,269,89,271,98,265,112,259,119,248,126,244,126,240,122],[62,112,47,109,44,115,44,126,52,148,42,171,36,192,37,205,45,232,50,238,59,235,61,231,64,197,70,180,93,142,92,134,62,112]],"t":[[-12,23,-15,30,-20,30,-21,26,-10,16,-6,5,-6,-13,1,-17,4,-15,5,-7,12,6,6,14,-3,15,-12,23]],"line":[0,0,14,249,0,490]}},{"n":7,"par":3,"hcp":5,"yd":{"red":140,"gold":170,"wg":170,"white":185,"blue":200},"line":197,"dl":[],"green":{"front":176,"back":214,"left":-15,"right":13},"fw":[[100,-15,3],[120,-15,5]],"hz":[{"k":"bunker","s":"L","a":161,"b":181,"edge":-9,"gs":1},{"k":"bunker","s":"R","a":170,"b":190,"edge":11,"gs":1},{"k":"bunker","s":"L","a":186,"b":205,"edge":-13,"gs":1},{"k":"bunker","s":"R","a":201,"b":215,"edge":5,"gs":1}],"tip":"","m":{"f":[[9,169,9,178,15,191,11,204,-5,216,-14,212,-15,208,-15,198,-4,170,-15,110,-12,102,-5,99,-1,100,3,105,5,113,10,159,9,169]],"g":[[5,179,13,191,12,200,2,211,-7,214,-14,208,-13,197,-3,177,1,176,5,179]],"b":[[18,203,14,207,8,208,5,214,19,213,24,204,21,201,18,203],[-16,186,-26,189,-28,194,-25,203,-21,205,-18,201,-18,195,-13,191,-13,187,-16,186],[-21,181,-27,178,-26,172,-21,162,-13,161,-9,169,-11,172,-16,173,-21,181],[12,172,13,170,24,172,27,183,24,190,14,185,12,172]],"w":[],"t":[[13,17,15,19,13,26,10,28,4,24,4,15,1,11,-8,7,-11,3,-11,-7,-21,-15,-22,-20,-20,-23,-12,-22,-8,-12,-4,-9,11,-5,7,11,13,17]],"line":[0,0,0,197]}},{"n":8,"par":4,"hcp":3,"yd":{"red":320,"gold":320,"wg":320,"white":400,"blue":430},"line":426,"dl":[],"green":{"front":408,"back":443,"left":-13,"right":14},"fw":[[160,-9,13],[180,-12,21],[200,-14,21],[260,-16,19],[300,-16,17],[320,-16,17],[380,-15,18]],"hz":[{"k":"bunker","s":"R","a":399,"b":416,"edge":13,"gs":1},{"k":"bunker","s":"L","a":408,"b":427,"edge":-12,"gs":1},{"k":"bunker","s":"R","a":430,"b":445,"edge":11,"gs":1}],"tip":"","m":{"f":[[12,405,16,424,4,442,-5,444,-10,441,-15,433,-14,424,-9,416,-13,390,-8,290,-7,177,-5,170,2,166,18,169,23,174,26,184,26,258,22,375,20,389,13,399,12,405]],"g":[[-7,415,-3,410,5,408,10,411,14,420,13,426,3,440,-2,442,-7,441,-13,435,-13,428,-7,415]],"b":[[10,438,14,432,22,431,24,433,24,436,16,445,10,443,10,438],[-26,424,-28,420,-14,407,-11,412,-17,423,-20,425,-26,424],[15,411,14,403,20,400,25,403,28,414,22,417,15,411]],"w":[],"t":[[18,114,21,124,25,124,27,114,24,111,20,111,18,114],[-6,15,-4,20,0,21,4,20,7,16,7,-14,3,-21,-1,-20,-4,-16,-6,15]],"line":[0,0,8,297,0,425]}},{"n":9,"par":4,"hcp":1,"yd":{"red":314,"gold":314,"wg":314,"white":355,"blue":370},"line":384,"dl":[{"at":255,"s":"L","deg":27}],"green":{"front":367,"back":399,"left":-13,"right":12},"fw":[[100,-15,8],[160,-14,14],[180,-12,17],[200,-9,26],[220,1,26],[240,-4,17],[260,-10,12],[300,-12,16],[320,-13,15],[340,-13,18]],"hz":[{"k":"bunker","s":"L","a":185,"b":208,"edge":-15},{"k":"water","s":"L","a":224,"b":281,"edge":-15},{"k":"bunker","s":"R","a":237,"b":255,"edge":18},{"k":"bunker","s":"R","a":255,"b":266,"edge":13},{"k":"bunker","s":"R","a":356,"b":369,"edge":13,"gs":1},{"k":"bunker","s":"L","a":360,"b":394,"edge":-3,"gs":1},{"k":"bunker","s":"R","a":377,"b":390,"edge":14,"gs":1}],"tip":"","m":{"f":[[2,331,7,354,3,360,-11,367,-14,372,-14,383,-7,390,4,389,17,370,18,356,29,342,32,322,44,293,50,236,60,208,55,190,44,168,24,100,20,91,16,88,6,90,2,95,1,103,18,186,34,204,36,222,29,255,7,311,2,331]],"g":[[-13,374,-9,367,4,361,9,360,15,363,15,368,7,384,2,388,-6,389,-11,386,-13,374]],"b":[[15,378,28,376,31,377,31,381,25,385,15,386,12,382,15,378],[30,355,35,357,33,363,20,365,20,356,24,353,30,355],[-24,372,-25,358,-19,356,-15,351,-10,353,-3,349,3,351,4,355,1,358,-8,360,-11,363,-17,363,-15,369,-16,377,-19,379,-23,378,-24,372],[15,196,17,205,12,209,9,207,3,192,9,186,15,196],[53,257,58,255,66,262,62,270,57,269,53,262,53,257],[56,239,56,234,60,231,63,232,66,240,73,245,72,251,67,254,64,253,62,246,56,239]],"w":[[13,228,22,238,22,254,7,267,4,267,-5,251,-9,238,-7,231,-2,227,6,226,13,228]],"t":[[13,60,12,55,7,54,6,61,10,63,13,60],[11,4,15,13,13,22,5,20,-8,9,-12,-11,-10,-18,-6,-21,-2,-20,5,-12,11,4]],"line":[0,0,40,252,0,375]}}]}}};
+/* courses:end */
+/* caddy:start */
+/* ---------- Course section: a researched guide per course, your clubs on every hole ----------
+   Hole distances in GUIDES are along the hole's center line from where the map's line starts (usually the back tee).
+   ydOf() gives the hole length from the tee you play; hazard distances shift by (that length - line length). */
+const TEMPF={warm:1,cool:.98,cold:.965,freeze:.95};
+const TEMPS=[['warm','Warm','70°F+'],['cool','Cool','50s–60s'],['cold','Cold','40s'],['freeze','Freezing','30s']];
+const HZN={water:'Water',bunker:'Bunker',trees:'Trees'};
+function defTemp(){const m=new Date().getMonth();return m===11||m<=1?'freeze':m===2||m===10?'cold':m===3||m===9?'cool':'warm';}
+function tempF(r){return TEMPF[(r&&r.temp)||'warm']||1;}
+function phi(z){const t=1/(1+.2316419*Math.abs(z)),d=.3989423*Math.exp(-z*z/2),p=d*t*(.3193815+t*(-.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return z>0?1-p:p;}
+function courseByName(name){const n=(name||'').trim().toLowerCase();if(!n)return null;return Object.values(GUIDES).find(c=>c.match.some(m=>n.includes(m)))||null;}
+function teeList(c){return c.tees.map(t=>t.k);}
+function ydOf(c,hd,tee){if(hd.yd){if(hd.yd[tee])return hd.yd[tee];const ks=teeList(c),i=ks.indexOf(tee);for(let d=1;d<ks.length;d++){const a=hd.yd[ks[i+d]],b=hd.yd[ks[i-d]];if(a)return a;if(b)return b;}}return hd.line;}
+function hzFrom(c,hd,tee){const off=ydOf(c,hd,tee)-hd.line;return(hd.hz||[]).map(z=>Object.assign({},z,{a:z.a+off,b:z.b+off,cy:z.cy!=null?z.cy+off:null}));}
+function nineTotal(c,nine,tee){return(c.nines[nine]||[]).reduce((s,hd)=>s+ydOf(c,hd,tee),0);}
+/* The guide a round uses: r.g = course id, r.gn = its nines in order, r.tee, r.temp */
+function guideOf(r){return r&&r.g&&r.gn&&GUIDES[r.g]?GUIDES[r.g]:null;}
+function gHole(r,i){const c=guideOf(r);if(!c)return null;const nine=r.gn[Math.floor(i/9)],n=i%9+1,hd=(c.nines[nine]||[])[n-1];return hd?{c,nine,n,hd,tee:r.tee||c.rec,r}:null;}
+function gFor(h){const r=S.rounds[S.cur];if(!r)return null;const i=r.h.indexOf(h);return i<0?null:gHole(r,i);}
+/* Tee shot on a par 4 or 5: the club with the fewest expected strokes once hazards, doglegs and the rest of the hole count */
+function caddyTee(G){
+  const {c,hd,tee,r}=G;if(hd.par<4)return null;
+  const R=ydOf(c,hd,tee),tf=tempF(r),ctx=planCtx(),off=R-hd.line,hz=hzFrom(c,hd,tee).filter(z=>!z.gs&&z.b>0);
+  let best=null;const all=[];
+  ['Driver','3Wood','3Hybrid','5Iron','6Iron','7Iron'].filter(k=>YC[k]).forEach(k=>{
+    const y=YC[k],mid=clubMid(k,ctx)*tf,band=y.band,ss=y.ss||Math.max(9,band*.8);
+    if(mid>R-15)return;
+    let cost=0;const hits=[];
+    hz.forEach(z=>{
+      let p;
+      if(z.s==='C'){const carry=z.cy!=null?z.cy:z.b;p=phi((carry+3-mid)/band);}
+      else p=(phi((z.b+5-mid)/band)-phi((z.a-5-mid)/band))*(1-phi(Math.max(4,Math.abs(z.edge))/ss));
+      const w=z.k==='water'?1:z.k==='trees'?.5:.35;
+      if(p>.03){cost+=p*w;hits.push({z,p});}
+    });
+    /* Past a sharp corner the trees inside it block the line, so a ball that runs through goes into the trees outside it */
+    (hd.dl||[]).forEach(d=>{const w=d.deg>=35?.5:d.deg>=25?.25:0;if(!w)return;const at=d.at+off,p=1-phi((at+22-mid)/band);if(p>.05){cost+=p*w;hits.push({dl:d,at,p});}});
+    const fw=(hd.fw||[]).map(w=>[w[0]+off,w[1],w[2]]).sort((a,b)=>Math.abs(a[0]-mid)-Math.abs(b[0]-mid))[0];
+    const half=fw&&Math.abs(fw[0]-mid)<30?Math.max(8,(fw[2]-fw[1])/2):14,pOff=2*(1-phi(half/ss));cost+=pOff*.3;
+    const left=R-mid,rest=left>8?solve(left/tf,'fw',ctx,1,{}):{cost:0,steps:[]};
+    const total=10+((band+Math.abs(y.side))/2)/6+(ctx.teeBad[k]||0)/6+cost*10+rest.cost;
+    const o={k,mid,band,ss,cost,hits,rest,total,pOff,R};all.push(o);if(!best||total<best.total)best=o;
+  });
+  /* Within about 0.1 stroke it's a coin flip: take the longer club, which leaves a shorter next shot */
+  if(best)all.forEach(o=>{if(o.total<=best.total+1&&o.mid>best.mid)best=o;});
+  return best;
+}
+const sideW=s=>s==='L'?'left':s==='R'?'right':'across';
+const R5=v=>Math.round(v/5)*5;
+/* Trouble on the tee shot, with what your club does about it */
+function troubleLines(G,cad){
+  const {c,hd,tee}=G,out=[];
+  hzFrom(c,hd,tee).filter(z=>!z.gs&&z.b>0).forEach(z=>{
+    const name=HZN[z.k]||'Trouble';
+    if(z.s==='C'){const cy=z.cy!=null?z.cy:z.b;out.push({k:z.k,s:'C',t:`${name} to carry: ${Math.max(0,Math.round(cy))} yd`,why:cad&&cad.mid?`Your ${YNAME[cad.k].toLowerCase()} carries about ${Math.round(cad.mid)}.`:''});return;}
+    const a=Math.max(0,R5(z.a)),b=R5(z.b);
+    let why='',inr=false;if(cad&&cad.mid){const lo=cad.mid-cad.band,hi=cad.mid+cad.band,n=YNAME[cad.k].toLowerCase();inr=!(hi<z.a-3||lo>z.b+3);why=hi<z.a-3?`Your ${n} stops short.`:lo>z.b+3?`Your ${n} flies past it.`:`In range of your ${n}.`;}
+    out.push({k:z.k,s:z.s,t:`${name} ${sideW(z.s)}, ${a}–${b} yd`,why,inr});
+  });
+  return out;
+}
+/* Which side to favor off the tee: away from water first, else away from sand in range; sand both sides = middle */
+function aimAdvice(tl){
+  const inr=tl.filter(t=>t.inr&&(t.s==='L'||t.s==='R')),w=inr.filter(t=>t.k==='water');
+  const use=w.length?w:inr,L=use.some(t=>t.s==='L'),R=use.some(t=>t.s==='R');
+  if(L&&R)return w.length?'Water both sides: aim at the middle.':'Sand on both sides: aim at the middle.';
+  if(R)return `Favor the left side${w.length?', away from the water':''}.`;
+  if(L)return `Favor the right side${w.length?', away from the water':''}.`;
+  return '';
+}
+/* Around the green: where the sand and water are, and the safe miss */
+function greenNote(G){
+  const {c,hd,tee}=G,g=hd.green;if(!g)return '';
+  const off=ydOf(c,hd,tee)-hd.line,hz=hzFrom(c,hd,tee).filter(z=>z.gs),gf=g.front+off,gb=g.back+off,sand=[],water=[],sides=new Set();
+  hz.forEach(z=>{let w;
+    if(z.s==='C')w=z.a>gb-3?'long':'short';
+    else if(Math.abs(z.edge)<6&&(z.b<gf+3||z.a>gb-3))w=(z.a>gb-3?'back-':'front-')+(z.s==='L'?'left':'right');
+    else w=(z.b<gf+3?'front-':z.a>gb-3?'back-':'')+(z.s==='L'?'left':'right');
+    (z.k==='water'?water:sand).push(w);w.split('-').forEach(x=>sides.add(x==='front'?'short':x==='back'?'long':x));});
+  const uniq=a=>[...new Set(a)];
+  const safe=['short','right','left','long'].filter(w=>!sides.has(w));
+  const parts=[];if(sand.length)parts.push('Sand '+uniq(sand).join(', '));if(water.length)parts.push('water '+uniq(water).join(', '));
+  const miss=hd.miss!=null?hd.miss:safe[0];
+  return `${parts.length?parts.join('; ')+'.':'No sand around it.'} ${miss?`Safe miss: ${miss}.`:'No safe miss: aim at the middle.'}`;
+}
+/* One line for the Play screen */
+function caddyLine(G,h){
+  const c=strokesOf(h),tee=c.n===0&&pos(h)==='T';
+  if(tee&&G.hd.par>=4){const cad=caddyTee(G);if(!cad)return '';const all=troubleLines(G,cad),aim=aimAdvice(all),key=all.find(t=>t.inr&&t.k==='water')||all.find(t=>t.inr)||all.find(t=>t.k==='water'&&t.s==='C');
+    return `<b>${YNAME[cad.k]}</b> · ${aim?aim.replace(/\.$/,'').replace('Favor the ','favor ').replace(': aim at the middle',', aim middle').replace('Sand on both sides','sand both sides').replace('Water both sides','water both sides'):key?key.t:'open tee shot'}`;}
+  if(tee&&G.hd.par===3){const w=hzFrom(G.c,G.hd,G.tee).find(z=>z.k==='water'&&z.s==='C');return `<b>Par 3</b> · ${w?`water to carry ${Math.round(w.cy!=null?w.cy:w.b)} yd · `:''}${greenNote(G).split('.')[0]}`;}
+  return `<b>Green</b> · ${greenNote(G)}`;
+}
+/* Mini map of the real hole: tee at the bottom, green at the top, your shots as dots */
+function holeMapSVG(G,opt){
+  opt=opt||{};const {c,hd,tee}=G,m=hd.m;if(!m)return '';
+  const off=ydOf(c,hd,tee)-hd.line,line=[];for(let i=0;i<m.line.length;i+=2)line.push([m.line[i],m.line[i+1]]);
+  const xs=line.map(p=>p[0]),top=line[line.length-1][1]+28,bot=Math.min(0,-off)-18,lx=Math.min(-48,Math.min(...xs)-34),rx=Math.max(48,Math.max(...xs)+34);
+  const W=rx-lx,H=top-bot,X=x=>(x-lx).toFixed(1),Y=y=>(top-y).toFixed(1),fs=(H/(opt.h||220)*11.5).toFixed(1);
+  const poly=(arr,cls)=>arr.map(a=>{let d='';for(let i=0;i<a.length;i+=2)d+=(i?'L':'M')+X(a[i])+' '+Y(a[i+1]);return `<path class="${cls}" d="${d}Z"/>`;}).join('');
+  const at=d=>{let left=d-off;for(let i=0;i<line.length-1;i++){const a=line[i],b=line[i+1],l=Math.hypot(b[0]-a[0],b[1]-a[1]);if(left<=l||i===line.length-2){const t=left/l;return[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];}left-=l;}return line[line.length-1];};
+  const teeP=at(0);let dots='',acc=0;
+  (opt.steps||[]).forEach((s,j,arr)=>{if(j===arr.length-1)return;acc+=s.d;const p=at(acc);dots+=`<circle class="hm-dot" cx="${X(p[0])}" cy="${Y(p[1])}" r="${(fs*.42).toFixed(1)}"/><text class="hm-lab" x="${X(p[0]+fs*.7)}" y="${Y(p[1]-fs*.35)}" font-size="${fs}">${SHORTN[s.k]||''}</text>`;});
+  const path=line.map((p,i)=>(i?'L':'M')+X(p[0])+' '+Y(p[1])).join('');
+  return `<svg class="hmap" viewBox="0 0 ${W.toFixed(0)} ${H.toFixed(0)}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of hole ${G.n}">
+    <rect class="hm-r" x="0" y="0" width="${W.toFixed(0)}" height="${H.toFixed(0)}"/>${poly(m.w,'hm-w')}${poly(m.f,'hm-f')}${poly(m.t,'hm-t')}${poly(m.g,'hm-g')}${poly(m.b,'hm-b')}
+    <path class="hm-l" d="${path}" stroke-width="${(fs*.14).toFixed(2)}" stroke-dasharray="${(fs*.4).toFixed(1)} ${(fs*.4).toFixed(1)}"/>
+    <circle class="hm-tee" cx="${X(teeP[0])}" cy="${Y(teeP[1])}" r="${(fs*.45).toFixed(1)}"/>${dots}</svg>`;
+}
+/* The whole-hole plan from the tee you play */
+function holePlan(G){
+  const {c,hd,tee,r}=G,R=ydOf(c,hd,tee),tf=tempF(r);
+  if(hd.par===3){const pl=solve(R/tf,'tee',planCtx(),0,{});return{cad:null,steps:pl.steps.map(s=>Object.assign({},s,{d:s.d*tf}))};}
+  const cad=caddyTee(G);if(!cad)return{cad:null,steps:[]};
+  return{cad,steps:[{k:cad.k,d:cad.mid,mid:cad.mid}].concat(cad.rest.steps.map(s=>Object.assign({},s,{d:s.d*tf})))};
+}
+function chainHTML(steps){return steps.map((s,j)=>j===0?`<b>${YNAME[s.k]||stepName(s)}</b>`:`<span>${SHORTN[s.k]||''}</span>`).join('<i>›</i>');}
+function holeCardHTML(G,opt){
+  opt=opt||{};const {c,hd,tee}=G,R=ydOf(c,hd,tee),pl=holePlan(G),tl=hd.par>=4?troubleLines(G,pl.cad):hzFrom(c,hd,tee).filter(z=>z.k==='water'&&z.s==='C').map(z=>({k:'water',t:`Water to carry: ${Math.round(z.cy!=null?z.cy:z.b)} yd`,why:''}));
+  const big=!!opt.big,dl=(hd.dl||[]).find(d=>d.deg>=20);
+  return `<div class="cd-card${opt.cur?' cur':''}${big?' big':''}">
+    <div class="cd-map">${holeMapSVG(G,{steps:pl.steps,h:big?380:200})}</div>
+    <div class="cd-b">
+      <div class="cd-t"><b class="num">${G.n}</b><span>Par ${hd.par} · <span class="num">${R}</span> yd</span><small>${hd.hcp?'hardest #'+hd.hcp:''}</small></div>
+      ${pl.steps.length?`<div class="cd-plan">${chainHTML(pl.steps)}</div>`:''}
+      ${dl?`<p class="cd-s">Dogleg ${dl.s==='L'?'left':'right'} at about ${R5(dl.at+R-hd.line)} yd.</p>`:''}
+      ${tl.length?`<ul class="cd-tr">${tl.slice(0,big?6:3).map(t=>`<li class="${t.k}"><span>${t.t}</span>${big&&t.why?`<small>${t.why}</small>`:''}</li>`).join('')}</ul>`:''}
+      ${hd.par>=4&&aimAdvice(tl)?`<p class="cd-aim">${aimAdvice(tl)}</p>`:''}
+      <p class="cd-s">${greenNote(G)}</p>
+      ${hd.tip?`<p class="cd-tip">${esc(hd.tip)}</p>`:''}
+    </div></div>`;
+}
+/* Course tab */
+function cadState(){
+  const r=S.rounds[S.cur],live=r&&r.status!=='done'&&guideOf(r)?r:null;
+  if(live)return{c:guideOf(live),gn:live.gn,tee:live.tee||guideOf(live).rec,temp:live.temp||'warm',r:live};
+  const c=GUIDES[S.cad.id]||Object.values(GUIDES)[0];if(!c)return null;
+  return{c,gn:S.cad.gn&&S.cad.gn.every(n=>c.nines[n])?S.cad.gn:[Object.keys(c.nines)[0]],tee:c.tees.some(t=>t.k===S.cad.tee)?S.cad.tee:c.rec,temp:S.cad.temp||defTemp(),r:null};
+}
+function viewCaddy(){
+  const st=cadState();
+  if(!st)return `<h1 class="t1">Course</h1><section class="empty"><p class="sub">No course guides yet. Send Claude a course name in chat and it adds the guide here.</p></section>`;
+  const {c,gn,tee,temp,r}=st,cur=r?S.hole:-1,fake={tee,temp};
+  const nines=Object.keys(c.nines),tot=gn.reduce((s,n)=>s+nineTotal(c,n,tee),0);
+  const keys=(c.keys||[]).slice(0,4).map(k=>`<li>${k}</li>`).join('');
+  const tf=TEMPF[temp]||1,coldTxt=tf<1?`<li><b>${TEMPS.find(t=>t[0]===temp)[1]} air:</b> every club flies about ${Math.round((1-tf)*100)}% shorter than at the bay. Your 7-iron is about ${Math.round(YC['7Iron'].mid*tf)}, not ${Math.round(YC['7Iron'].mid)}. The plans below already count it.</li>`:'';
+  const cards=gn.map((nine,k)=>`<h2 class="t3 cd-nine">${nine} nine <span class="cap">${nineTotal(c,nine,tee)} yd · par ${c.nines[nine].reduce((s,hd)=>s+hd.par,0)}</span></h2>`+
+    c.nines[nine].map((hd,j)=>{const i=k*9+j,G={c,nine,n:j+1,hd,tee,r:r||fake};return `<button class="cd-btn" data-act="cadhole" data-nine="${nine}" data-n="${j+1}" aria-label="${nine} hole ${j+1}">${holeCardHTML(G,{cur:i===cur})}</button>`;}).join('')).join('');
+  const others=Object.values(GUIDES).filter(x=>x!==c);
+  return `<h1 class="t1">${esc(c.name)}</h1>
+    <section class="box cd-head"><span class="cap">${esc(c.place||'')}${r?' · your round':''}</span>
+      <div class="pills" role="group" aria-label="Nines">${(r?gn:nines).map(n=>`<button class="pl" data-act="cadnine" data-v="${n}" aria-pressed="${gn.includes(n)}"${r?' disabled':''}>${n}${gn.length>1&&gn.includes(n)?` <small>${gn.indexOf(n)===0?'front':'back'}</small>`:''}</button>`).join('')}</div>
+      <div class="seg" role="group" aria-label="Tees">${c.tees.map(t=>`<button data-act="cadtee" data-v="${t.k}" aria-pressed="${tee===t.k}">${t.name}</button>`).join('')}</div>
+      <div class="seg" role="group" aria-label="Temperature">${TEMPS.map(([v,l,s])=>`<button data-act="cadtemp" data-v="${v}" aria-pressed="${temp===v}">${l}<small>${s}</small></button>`).join('')}</div>
+      <p class="sub"><span class="num">${tot}</span> yd from the ${c.tees.find(t=>t.k===tee).name} tees${c.rec===tee&&c.recWhy?`: ${c.recWhy}`:''}</p></section>
+    <section class="box cd-keys"><h2 class="t3">Before you tee off</h2><ul>${coldTxt}${keys}</ul></section>
+    ${cards}
+    <p class="sub cd-foot">${esc(c.src||'')} Want another course? Send Claude its name in chat.${others.length?' Other guides: '+others.map(o=>`<button class="lk" data-act="cadcourse" data-v="${o.id}">${esc(o.name)}</button>`).join(', '):''}</p>`;
+}
+function cadHoleSheet(){
+  const st=cadState();if(!st||!S.cadHole)return '';
+  const {c,tee,temp,r}=st,[nine,n]=S.cadHole,hd=c.nines[nine]&&c.nines[nine][n-1];if(!hd)return '';
+  const G={c,nine,n,hd,tee,r:r||{tee,temp}};
+  return `${sheetHead(`${esc(c.name)} · ${nine}`,`Hole ${n}`)}${holeCardHTML(G,{big:true})}`;
+}
+/* New round: pick the nines (front, then back), tees and temperature from the guide */
+function saveCad(){try{localStorage.setItem('psc.cad',JSON.stringify(S.cad));}catch(e){}}
+function ngState(c,n){
+  if(!c)return{gn:[],tee:null,temp:defTemp()};
+  const need=n===9?1:2,nines=Object.keys(c.nines);
+  let ng=S.ng&&S.ng.id===c.id?S.ng:null;
+  if(!ng){const last=S.cad&&S.cad.id===c.id?S.cad:{};ng={id:c.id,gn:(last.gn&&last.gn.length?last.gn:nines).slice(0,need),tee:last.tee||c.rec,temp:last.temp||defTemp()};}
+  ng=Object.assign({},ng,{gn:ng.gn.slice(-need)});
+  return ng;
+}
+function newGuideHTML(){
+  const c=courseByName(S.newCourse);if(!c)return '';
+  const n=S.newHoles===9?9:18,ng=ngState(c,n),need=n/9;
+  return `<div class="ngb"><span class="cap">Course guide found: ${esc(c.name)}. Tap ${need===1?'the nine you play':'your front nine, then your back nine'}.</span>
+    <div class="pills" role="group" aria-label="Nines">${Object.keys(c.nines).map(x=>`<button class="pl" data-act="ngn" data-v="${x}" aria-pressed="${ng.gn.includes(x)}">${x}${need===2&&ng.gn.includes(x)?` <small>${ng.gn.indexOf(x)===0?'front':'back'}</small>`:''}</button>`).join('')}</div>
+    <div class="seg" role="group" aria-label="Tees">${c.tees.map(t=>`<button data-act="ngtee" data-v="${t.k}" aria-pressed="${ng.tee===t.k}">${t.short||t.name}</button>`).join('')}</div>
+    <div class="seg" role="group" aria-label="Temperature">${TEMPS.map(([v,l,s])=>`<button data-act="ngtemp" data-v="${v}" aria-pressed="${ng.temp===v}">${l}<small>${s}</small></button>`).join('')}</div>
+    ${ng.gn.length<need?`<span class="cap">Pick ${need-ng.gn.length} more nine${need-ng.gn.length>1?'s':''} to use the guide.</span>`:''}</div>`;
+}
+/* caddy:end */
 /* ---------- actions ---------- */
 function tapped(h,msg){S.justTapped=true;S.staleOk=null;if(!isQuick(h))derive(h);touch(S.cur);render();S.justTapped=false;toast(msg,true);}
 document.addEventListener('click',ev=>{
@@ -1328,11 +1580,24 @@ document.addEventListener('click',ev=>{
   const redo=()=>{if(h&&!isQuick(h))derive(h);touch(S.cur);render();};
   switch(act){
     case 'pages':{const g=$('gmOpen');if(g)g.click();break;}
-    case 'nh':S.newHoles=+b.dataset.v;render();break;
-    case 'pickcourse':S.newCourse=b.dataset.v;render();break;
+    case 'cad':{const G=gHole(r,i);if(G){S.cadHole=[G.nine,G.n];S.sheet='cad';renderSheet();}break;}
+    case 'cadhole':S.cadHole=[b.dataset.nine,+b.dataset.n];S.sheet='cad';renderSheet();break;
+    case 'cadcourse':S.cad={id:b.dataset.v};saveCad();render();break;
+    case 'cadnine':{const st=cadState();if(!st||st.r)break;let gn=st.gn.slice();const v=b.dataset.v;gn=gn.includes(v)?(gn.length>1?gn.filter(x=>x!==v):gn):gn.concat(v).slice(-2);S.cad=Object.assign({},S.cad,{id:st.c.id,gn});saveCad();render();break;}
+    case 'cadtee':case 'cadtemp':{const st=cadState();if(!st)break;const k=act==='cadtee'?'tee':'temp';
+      if(st.r){st.r[k]=b.dataset.v;if(k==='tee')st.r.h.forEach((x,j)=>{const G=gHole(st.r,j);if(G&&!holeDone(x))x.len=ydOf(G.c,G.hd,st.r.tee);});touch(S.cur);}
+      S.cad=Object.assign({},S.cad,{id:st.c.id,[k]:b.dataset.v});saveCad();render();break;}
+    case 'rtemp':r.temp=b.dataset.v;S.condOpen=true;touch(S.cur);renderSheet();break;
+    case 'ngn':case 'ngtee':case 'ngtemp':{const gc=courseByName(S.newCourse),ng=ngState(gc,S.newHoles===9?9:18);if(!gc)break;
+      if(act==='ngn'){const v=b.dataset.v,need=S.newHoles===9?1:2;ng.gn=ng.gn.includes(v)?ng.gn.filter(x=>x!==v):ng.gn.concat(v).slice(-need);}
+      else ng[act==='ngtee'?'tee':'temp']=b.dataset.v;S.ng=ng;const bx=$('ng-box');if(bx)bx.innerHTML=newGuideHTML();break;}
+    case 'nh':S.newHoles=+b.dataset.v;S.ng=null;render();break;
+    case 'pickcourse':S.newCourse=b.dataset.v;S.ng=null;render();break;
     case 'start':{const n=S.newHoles===9?9:18,id='r'+Date.now().toString(36),course=(($('f-course')||{}).value||'').trim();
       const prev=course?sortedRounds().map(x=>x[1]).find(x=>!x.example&&(x.course||'').trim().toLowerCase()===course.toLowerCase()):null;
       S.rounds[id]={course,date:($('f-date')||{}).value||today(),holes:n,h:Array.from({length:n},(_,j)=>{const x=blankHole(prev&&prev.h[j]?prev.h[j].par:4);if(prev&&prev.h[j]&&prev.h[j].len)x.len=prev.h[j].len;if(prev&&prev.h[j]&&prev.h[j].parSet)x.parSet=1;return x;}),status:'playing',created:Date.now(),updated:Date.now()};
+      const gc=courseByName(course),ng=ngState(gc,n);
+      if(gc&&ng.gn.length===n/9){const rr=S.rounds[id];rr.g=gc.id;rr.gn=ng.gn.slice();rr.tee=ng.tee;rr.temp=ng.temp;rr.h.forEach((x,j)=>{const G=gHole(rr,j);if(G){x.par=G.hd.par;x.parSet=1;x.len=ydOf(gc,G.hd,rr.tee);}});S.cad={id:gc.id,gn:rr.gn.slice(),tee:rr.tee,temp:rr.temp};saveCad();}
       S.cur=id;S.hole=0;S.newCourse='';touch(id);setView('play');break;}
     case 'open':{S.cur=b.dataset.id;const rr=S.rounds[S.cur];const k=rr?rr.h.findIndex(x=>!holeDone(x)):0;S.hole=k<0?0:k;saveLocal();setView('play');break;}
     case 'summary':S.cur=b.dataset.id;saveLocal();setView('summary');break;
@@ -1394,11 +1659,11 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('input',e=>{
   if(e.target.id==='pl-r'){setPlanYd(+e.target.value,'s');return;}
   if(e.target.id==='pl-n'){const v=parseInt(e.target.value,10);if(v>0)setPlanYd(v,'n');return;}
-  if(e.target.id==='f-course')S.newCourse=e.target.value;
+  if(e.target.id==='f-course'){S.newCourse=e.target.value;const bx=$('ng-box');if(bx)bx.innerHTML=newGuideHTML();}
 });
 document.addEventListener('change',e=>{if(e.target.id==='pl-r'||e.target.id==='pl-n')savePlanYd();});
 document.addEventListener('toggle',e=>{if(e.target&&e.target.id==='condd')S.condOpen=e.target.open;},true);
-const ROUTES=['rounds','play','stats','summary'];
+const ROUTES=['rounds','play','caddy','stats','summary'];
 window.addEventListener('hashchange',()=>{let v=location.hash.slice(1);if(v==='patterns')v='stats';if(ROUTES.includes(v)&&v!==S.view){S.view=v;render();}});
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='hidden'&&(pending.size||pendingDel.size)){clearTimeout(flushTimer);flush();}
@@ -1407,7 +1672,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 window.addEventListener('online',()=>{clearTimeout(flushTimer);flush();});
 let fitT=null;window.addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fitMap,120);});
-loadLocal();
+loadLocal();try{S.cad=JSON.parse(localStorage.getItem('psc.cad')||'{}')||{};}catch(e){}
 let hv=location.hash.slice(1);if(hv==='patterns')hv='stats';
 S.view=ROUTES.includes(hv)?hv:(S.cur&&S.rounds[S.cur]&&S.rounds[S.cur].status!=='done'?'play':'rounds');
 render();syncLabel();connect();
