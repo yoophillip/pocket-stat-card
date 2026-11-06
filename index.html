@@ -454,6 +454,15 @@ table.dt{width:100%;border-collapse:collapse;font-size:var(--t-small);font-varia
 .prow b{font:600 var(--t-small)/1.4 var(--f-ui)}
 .sheet .seg button small{display:block;font-size:var(--t-micro);font-weight:500;color:var(--c-muted)}
 .maphint.preadbtn{pointer-events:auto;border:0;cursor:pointer;min-height:32px}
+.seg button{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+/* Inside claude.ai on a phone the browser's bottom toolbar covers the page's bottom edge, so the tab bar moves to the top
+   and the bottom gets a buffer (the home-screen GPS version keeps its bottom bar) */
+html.gm-framed .tabbar{top:calc(6px + env(safe-area-inset-top,0px));bottom:auto}
+html.gm-framed body::before{content:"";position:fixed;inset:0 0 auto;height:calc(62px + env(safe-area-inset-top,0px));background:var(--c-bg);z-index:29;pointer-events:none}
+html.gm-framed .app{padding-block:calc(66px + env(safe-area-inset-top,0px)) calc(110px + env(safe-area-inset-bottom,0px))}
+html.gm-framed body[data-view="play"] .app{padding-block:calc(64px + env(safe-area-inset-top,0px)) calc(96px + env(safe-area-inset-bottom,0px))}
+html.gm-framed .sheet{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+html.gm-framed .toast{bottom:calc(160px + env(safe-area-inset-bottom,0px))}
 /* caddy-css:end */
 </style>
 <style id="apple-skin">
@@ -1894,6 +1903,7 @@ document.addEventListener('visibilitychange',()=>{
 });
 window.addEventListener('online',()=>{clearTimeout(flushTimer);flush();});
 let fitT=null;window.addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fitMap,120);});
+try{if(window.self!==window.top&&matchMedia('(pointer: coarse)').matches)document.documentElement.classList.add('gm-framed');}catch(e){}
 loadLocal();try{S.cad=JSON.parse(localStorage.getItem('psc.cad')||'{}')||{};}catch(e){}
 let hv=location.hash.slice(1);if(hv==='patterns')hv='stats';
 S.view=ROUTES.includes(hv)?hv:(S.cur&&S.rounds[S.cur]&&S.rounds[S.cur].status!=='done'?'play':'rounds');
@@ -1985,6 +1995,12 @@ render();syncLabel();connect();
   @media (prefers-reduced-motion: reduce) {
     .gm-sheet[open], .gm-sheet.gm-closing, .gm-sheet[open]::backdrop, .gm-sheet.gm-closing::backdrop { animation-duration: 0.01ms; }
   }
+  /* Inside claude.ai on a phone the browser's own bottom toolbar can cover the bottom ~90 px of the page:
+     lift everything that sits on the bottom edge clear of it */
+  html.gm-framed .gm-fab { bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  @media (max-width: 599px) {
+    html.gm-framed .gm-sheet { inset: auto max(8px, env(safe-area-inset-right, 0px)) calc(92px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); max-height: calc(100% - 140px - env(safe-area-inset-top, 0px)); }
+  }
 </style>
 <button type="button" class="gm-fab" id="gmOpen" aria-haspopup="dialog" aria-controls="gmDrawer" aria-expanded="false">
   <svg viewBox="0 0 22 22" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2.2" fill="currentColor"/><rect x="12" y="3" width="7" height="7" rx="2.2" fill="currentColor" opacity="0.55"/><rect x="3" y="12" width="7" height="7" rx="2.2" fill="currentColor" opacity="0.55"/><rect x="12" y="12" width="7" height="7" rx="2.2" fill="currentColor" opacity="0.55"/></svg>
@@ -2007,6 +2023,7 @@ render();syncLabel();connect();
 </dialog>
 <script>
 (() => {
+  try { if (window.self !== window.top && matchMedia('(pointer: coarse)').matches) document.documentElement.classList.add('gm-framed'); } catch (e) {}
   const HERE = 'stat';
   const ART = 'https://claude.ai/artifact/';
   // Glyphs drawn on a 22-unit grid, white on each page's color tile.
