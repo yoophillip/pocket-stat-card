@@ -243,10 +243,21 @@ body[data-view="play"] #main{flex:1 1 auto;min-height:0}
 .nb.par{box-shadow:inset 0 0 0 2px var(--c-accent)}
 .nb[aria-pressed="true"]{background:var(--c-accent);color:var(--c-accent-ink);box-shadow:none}.nb[aria-pressed="true"] small{color:inherit;opacity:.85}
 .hgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-.hb{aspect-ratio:1;border:0;border-radius:var(--r-m);background:var(--c-fill);color:var(--c-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;position:relative;min-width:0;transition:transform .35s var(--spring)}
+.hb{-webkit-touch-callout:none;aspect-ratio:1;border:0;border-radius:var(--r-m);background:var(--c-fill);color:var(--c-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;position:relative;min-width:0;transition:transform .35s var(--spring)}
 .hb small{font-size:var(--t-micro);color:var(--c-muted);font-weight:600}.hb .num{font-size:var(--t-label)}
 .hb[aria-current="true"]{background:var(--c-ink);color:var(--c-bg)}.hb[aria-current="true"] small{color:inherit;opacity:.7}
 .hb.open::after{content:"";position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--c-warn)}
+.recap{display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:var(--r-xl);background:var(--c-surface);box-shadow:var(--c-shadow)}
+.recap .box,.recap .tile{box-shadow:none;background:var(--c-fill)}
+.rc-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rc-s{font-size:var(--t-num-l);line-height:1}
+.rc-dist{display:flex;flex-wrap:wrap;gap:6px}
+.rc-dist span{font:500 var(--t-cap)/1 var(--f-ui);color:var(--c-muted);background:var(--c-fill);border-radius:999px;padding:6px 10px}
+.rc-dist b{color:var(--c-ink);margin-right:3px}
+.rc-l{margin:0;font-size:var(--t-small);line-height:1.4}
+.rc-warn{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border-radius:var(--r-m);background:var(--c-warn-soft);font-size:var(--t-cap)}
+@media (prefers-reduced-motion:no-preference){.play.sl-l{animation:slL .24s var(--spring) both}.play.sl-r{animation:slR .24s var(--spring) both}}
+@keyframes slL{from{transform:translateX(26px);opacity:.35}}@keyframes slR{from{transform:translateX(-26px);opacity:.35}}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:var(--t-cap);color:var(--c-muted);align-items:center}
 .legend i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--c-warn);margin-right:6px}
 
@@ -459,7 +470,7 @@ table.dt{width:100%;border-collapse:collapse;font-size:var(--t-small);font-varia
 .seg button{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 /* Hole pager on Play: arrows either side, the middle opens the list of holes */
 .hpager{display:flex;align-items:stretch;flex:none;height:var(--h-ctl);padding:2px;gap:2px;border-radius:var(--r-m);background:var(--c-fill)}
-.hp-a{width:34px;flex:none;border:0;background:transparent;color:var(--c-ink);display:grid;place-items:center;border-radius:calc(var(--r-m) - 2px);cursor:pointer;padding:0}
+.hp-a{width:31px;flex:none;border:0;background:transparent;color:var(--c-ink);display:grid;place-items:center;border-radius:calc(var(--r-m) - 2px);cursor:pointer;padding:0}
 .hp-a .chevr{width:17px;height:17px;stroke:currentColor;stroke-width:2.4}
 .hp-a:disabled{opacity:.25;cursor:default}
 .hp-a.sq{width:32px;height:32px;border-radius:50%;background:var(--c-fill);color:var(--c-ink)}
@@ -469,7 +480,11 @@ table.dt{width:100%;border-collapse:collapse;font-size:var(--t-small);font-varia
 .hp-c{display:flex;align-items:center;gap:1px;font:700 9.5px/1 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--c-muted)}
 .hp-c .chev{width:10px;height:10px;margin:0;stroke-width:2.6}
 .hd-pill{border:0;cursor:pointer}
-.hd-par{margin-left:auto;display:flex;align-items:center;gap:6px;flex:none}
+.hd-par{margin-left:auto;display:flex;align-items:center;gap:5px;flex:none}
+.play .hd{gap:6px}
+.play .hd>*{flex-shrink:0}
+@media (max-width:404px){.hd-pill .thru{display:none}.hd-par .cap{display:none}.hd .seg.par button{min-width:32px}}
+@media (max-width:360px){.play .sdot{display:none}.hp-a{width:28px}}
 .hd-par .cap{font:700 9.5px/1 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--c-muted)}
 .hd-par .seg{margin-left:0}
 .hd .seg.par button{min-width:36px;padding:0 6px;font-variant-numeric:tabular-nums}
@@ -477,6 +492,7 @@ table.dt{width:100%;border-collapse:collapse;font-size:var(--t-small);font-varia
 .golive b{color:var(--c-warn);font-weight:700;white-space:nowrap}
 .sh-nav{display:flex;align-items:center;gap:6px;flex:none}
 .card-thru{font:600 var(--t-cap) var(--f-ui);color:var(--c-muted);letter-spacing:0}
+.hb.held{transform:scale(1.06);box-shadow:0 0 0 2px var(--c-accent);background:var(--c-accent-soft);transition:transform .15s var(--spring),box-shadow .15s}
 /* Press feedback: a small, quick dip, not a squash */
 html button:active{transform:scale(.975)}
 html .cd-btn:active{transform:none}
@@ -1264,10 +1280,11 @@ function viewPlay(){
   else if(p==='P')body=dropHTML(h);
   else if(p==='G')body=puttHTML(h);
   else body=shotHTML(r,i,h);
-  const tp=o.n?`<button class="hd-pill${o.score-o.par<0?' u':''}" data-act="card" aria-haspopup="dialog" aria-label="${vsPar(o.score-o.par)} through ${o.n}. Show the scorecard"><b class="num">${vsPar(o.score-o.par)}</b> thru ${o.n}</button>`:'';
+  const tp=o.n?`<button class="hd-pill${o.score-o.par<0?' u':''}" data-act="card" aria-haspopup="dialog" aria-label="${vsPar(o.score-o.par)} through ${o.n}. Show the scorecard"><b class="num">${vsPar(o.score-o.par)}</b><span class="thru"> thru ${o.n}</span></button>`:'';
   const n=r.h.length,live=liveHole(r),no=holeNo(r,i);
   const back=i!==live&&r.status!=='done'?`<button class="golive" data-act="hole" data-v="${live}"><span>Looking at hole ${no}. You're playing hole ${holeNo(r,live)}.</span><b>Back to it ›</b></button>`:'';
-  return `<div class="play"><header class="hd">
+  const sl=S.slide;S.slide=null;
+  return `<div class="play${sl?' sl-'+sl:''}"><header class="hd">
       <div class="hpager" role="group" aria-label="Hole">
         <button class="hp-a" data-act="hole" data-v="${i-1}" aria-label="Previous hole"${i<=0?' disabled':''}>${IC.chevL}</button>
         <button class="hd-hole" data-act="holes" aria-haspopup="dialog" aria-label="Hole ${no}. Show all holes"><span class="hp-c">Hole${IC.chev}</span><b class="num">${no}</b></button>
@@ -1332,11 +1349,33 @@ function doneHTML(r,i,h){
   return `<section class="res">
       <div class="res-top"><div class="mk big ${markCls(d)} num" aria-label="Score ${h.s}">${h.s}</div>
         <div class="res-t"><span class="pillx ${toneCls(d)}">${scoreName(d)}</span><span class="sub">${info}</span></div></div>
-      ${quick?'':`<div class="mapw fit mini" data-mode="view">${mapSVG(h,'view')}</div>${historyHTML(h)}`}
+      ${quick?'':`${last?'':`<div class="mapw fit mini" data-mode="view">${mapSVG(h,'view')}</div>`}${historyHTML(h)}`}
     </section>
-    ${last?`<button class="cta" data-act="finish">Finish round ${IC.arrow}</button>`:`<div class="nx"><span class="t3">Hole ${i+2}</span><div class="seg big" role="group" aria-label="Hole ${i+2} par">${[3,4,5].map(v=>`<button data-act="npar" data-v="${v}" aria-pressed="${nx.par===v}">Par ${v}</button>`).join('')}</div></div>
+    ${last?`${recapHTML(r)}<button class="cta" data-act="finish">Finish round ${IC.arrow}</button>`:`<div class="nx"><span class="t3">Hole ${i+2}</span><div class="seg big" role="group" aria-label="Hole ${i+2} par">${[3,4,5].map(v=>`<button data-act="npar" data-v="${v}" aria-pressed="${nx.par===v}">Par ${v}</button>`).join('')}</div></div>
     <button class="cta" data-act="next">Next hole ${IC.arrow}</button>`}
     <div class="links">${quick?`<button class="lk" data-act="qs">Change score</button><button class="lk" data-act="tap">Tap shots instead</button>`:`<button class="lk" data-act="undo">Undo last tap</button><button class="lk" data-act="qs">Change score</button>`}</div>`;
+}
+
+/* The round at a glance, shown as soon as the last hole has a score */
+function recapHTML(r){
+  const o=roundStats(r),d=o.score-o.par,miss=r.h.map((x,j)=>x.s==null?j:-1).filter(j=>j>=0);
+  const ds=r.h.filter(x=>x.s!=null).map(x=>x.s-x.par),cnt=f=>ds.filter(f).length;
+  const dist=[['eagle',cnt(v=>v<=-2)],['birdie',cnt(v=>v===-1)],['par',cnt(v=>v===0)],['bogey',cnt(v=>v===1)],['double+',cnt(v=>v>=2)]].filter(x=>x[1]);
+  let bi=-1,bd=0;r.h.forEach((x,j)=>{if(x.s!=null&&x.s-x.par<bd){bd=x.s-x.par;bi=j;}});
+  const lost=[[o.pen,o.pen===1?'penalty stroke':'penalty strokes'],[o.three,o.three===1?'extra putt from a 3-putt':'extra putts from 3-putts'],[o.dbl,o.dbl===1?'double or worse':'doubles or worse']].filter(x=>x[0]>0).sort((a,b)=>b[0]-a[0])[0];
+  const PL={eagle:'eagles',birdie:'birdies',par:'pars',bogey:'bogeys','double+':'doubles+'};
+  return `<section class="recap" aria-label="Round summary"><span class="cap">Round summary</span>
+    <div class="rc-top"><span class="num rc-s">${o.score}</span><span class="pillx ${toneCls(Math.sign(d)*Math.min(2,Math.abs(d)))}">${vsPar(d)}</span><span class="sub">${o.n} ${o.n===1?'hole':'holes'} · par ${o.par}</span></div>
+    ${dist.length?`<div class="rc-dist">${dist.map(([w,n])=>`<span><b class="num">${n}</b>${n===1?w:PL[w]}</span>`).join('')}</div>`:''}
+    <div class="bento">
+      <div class="tile"><span class="num">${o.fwTries?o.fwHit+'/'+o.fwTries:'–'}</span><span>Fairways</span></div>
+      <div class="tile"><span class="num">${o.girTries?o.gir+'/'+o.girTries:'–'}</span><span>Greens in regulation</span></div>
+      <div class="tile"><span class="num">${o.puttHoles?o.putts:'–'}</span><span>Putts</span></div>
+      <div class="tile"><span class="num">${o.pen||0}</span><span>Penalty strokes</span></div></div>
+    ${bi>=0?`<p class="rc-l"><b>Best hole:</b> ${scoreName(bd).toLowerCase()} on ${holeNo(r,bi)}.</p>`:''}
+    <p class="rc-l">${lost?`<b>Most shots lost:</b> ${lost[0]} ${lost[1]}.`:'<b>Clean card:</b> no penalties, 3-putts or doubles.'}</p>
+    ${miss.length?`<div class="rc-warn"><span>${miss.length} ${miss.length===1?'hole has':'holes have'} no score. Tap to add:</span><div class="pills">${miss.map(j=>`<button class="pl" data-act="fill" data-v="${j}">Hole ${holeNo(r,j)}</button>`).join('')}</div></div>`:''}
+  </section>`;
 }
 
 /* Sheets */
@@ -1367,18 +1406,18 @@ function cardHTML(r){
 function sheetHead(cap,title){return `<div class="sh-h"><div><span class="cap">${cap}</span><h2 class="t2">${title}</h2></div><button class="x" data-act="close" aria-label="Close">${IC.x}</button></div>`;}
 function qsHTML(r,i,h){
   const base=Math.max(1,h.par-2),nums=Array.from({length:8},(_,k)=>base+k);
-  return `${sheetHead(`Hole ${i+1} · Par ${h.par}`,'How many shots?')}
+  return `${sheetHead(`Hole ${holeNo(r,i)} · Par ${h.par}`,'How many shots?')}
     <div class="nums">${nums.map(n=>`<button class="nb${n===h.par?' par':''}" data-act="qsn" data-v="${n}" aria-pressed="${S.qs.s===n}"><span class="num">${n}</span><small>${scoreShort(n-h.par)}</small></button>`).join('')}</div>
     <span class="cap">Putts, if you remember</span>
     <div class="seg full big" role="group" aria-label="Putts">${[0,1,2,3,4].map(p=>`<button data-act="qsp" data-v="${p}" aria-pressed="${S.qs.p===p}">${p}</button>`).join('')}</div>
-    <button class="cta" data-act="qssave"${S.qs.s==null?' disabled':''}>Save hole ${i+1}</button>`;
+    <button class="cta" data-act="qssave"${S.qs.s==null?' disabled':''}>Save hole ${holeNo(r,i)}</button>`;
 }
 function holesHTML(r,i){
   const cells=r.h.map((x,j)=>{const d=x.s!=null?x.s-x.par:null,open=x.s==null&&(x.sh||[]).length;
     return `<button class="hb${open?' open':''}" data-act="hole" data-v="${j}" aria-current="${j===i}" aria-label="Hole ${holeNo(r,j)}${x.s!=null?', score '+x.s:open?', not finished':''}"><small>${holeNo(r,j)}</small><span class="num">${x.s!=null?`<span class="mk ${markCls(d)}" style="width:24px;height:24px">${x.s}</span>`:'–'}</span></button>`;}).join('');
   return `${sheetHead(esc(r.course||'Round'),'Holes')}
     <div class="hgrid">${cells}</div>
-    <div class="legend"><span><i></i>Started, no score yet</span></div>
+    <div class="legend"><span><i></i>Started, no score yet</span><span>Hold a hole to enter its score</span></div>
     <button class="cta sec" data-act="finish">Finish round</button>`;
 }
 function importHTML(){return `${sheetHead('From the GPS version','Paste rounds')}
@@ -1776,10 +1815,37 @@ function cadHoleSheet(){
 function cadList(st){return(st.gn||[]).flatMap(nn=>(st.c.nines[nn]||[]).map((_,j)=>[nn,j+1]));}
 function cadStep(d){const st=cadState();if(!st||!S.cadHole)return;const L=cadList(st),ix=L.findIndex(([a,b])=>a===S.cadHole[0]&&b===S.cadHole[1]),k=ix+d;
   if(ix<0||k<0||k>=L.length)return;S.cadHole=L[k];renderSheet();const sh=document.querySelector('#sheet .sheet');if(sh)sh.scrollTop=0;}
-(()=>{let x0=null,y0=0,t0=0;const w=()=>document.getElementById('sheet');
-  document.addEventListener('pointerdown',e=>{x0=S.sheet==='cad'&&w()&&w().contains(e.target)?e.clientX:null;y0=e.clientY;t0=Date.now();},{passive:true});
-  document.addEventListener('pointerup',e=>{if(x0==null)return;const dx=e.clientX-x0,dy=e.clientY-y0;x0=null;
-    if(Math.abs(dx)>70&&Math.abs(dy)<45&&Date.now()-t0<700){cadStep(dx<0?1:-1);const eat=ev=>{ev.stopPropagation();ev.preventDefault();};document.addEventListener('click',eat,{capture:true,once:true});setTimeout(()=>document.removeEventListener('click',eat,{capture:true}),350);}},{passive:true});})();
+/* Gestures. Touch events (not pointer events): iOS cancels pointer events once it treats a drag as a pan. */
+function eatClick(){const eat=ev=>{ev.stopPropagation();ev.preventDefault();};document.addEventListener('click',eat,{capture:true,once:true});setTimeout(()=>document.removeEventListener('click',eat,{capture:true}),400);}
+function onSwipe(ok,fn){let x0=null,y0=0,t0=0;
+  const down=(x,y,tg)=>{x0=ok(tg,x)?x:null;y0=y;t0=Date.now();};
+  const up=(x,y)=>{if(x0==null)return;const dx=x-x0,dy=y-y0;x0=null;if(Math.abs(dx)>70&&Math.abs(dy)<45&&Date.now()-t0<700){fn(dx<0?1:-1);eatClick();}};
+  document.addEventListener('touchstart',e=>{if(e.touches.length!==1){x0=null;return;}const t=e.touches[0];down(t.clientX,t.clientY,e.target);},{passive:true});
+  document.addEventListener('touchend',e=>{const t=e.changedTouches[0];if(t)up(t.clientX,t.clientY);},{passive:true});
+  document.addEventListener('mousedown',e=>down(e.clientX,e.clientY,e.target));
+  document.addEventListener('mouseup',e=>up(e.clientX,e.clientY));}
+const nearEdge=x=>x<24||x>window.innerWidth-24;/* leave the edges to the phone's own back swipe */
+/* hole sheet on the Course tab: swipe to the next or previous hole */
+onSwipe((tg,x)=>S.sheet==='cad'&&!nearEdge(x)&&!!tg.closest&&!!tg.closest('#sheet'),d=>cadStep(d));
+/* Play: swipe anywhere on the hole to change holes */
+onSwipe((tg,x)=>S.view==='play'&&!S.sheet&&!nearEdge(x)&&!!tg.closest&&!!tg.closest('#main .play')&&!tg.closest('input,textarea'),d=>{
+  const r=S.rounds[S.cur];if(!r)return;const j=S.hole+d;if(j<0||j>=r.h.length)return;S.slide=d>0?'l':'r';S.hole=j;saveLocal();render();window.scrollTo(0,0);});
+/* Holes list: hold a hole to enter its score straight away */
+/* The hole lights up once held long enough; letting go opens its score (the list stays put until then, so the finger's
+   release can't land on the score buttons) */
+(()=>{let tm=null,x0=0,y0=0,held=null;const stop=()=>{clearTimeout(tm);tm=null;};
+  const reset=()=>{stop();if(held)held.classList.remove('held');held=null;};
+  const down=(x,y,tg)=>{reset();const b=tg.closest&&tg.closest('.hb[data-act="hole"]');if(!b||S.sheet!=='holes')return;x0=x;y0=y;
+    tm=setTimeout(()=>{tm=null;held=b;b.classList.add('held');try{navigator.vibrate&&navigator.vibrate(12);}catch(e){}},450);};
+  const move=(x,y)=>{if((tm||held)&&Math.hypot(x-x0,y-y0)>12)reset();};
+  const up=()=>{stop();if(!held)return;const b=held;held=null;b.classList.remove('held');eatClick();
+    const r=S.rounds[S.cur],j=+b.dataset.v;if(!r||!r.h[j])return;const h=r.h[j];
+    S.hole=j;S.qs={s:h.s!=null?h.s:null,p:h.s!=null?h.putts:null};S.sheet='qs';saveLocal();render();renderSheet();};
+  document.addEventListener('touchstart',e=>{const t=e.touches[0];if(t)down(t.clientX,t.clientY,e.target);},{passive:true});
+  document.addEventListener('touchmove',e=>{const t=e.touches[0];if(t)move(t.clientX,t.clientY);},{passive:true});
+  document.addEventListener('touchend',up,{passive:true});document.addEventListener('touchcancel',reset,{passive:true});
+  document.addEventListener('mousedown',e=>down(e.clientX,e.clientY,e.target));document.addEventListener('mousemove',e=>move(e.clientX,e.clientY));document.addEventListener('mouseup',up);
+  document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.hb'))e.preventDefault();});})();
 /* New round: pick the nines (front, then back), tees and temperature from the guide */
 function saveCad(){try{localStorage.setItem('psc.cad',JSON.stringify(S.cad));}catch(e){}}
 function ngState(c,n){
@@ -1938,8 +2004,8 @@ document.addEventListener('click',ev=>{
     case 'holes':S.sheet='holes';renderSheet();break;
     case 'card':S.sheet='card';renderSheet();break;
     case 'cadstep':cadStep(+b.dataset.v);break;
-    case 'hole':S.hole=+b.dataset.v;S.sheet=null;saveLocal();renderSheet();render();window.scrollTo(0,0);break;
-    case 'next':S.hole=Math.min(r.h.length-1,S.hole+1);saveLocal();render();window.scrollTo(0,0);break;
+    case 'hole':{const j=+b.dataset.v;S.slide=j>S.hole?'l':j<S.hole?'r':null;}S.hole=+b.dataset.v;S.sheet=null;saveLocal();renderSheet();render();window.scrollTo(0,0);break;
+    case 'next':S.slide='l';S.hole=Math.min(r.h.length-1,S.hole+1);saveLocal();render();window.scrollTo(0,0);break;
     case 'finish':r.status='done';S.sheet=null;renderSheet();touch(S.cur);setView('summary');break;
     case 'close':{const was=S.sheet;if(was==='plan')savePlanYd();S.sheet=null;renderSheet();if(was==='plan')render();break;}
     case 'par':h.par=+b.dataset.v;h.parSet=1;if(h.par===3){h.tee=null;h.club=null;}redo();if(S.sheet==='plan')renderSheet();break;
@@ -1967,7 +2033,7 @@ document.addEventListener('click',ev=>{
     case 'qs':S.qs={s:h.s!=null?h.s:null,p:h.s!=null?h.putts:null};S.sheet='qs';renderSheet();break;
     case 'qsn':S.qs.s=+b.dataset.v;renderSheet();break;
     case 'qsp':S.qs.p=S.qs.p===+b.dataset.v?null:+b.dataset.v;renderSheet();break;
-    case 'qssave':{if(S.qs.s==null)break;h.quick=true;h.s=S.qs.s;h.putts=S.qs.p;S.sheet=null;renderSheet();touch(S.cur);render();window.scrollTo(0,0);toast(`Hole ${i+1}: ${h.s} saved`,false);break;}
+    case 'qssave':{if(S.qs.s==null)break;h.quick=true;h.s=S.qs.s;h.putts=S.qs.p;S.sheet=null;renderSheet();touch(S.cur);render();window.scrollTo(0,0);toast(`Hole ${holeNo(r,i)}: ${h.s} saved`,false);break;}
     case 'tap':h.quick=false;if(!h.sh)h.sh=[];redo();break;
     case 'plan':{const rem=remainingYd(h),c=strokesOf(h),tee=c.n===0&&pos(h)==='T';S.planYd=rem?rem.yd:(tee?(h.par===3?150:h.par===5?480:370):150);S.planSrc=null;S.sheet='plan';renderSheet();break;}
     case 'pstep':setPlanYd(S.planYd+(+b.dataset.d),'b');savePlanYd();break;
