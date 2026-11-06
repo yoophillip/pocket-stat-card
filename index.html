@@ -176,6 +176,7 @@ body[data-view="play"] #main{flex:1 1 auto;min-height:0}
 .m-fringe{fill:var(--m-fringe)}.m-green{fill:var(--m-green)}.m-green-hi{fill:var(--m-green-hi)}.m-sand{fill:var(--m-sand);stroke:var(--m-sand-edge);stroke-width:1.5}.m-tee{fill:var(--m-stripe)}
 .z{cursor:pointer;outline:none;transition:filter .15s}
 .z:active{filter:brightness(1.14)}.z:focus-visible{filter:brightness(1.18)}
+.behind{cursor:not-allowed}.behind rect,.behind>path:not(.behind-edge){fill:#071108;fill-opacity:.46}.behind-edge{fill:none;stroke:var(--m-line);stroke-opacity:.6;stroke-width:1.2;stroke-dasharray:4 5}
 .ml{pointer-events:none}.ml rect{fill:var(--m-chip)}.ml text{fill:var(--m-label);font:650 10px var(--f-ui);letter-spacing:.07em;text-anchor:middle}
 .deco{pointer-events:none}
 .pin{stroke:var(--m-label);stroke-width:1.3;stroke-linecap:round}.flag{fill:var(--c-bad)}.cup{fill:var(--m-label);opacity:.75}
@@ -1132,7 +1133,12 @@ function mapPts(h){
 function mapSVG(h,mode,kk){
   const k=kk||S.mapK||1,Y=v=>+(v*k).toFixed(1),VH=Y(330),rk=Math.min(k,1.2);
   const live=mode==='shot'||mode==='drop',act=mode==='drop'?'drop':'res';
-  const Z=(v,label,shape)=>live&&!(mode==='drop'&&v==='G')?`<g class="z" data-act="${act}" data-v="${v}" role="button" tabindex="0" aria-label="${label}">${shape}</g>`:shape;
+  /* No tapping behind the ball: from mid-hole, everything farther back than your ball is shaded off; from near the green,
+     only the green, the area around it and its bunkers stay open. Drops (after a penalty) can go back, so they stay open. */
+  const lie=pos(h),shotM=mode==='shot',nearG=shotM&&(lie==='N'||lie==='GS'),mid=shotM&&['F','L','R','Ro','X','B'].includes(lie);
+  const cur0=mapPts(h).cur,back=mid?Math.max(cur0[1]+18,150):null,backY=back!=null&&back<326?Y(back):null;
+  const shut=v=>nearG&&['L','R','X','F','B'].includes(v);
+  const Z=(v,label,shape)=>live&&!shut(v)&&!(mode==='drop'&&v==='G')?`<g class="z" data-act="${act}" data-v="${v}" role="button" tabindex="0" aria-label="${label}">${shape}</g>`:shape;
   const FW=`M112 ${VH}V${Y(214)}Q112 ${Y(152)} 170 ${Y(152)}Q228 ${Y(152)} 228 ${Y(214)}V${VH}Z`;
   const trees=`<rect class="m-tree" x="33" y="0" width="3" height="${VH}"/><rect class="m-tree" x="304" y="0" width="3" height="${VH}"/>`;
   let stripes='';for(let y=Y(152);y<VH;y+=26)stripes+=`<rect class="m-stripe" x="100" y="${y.toFixed(1)}" width="140" height="13"/>`;
@@ -1151,7 +1157,14 @@ function mapSVG(h,mode,kk){
     ${Z('GS','Greenside bunker',`<ellipse class="m-sand" cx="80" cy="${Y(98)}" rx="24" ry="${15*rk}"/><ellipse class="m-sand" cx="262" cy="${Y(56)}" rx="24" ry="${15*rk}"/>`)}
     ${Z('G','Green',`<ellipse class="m-green" cx="170" cy="${Y(76)}" rx="72" ry="${41*rk}"/><ellipse class="m-green-hi" cx="160" cy="${Y(68)}" rx="44" ry="${22*rk}"/>`)}
     <g class="deco"><circle class="cup" cx="188" cy="${Y(72)}" r="3"/><path class="pin" d="M188 ${Y(72)}v-26"/><path class="flag" d="M188.7 ${Y(72)-25.5}l12 4-12 4z"/></g>
-    ${live?pill(152,Y(90),'Green')+pill(170,Y(134),'Near the green')+pill(80,Y(98),'Bunker')+pill(262,Y(56),'Bunker')+pill(170,Y(268),'Fairway')+pill(236,Y(228),'Bunker')+pill(74,Y(190),'Rough')+pill(266,Y(190),'Rough')+pill(18,Y(250),'Trees',1)+pill(322,Y(250),'Trees',1):''}
+    ${live?(()=>{const lim=backY!=null?backY:VH,fy=Math.min(Y(268),lim-Y(42)),ry=Math.min(Y(190),lim-Y(42)),ty=Math.min(Y(250),lim-Y(50));/* labels sit clear of the ball */
+      /* a label never sits under the ball: it steps sideways out of the way */
+      const L=(x,y,n,rot)=>{if(!rot&&!done){const w=n.length*7.4+14;if(Math.abs(x-cu[0])<w/2+14&&Math.abs(y-cu[1])<22){x=cu[0]<x?cu[0]+w/2+18:cu[0]-w/2-18;x=Math.max(w/2+4,Math.min(336-w/2,x));}}return pill(x,y,n,rot);};
+      let t=L(152,Y(90),'Green')+L(170,Y(134),'Near the green')+L(80,Y(98),'Bunker')+L(262,Y(56),'Bunker');
+      if(!nearG){if(fy>=Y(170))t+=L(170,fy,'Fairway');if(Y(242)<=lim)t+=L(236,Y(228),'Bunker');if(ry>=Y(160))t+=L(74,ry,'Rough')+L(266,ry,'Rough');if(ty>=Y(60))t+=L(18,ty,'Trees',1)+L(322,ty,'Trees',1);}
+      return t;})():''}
+    ${backY!=null?`<g class="behind" data-act="behind" data-v="mid" aria-label="Behind your ball"><rect x="0" y="${backY}" width="340" height="${(VH-backY).toFixed(1)}"/><path class="behind-edge" d="M0 ${backY}H340"/></g>`:''}
+    ${nearG?`<g class="behind" data-act="behind" data-v="green" aria-label="Away from the green"><path fill-rule="evenodd" d="M0 0H340V${VH}H0Z M42 ${Y(80)}a128 ${(66*k).toFixed(1)} 0 1 0 256 0a128 ${(66*k).toFixed(1)} 0 1 0 -256 0Z"/></g>`:''}
     <g class="deco">${path}${ball}${penb}</g>
   </svg>`;
 }
@@ -1883,6 +1896,7 @@ document.addEventListener('click',ev=>{
       h.sh.push(e);if(h.cond)h.cond=Object.assign({},h.cond,{l:lieFor(e.drop)});tapped(h,`Playing from ${v==='same'?'the same spot':LBL[v].toLowerCase()}`);break;}
     case 'putt':{if(!h.sh)h.sh=[];const k=(h.putts||0)+1;if(k===1)learnGreen(r,i);h.sh.push(stamp({to:b.dataset.v==='made'?'H':'G',t:Date.now()}));tapped(h,b.dataset.v==='made'?`Holed on putt ${k}`:`Putt ${k} missed`);if(pos(h)==='H')window.scrollTo(0,0);break;}
     case 'plus1':{if(!h.sh)h.sh=[];h.sh.push(stamp({to:pos(h),f:1,t:Date.now()}));const c=strokesOf(h);tapped(h,`Added a shot. Now on shot ${c.n+c.p+1}`);break;}
+    case 'behind':toast(b.dataset.v==='green'?'You’re by the green: tap the green, around it, or a bunker':'That’s behind your ball: tap ahead of it');break;
     case 'undo':{$('toast').hidden=true;if(h&&h.sh&&h.sh.length&&!isQuick(h)){h.sh.pop();redo();}break;}
     case 'staleok':S.staleOk=S.cur+':'+i;render();break;
     case 'fp':h.fp=h.fp===b.dataset.v?null:b.dataset.v;touch(S.cur);render();break;
