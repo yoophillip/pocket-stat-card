@@ -1527,7 +1527,10 @@ function greenRead(hd){
   const lines=[];
   if(gr.sl<1)lines.push('Almost flat: putts roll nearly straight.');
   else{const lowW=low.join('-')||'low side',how=gr.sl>=3?'Steep slope':gr.sl>=2?'Slopes':'Gentle slope';
-    lines.push(`${how} down from the ${gr.hi} to the ${lowW} (${gr.sl}%). Putts curve toward the ${lowW}, so aim a little ${AIMW[gr.hi]||'on the high side of the hole'}.`);}
+    /* % = feet of drop per 100 ft, so over a 10-foot putt (120 in) the ground drops sl x 1.2 inches.
+       Aim size is a rough guide for a 10-foot putt across the slope on medium-speed greens (a hole is 4¼ in wide). */
+    const inch=Math.max(1,Math.round(gr.sl*1.2)),cups=gr.sl<1.5?'just inside the edge of the hole':gr.sl<2.5?'about 1 hole-width outside the hole':gr.sl<3.5?'about 2 hole-widths outside the hole':'about 3 hole-widths outside the hole';
+    lines.push(`${how} down from the ${gr.hi} to the ${lowW}: the ground drops about ${inch} inch${inch===1?'':'es'} over a 10-foot putt. Putts curve toward the ${lowW}, so aim ${AIMW[gr.hi]||'on the high side of the hole'}: from 10 feet across the slope, ${cups}.`);}
   if(al<-.38&&gr.sl>=2.5)lines.push('On your approach, stop it short of the flag: putting uphill is easier, and putts from past the flag roll fast.');
   else if(al>.38&&gr.sl>=1.5)lines.push('It tilts away from you, so land your approach short of the flag and let it roll.');
   if(gr.relief>=30)lines.push('Big humps inside the green: from far away, a putt to the wrong section can take three putts.');
@@ -1615,7 +1618,7 @@ function holeCardHTML(G,opt){
     ${hd.tip?`<p class="cd-tip">${esc(hd.tip)}</p>`:''}
     <section class="cd-green"><div class="cd-gh"><span class="cap">The green</span><span class="cd-s">${greenNote(G)}</span></div>
       ${gr?`<div class="cd-gw">${greenMapSVG(hd)}<ul>${gr.lines.map(l=>`<li>${l}</li>`).join('')}</ul></div>
-      <p class="cd-s">Darker is lower; the arrow runs downhill, from high to low. Front is the end of the green nearest you, back is the far end; left and right are as you face the flag. Short means in front of the green, long means past it. Green speed isn’t published, so roll a few on the practice green.</p>`:''}</section>
+      <p class="cd-s">Darker is lower; the arrow runs downhill, from high to low. Faster greens curve more, so on fast days aim farther out. Front is the end of the green nearest you, back is the far end; left and right are as you face the flag. Short means in front of the green, long means past it. Green speed isn’t published, so roll a few on the practice green.</p>`:''}</section>
   </div>`;
 }
 /* Course tab */
