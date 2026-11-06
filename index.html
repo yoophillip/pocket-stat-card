@@ -1251,7 +1251,7 @@ function dropHTML(h){
 function puttHTML(h){
   const c=strokesOf(h),k=(h.putts||0)+1,first=k===1;
   return `${strip(c.n+c.p+1,'On the green',first?'First putt':'Putt '+k,h)}
-    <div class="greenw fitg" style="position:relative">${greenSVG(h)}${(()=>{const {r,i}=curHole(),G=r?gHole(r,i):null;return G&&G.hd.gr?`<button class="maphint preadbtn" data-act="putt">Read this putt ›</button>`:'';})()}</div>
+    <div class="greenw fitg" style="position:relative">${greenSVG(h)}${(()=>{const {r,i}=curHole(),G=r?gHole(r,i):null;return G&&G.hd.gr?`<button class="maphint preadbtn" data-act="pread">Read this putt ›</button>`:'';})()}</div>
     ${first?`<div class="pgrid" role="group" aria-label="First putt length, optional">${PUTT_LEN.map(([v,l])=>`<button class="pl" data-act="fp" data-v="${v}" aria-pressed="${h.fp===v}">${l}</button>`).join('')}</div>`:''}
     <div class="acts three"><button class="act big" data-act="putt" data-v="miss"><b>Missed</b></button><button class="act big go" data-act="putt" data-v="made" style="grid-column:span 2"><b>Made it</b></button></div>
     <button class="lk" data-act="qs" style="align-self:center;margin-top:-6px">Lost count? Enter the score</button>`;
@@ -1649,7 +1649,7 @@ function holeCardHTML(G,opt){
         ${elev?`<p class="cd-s">${elev}</p>`:''}</div></div>
     ${hd.tip?`<p class="cd-tip">${esc(hd.tip)}</p>`:''}
     <section class="cd-green"><div class="cd-gh"><span class="cap">The green</span><span class="cd-s">${greenNote(G)}</span></div>
-      ${hd.gr?`<button class="cta sec" data-act="putt" data-id="${c.id}" data-nine="${G.nine}" data-n="${G.n}">Read a putt on this green</button>`:''}
+      ${hd.gr?`<button class="cta sec" data-act="pread" data-id="${c.id}" data-nine="${G.nine}" data-n="${G.n}">Read a putt on this green</button>`:''}
       ${gr?`<div class="cd-gw">${greenMapSVG(hd)}<ul>${gr.lines.map(l=>`<li>${l}</li>`).join('')}</ul></div>
       <p class="cd-s">Darker is lower; the arrow runs downhill, from high to low. Faster greens curve more, so on fast days aim farther out. Front is the end of the green nearest you, back is the far end; left and right are as you face the flag. Short means in front of the green, long means past it. Green speed isn’t published, so roll a few on the practice green.</p>`:''}</section>
   </div>`;
@@ -1818,7 +1818,7 @@ document.addEventListener('click',ev=>{
     case 'pages':{const g=$('gmOpen');if(g)g.click();break;}
     case 'cad':{const G=gHole(r,i);if(G){S.cadHole=[G.nine,G.n];S.sheet='cad';renderSheet();}break;}
     case 'cadhole':S.cadHole=[b.dataset.nine,+b.dataset.n];S.sheet='cad';renderSheet();break;
-    case 'putt':{if(b.dataset.id)openPutt(b.dataset.id,b.dataset.nine,+b.dataset.n);else{const G=gHole(r,i);if(G)openPutt(G.c.id,G.nine,G.n);}break;}
+    case 'pread':{if(b.dataset.id)openPutt(b.dataset.id,b.dataset.nine,+b.dataset.n);else{const G=gHole(r,i);if(G)openPutt(G.c.id,G.nine,G.n);}break;}
     case 'pmode':if(S.putt){S.putt.mode=b.dataset.v;renderSheet();}break;
     case 'pspeed':if(S.putt){S.putt.speed=b.dataset.v;renderSheet();}break;
     case 'cadcourse':{const v=b.dataset.v;S.cadId=v;if(S.cad.id!==v){S.cad={id:v};saveCad();}render();window.scrollTo(0,0);break;}
