@@ -457,6 +457,26 @@ table.dt{width:100%;border-collapse:collapse;font-size:var(--t-small);font-varia
 .sheet .seg button small{display:block;font-size:var(--t-micro);font-weight:500;color:var(--c-muted)}
 .maphint.preadbtn{pointer-events:auto;border:0;cursor:pointer;min-height:32px}
 .seg button{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+/* Hole pager on Play: arrows either side, the middle opens the list of holes */
+.hpager{display:flex;align-items:stretch;flex:none;height:var(--h-ctl);padding:2px;gap:2px;border-radius:var(--r-m);background:var(--c-fill)}
+.hp-a{width:34px;flex:none;border:0;background:transparent;color:var(--c-ink);display:grid;place-items:center;border-radius:calc(var(--r-m) - 2px);cursor:pointer;padding:0}
+.hp-a .chevr{width:17px;height:17px;stroke:currentColor;stroke-width:2.4}
+.hp-a:disabled{opacity:.25;cursor:default}
+.hp-a.sq{width:32px;height:32px;border-radius:50%;background:var(--c-fill);color:var(--c-ink)}
+.hp-a.sq .chevr{width:15px;height:15px}
+.hpager .hd-hole{flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:48px;padding:0 6px;background:var(--c-surface);border-radius:calc(var(--r-m) - 2px);box-shadow:var(--c-shadow)}
+.hpager .hd-hole b{font:800 21px/1 var(--f-num);letter-spacing:-.02em}
+.hp-c{display:flex;align-items:center;gap:1px;font:700 9.5px/1 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--c-muted)}
+.hp-c .chev{width:10px;height:10px;margin:0;stroke-width:2.6}
+.hd-pill{border:0;cursor:pointer}
+.hd-par{margin-left:auto;display:flex;align-items:center;gap:6px;flex:none}
+.hd-par .cap{font:700 9.5px/1 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--c-muted)}
+.hd-par .seg{margin-left:0}
+.hd .seg.par button{min-width:36px;padding:0 6px;font-variant-numeric:tabular-nums}
+.golive{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:36px;padding:6px 12px;border:0;border-radius:var(--r-m);background:var(--c-warn-soft);color:var(--c-ink);font:500 var(--t-cap)/1.3 var(--f-ui);text-align:left;cursor:pointer}
+.golive b{color:var(--c-warn);font-weight:700;white-space:nowrap}
+.sh-nav{display:flex;align-items:center;gap:6px;flex:none}
+.card-thru{font:600 var(--t-cap) var(--f-ui);color:var(--c-muted);letter-spacing:0}
 /* Press feedback: a small, quick dip, not a squash */
 html button:active{transform:scale(.975)}
 html .cd-btn:active{transform:none}
@@ -717,7 +737,8 @@ const IC={undo:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 4.5 11
   x:'<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9"/></svg>',
   flag:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V3.5"/><path d="M6.6 4h10.6l-2.6 4 2.6 4H6.6"/></svg>',
   ruler:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16M4 8v8M20 8v8"/><path d="M8 12v-2.5M12 12V9M16 12v-2.5"/></svg>',
-  chevR:'<svg class="chevr" viewBox="0 0 18 18" aria-hidden="true"><path d="M7 4.5 11.5 9 7 13.5"/></svg>'};
+  chevR:'<svg class="chevr" viewBox="0 0 18 18" aria-hidden="true"><path d="M7 4.5 11.5 9 7 13.5"/></svg>',
+  chevL:'<svg class="chevr" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 4.5 6.5 9 11 13.5"/></svg>'};
 
 function lieFor(p){return p==='T'?'tee':(['L','R','Ro','X'].includes(p)?'rough':'fw');}
 function defCond(h){return{w:'calm',l:lieFor(pos(h)),s:'flat'};}
@@ -1075,6 +1096,7 @@ function editingText(){const a=document.activeElement;return a&&a.tagName==='INP
 
 /* ---------- stats ---------- */
 function holeDone(h){return h.s!=null;}
+function liveHole(r){let j=-1;r.h.forEach((x,k)=>{if(x.s!=null||(x.sh||[]).length)j=k;});if(j<0)return 0;return holeDone(r.h[j])&&j<r.h.length-1?j+1:j;}
 function roundStats(r){
   const o={score:0,par:0,n:0,putts:0,puttHoles:0,three:0,threeH:0,one:0,fwHit:0,fwTries:0,gir:0,girTries:0,pen:0,extraShort:0,topped:0,scrTries:0,scrMade:0,dbl:0,
     udTries:0,udMade:0,ssTries:0,ssMade:0,trN:0,trOk:0,gsN:0,gsOn:0,chN:0,chOn:0,teeBad:0,
@@ -1159,7 +1181,13 @@ function mapSVG(h,mode,kk){
     <g class="deco"><circle class="cup" cx="188" cy="${Y(72)}" r="3"/><path class="pin" d="M188 ${Y(72)}v-26"/><path class="flag" d="M188.7 ${Y(72)-25.5}l12 4-12 4z"/></g>
     ${live?(()=>{const lim=backY!=null?backY:VH,fy=Math.min(Y(268),lim-Y(42)),ry=Math.min(Y(190),lim-Y(42)),ty=Math.min(Y(250),lim-Y(50));/* labels sit clear of the ball */
       /* a label never sits under the ball: it steps sideways out of the way */
-      const L=(x,y,n,rot)=>{if(!rot&&!done){const w=n.length*7.4+14;if(Math.abs(x-cu[0])<w/2+14&&Math.abs(y-cu[1])<22){x=cu[0]<x?cu[0]+w/2+18:cu[0]-w/2-18;x=Math.max(w/2+4,Math.min(336-w/2,x));}}return pill(x,y,n,rot);};
+      /* labels never sit under the ball or on each other: try the spot, then beside the ball, then above it, else leave it off */
+      const box=[];if(!done)box.push([cu[0]-14,cu[1]-14,cu[0]+14,cu[1]+14]);
+      const hit=b=>box.some(o=>b[0]<o[2]+4&&b[2]>o[0]-4&&b[1]<o[3]+3&&b[3]>o[1]-3);
+      const L=(x,y,n,rot)=>{const w=n.toUpperCase().length*7.4+14,hw=rot?9:w/2,hh=rot?w/2:9;
+        const cands=rot?[[x,y],[x,y-Y(40)],[x,y+Y(30)]]:[[x,y],[cu[0]+w/2+20,y],[cu[0]-w/2-20,y],[x,y-Y(26)]];
+        for(const [cx,cy] of cands){const X=Math.max(hw+3,Math.min(337-hw,cx)),b=[X-hw,cy-hh,X+hw,cy+hh];if(cy-hh<0||cy+hh>VH||hit(b))continue;box.push(b);return pill(X,cy,n,rot);}
+        return '';};
       let t=L(152,Y(90),'Green')+L(170,Y(134),'Near the green')+L(80,Y(98),'Bunker')+L(262,Y(56),'Bunker');
       if(!nearG){if(fy>=Y(170))t+=L(170,fy,'Fairway');if(Y(242)<=lim)t+=L(236,Y(228),'Bunker');if(ry>=Y(160))t+=L(74,ry,'Rough')+L(266,ry,'Rough');if(ty>=Y(60))t+=L(18,ty,'Trees',1)+L(322,ty,'Trees',1);}
       return t;})():''}
@@ -1195,8 +1223,14 @@ function fitMap(){
 
 /* ---------- views ---------- */
 function setView(v){S.view=v;if(location.hash!=='#'+v)history.replaceState(null,'','#'+v);render();window.scrollTo(0,0);}
+/* Keep the screen on while a round is open on Play, so the phone doesn't lock between shots (released anywhere else) */
+let wakeL=null,wakeAsk=false;
+function wakeWant(){const r=S.rounds[S.cur];return S.view==='play'&&!!r&&r.status!=='done'&&document.visibilityState==='visible';}
+async function wakeSync(){if(!('wakeLock' in navigator))return;
+  if(wakeWant()){if(wakeL||wakeAsk)return;wakeAsk=true;try{wakeL=await navigator.wakeLock.request('screen');wakeL.addEventListener('release',()=>{wakeL=null;});if(!wakeWant()){const l=wakeL;wakeL=null;l.release();}}catch(e){wakeL=null;}wakeAsk=false;}
+  else if(wakeL){const l=wakeL;wakeL=null;try{await l.release();}catch(e){}}}
 function render(){
-  document.body.dataset.view=S.view;
+  document.body.dataset.view=S.view;wakeSync();
   if(gpsOn()){if(S.view==='play'&&document.visibilityState!=='hidden')gpsStart();else gpsStop();const d=$('gpsdot');if(d)d.innerHTML=S.view==='play'?gpsDotHTML():'';}
   [['play','play'],['caddy','caddy'],['rounds','rounds'],['stats','stats']].forEach(([v,id])=>{const b=$('tab-'+id);if(b)b.setAttribute('aria-current',(S.view===v||(v==='rounds'&&S.view==='summary'))?'page':'false');});
   const m=$('main');
@@ -1230,12 +1264,18 @@ function viewPlay(){
   else if(p==='P')body=dropHTML(h);
   else if(p==='G')body=puttHTML(h);
   else body=shotHTML(r,i,h);
-  const tp=o.n?`<span class="hd-pill${o.score-o.par<0?' u':''}"><b class="num">${vsPar(o.score-o.par)}</b> thru ${o.n}</span>`:'';
+  const tp=o.n?`<button class="hd-pill${o.score-o.par<0?' u':''}" data-act="card" aria-haspopup="dialog" aria-label="${vsPar(o.score-o.par)} through ${o.n}. Show the scorecard"><b class="num">${vsPar(o.score-o.par)}</b> thru ${o.n}</button>`:'';
+  const n=r.h.length,live=liveHole(r),no=holeNo(r,i);
+  const back=i!==live&&r.status!=='done'?`<button class="golive" data-act="hole" data-v="${live}"><span>Looking at hole ${no}. You're playing hole ${holeNo(r,live)}.</span><b>Back to it ›</b></button>`:'';
   return `<div class="play"><header class="hd">
-      <button class="hd-hole" data-act="holes" aria-haspopup="dialog" aria-label="Hole ${holeNo(r,i)}. Show all holes"><span class="hd-t">Hole ${holeNo(r,i)}${IC.chev}</span></button>
+      <div class="hpager" role="group" aria-label="Hole">
+        <button class="hp-a" data-act="hole" data-v="${i-1}" aria-label="Previous hole"${i<=0?' disabled':''}>${IC.chevL}</button>
+        <button class="hd-hole" data-act="holes" aria-haspopup="dialog" aria-label="Hole ${no}. Show all holes"><span class="hp-c">Hole${IC.chev}</span><b class="num">${no}</b></button>
+        <button class="hp-a" data-act="hole" data-v="${i+1}" aria-label="Next hole"${i>=n-1?' disabled':''}>${IC.chevR}</button>
+      </div>
       ${tp}<span class="sdot" id="sdot" aria-hidden="true"></span>
-      <div class="seg par" role="group" aria-label="Par">${[3,4,5].map(v=>`<button data-act="par" data-v="${v}" aria-pressed="${h.par===v}" aria-label="Par ${v}">${h.par===v?'Par '+v:v}</button>`).join('')}</div>
-    </header>${body}</div>`;
+      <div class="hd-par"><span class="cap">Par</span><div class="seg par" role="group" aria-label="Par">${[3,4,5].map(v=>`<button data-act="par" data-v="${v}" aria-pressed="${h.par===v}" aria-label="Par ${v}">${v}</button>`).join('')}</div></div>
+    </header>${back}${body}</div>`;
 }
 function strip(n,title,sub,h,opt){
   opt=opt||{};const any=(h.sh||[]).length;
@@ -1311,7 +1351,18 @@ function renderSheet(){
   else if(S.sheet==='export')b.innerHTML=exportHTML();
   else if(S.sheet==='cad')b.innerHTML=cadHoleSheet();
   else if(S.sheet==='putt')b.innerHTML=puttSheetHTML();
+  else if(S.sheet==='card')b.innerHTML=cardHTML(r);
   w.hidden=false;
+}
+function cardHTML(r){
+  const o=roundStats(r),d=o.score-o.par;
+  return `${sheetHead(`${esc(r.course||'Round')} · ${esc(fmtDate(r.date))}`,o.n?`<span class="num">${o.score}</span> <span class="pillx ${toneCls(Math.sign(d)*Math.min(2,Math.abs(d)))}">${vsPar(d)}</span> <small class="card-thru">thru ${o.n}</small>`:'Scorecard')}
+    <section class="box">${scorecardHTML(r)}</section>
+    <div class="bento">
+      <div class="tile"><span class="num">${pct(o.fwHit,o.fwTries)}</span><span>Fairways</span></div>
+      <div class="tile"><span class="num">${pct(o.gir,o.girTries)}</span><span>Greens in regulation</span></div>
+      <div class="tile"><span class="num">${o.puttHoles?o.putts:'–'}</span><span>Putts</span></div>
+      <div class="tile"><span class="num">${o.pen||0}</span><span>Penalty strokes</span></div></div>`;
 }
 function sheetHead(cap,title){return `<div class="sh-h"><div><span class="cap">${cap}</span><h2 class="t2">${title}</h2></div><button class="x" data-act="close" aria-label="Close">${IC.x}</button></div>`;}
 function qsHTML(r,i,h){
@@ -1369,11 +1420,11 @@ function viewRounds(){
 }
 function scorecardHTML(r){
   const nine=(a,b,lab)=>{const hs=r.h.slice(a,b);if(!hs.length)return '';let ts=0,tp=0,tpu=0;
-    const sc=hs.map(h=>{if(h.s!=null)ts+=h.s;tp+=h.par;tpu+=h.putts||0;const d=h.s==null?null:h.s-h.par;return `<td>${h.s==null?'–':`<span class="mk ${markCls(d)}">${h.s}</span>`}</td>`;}).join('');
+    const sc=hs.map(h=>{if(h.s!=null){ts+=h.s;tpu+=h.putts||0;}tp+=h.par;const d=h.s==null?null:h.s-h.par;return `<td>${h.s==null?'–':`<span class="mk ${markCls(d)}">${h.s}</span>`}</td>`;}).join('');
     return `<div class="scw"><table class="sc"><thead><tr><th class="rl">Hole</th>${hs.map((h,k)=>`<th>${holeNo(r,a+k)}</th>`).join('')}<th>${lab}</th></tr></thead>
       <tbody><tr class="pr"><td class="rl">Par</td>${hs.map(h=>`<td>${h.par}</td>`).join('')}<td>${tp}</td></tr>
       <tr><td class="rl">Score</td>${sc}<td class="tt">${ts||'–'}</td></tr>
-      <tr class="pr"><td class="rl">Putts</td>${hs.map(h=>`<td>${h.putts==null?'–':h.putts}</td>`).join('')}<td>${tpu||'–'}</td></tr></tbody></table></div>`;};
+      <tr class="pr"><td class="rl">Putts</td>${hs.map(h=>`<td>${h.s==null||h.putts==null?'–':h.putts}</td>`).join('')}<td>${tpu||'–'}</td></tr></tbody></table></div>`;};
   return nine(0,9,'Out')+nine(9,18,'In');
 }
 function viewSummary(){
@@ -1717,8 +1768,18 @@ function cadHoleSheet(){
   const st=cadState();if(!st||!S.cadHole)return '';
   const {c,tee,temp,r}=st,[nine,n]=S.cadHole,hd=c.nines[nine]&&c.nines[nine][n-1];if(!hd)return '';
   const G={c,nine,n,hd,tee,r:r||{tee,temp}};
-  return `${sheetHead(`${esc(c.name)} · ${/^(front|back)$/i.test(nine)?nine+' 9':nine}`,`Hole ${hd.n||n}`)}${holeCardHTML(G,{big:true})}`;
+  const L=cadList(st),ix=L.findIndex(([a,b])=>a===nine&&b===n);
+  const nav=ix<0?'':`<button class="hp-a sq" data-act="cadstep" data-v="-1" aria-label="Previous hole"${ix<=0?' disabled':''}>${IC.chevL}</button><button class="hp-a sq" data-act="cadstep" data-v="1" aria-label="Next hole"${ix>=L.length-1?' disabled':''}>${IC.chevR}</button>`;
+  return `<div class="sh-h"><div><span class="cap">${esc(c.name)} · ${/^(front|back)$/i.test(nine)?nine+' 9':nine}</span><h2 class="t2">Hole ${hd.n||n}</h2></div><div class="sh-nav">${nav}<button class="x" data-act="close" aria-label="Close">${IC.x}</button></div></div>${holeCardHTML(G,{big:true})}`;
 }
+/* Flip through the holes in the sheet: arrows, or swipe left and right */
+function cadList(st){return(st.gn||[]).flatMap(nn=>(st.c.nines[nn]||[]).map((_,j)=>[nn,j+1]));}
+function cadStep(d){const st=cadState();if(!st||!S.cadHole)return;const L=cadList(st),ix=L.findIndex(([a,b])=>a===S.cadHole[0]&&b===S.cadHole[1]),k=ix+d;
+  if(ix<0||k<0||k>=L.length)return;S.cadHole=L[k];renderSheet();const sh=document.querySelector('#sheet .sheet');if(sh)sh.scrollTop=0;}
+(()=>{let x0=null,y0=0,t0=0;const w=()=>document.getElementById('sheet');
+  document.addEventListener('pointerdown',e=>{x0=S.sheet==='cad'&&w()&&w().contains(e.target)?e.clientX:null;y0=e.clientY;t0=Date.now();},{passive:true});
+  document.addEventListener('pointerup',e=>{if(x0==null)return;const dx=e.clientX-x0,dy=e.clientY-y0;x0=null;
+    if(Math.abs(dx)>70&&Math.abs(dy)<45&&Date.now()-t0<700){cadStep(dx<0?1:-1);const eat=ev=>{ev.stopPropagation();ev.preventDefault();};document.addEventListener('click',eat,{capture:true,once:true});setTimeout(()=>document.removeEventListener('click',eat,{capture:true}),350);}},{passive:true});})();
 /* New round: pick the nines (front, then back), tees and temperature from the guide */
 function saveCad(){try{localStorage.setItem('psc.cad',JSON.stringify(S.cad));}catch(e){}}
 function ngState(c,n){
@@ -1875,6 +1936,8 @@ document.addEventListener('click',ev=>{
     case 'del':{const id=b.dataset.id;if(S.confirmDel!==id){S.confirmDel=id;render();break;}
       S.confirmDel=null;delete S.rounds[id];pending.delete(id);pendingDel.add(id);if(S.cur===id)S.cur=null;saveLocal();clearTimeout(flushTimer);flushTimer=setTimeout(flush,300);syncLabel();setView('rounds');break;}
     case 'holes':S.sheet='holes';renderSheet();break;
+    case 'card':S.sheet='card';renderSheet();break;
+    case 'cadstep':cadStep(+b.dataset.v);break;
     case 'hole':S.hole=+b.dataset.v;S.sheet=null;saveLocal();renderSheet();render();window.scrollTo(0,0);break;
     case 'next':S.hole=Math.min(r.h.length-1,S.hole+1);saveLocal();render();window.scrollTo(0,0);break;
     case 'finish':r.status='done';S.sheet=null;renderSheet();touch(S.cur);setView('summary');break;
@@ -1940,6 +2003,7 @@ document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='hidden'&&(pending.size||pendingDel.size)){clearTimeout(flushTimer);flush();}
   if(document.visibilityState==='hidden')gpsStop();
   if(document.visibilityState==='visible'&&S.view==='play'&&!S.sheet&&!editingText())render();
+  wakeSync();
 });
 window.addEventListener('online',()=>{clearTimeout(flushTimer);flush();});
 let fitT=null;window.addEventListener('resize',()=>{clearTimeout(fitT);fitT=setTimeout(fitMap,120);});
