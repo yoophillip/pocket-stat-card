@@ -439,6 +439,21 @@ table.dt{width:100%;border-collapse:collapse;font-size:var(--t-small);font-varia
 .gm-hi{fill:var(--m-ball)}
 .gm-lab{fill:var(--c-muted);font:600 4.2px var(--f-ui)}
 .gm-tag{fill:var(--m-label);font:700 3.6px var(--f-ui);paint-order:stroke;stroke:var(--m-chip);stroke-width:1.1px}
+.pmapw{position:relative;border-radius:var(--r-l);overflow:hidden;background:var(--m-fringe);line-height:0}
+.pmap{display:block;width:100%;height:auto;max-height:46vh;touch-action:manipulation;cursor:crosshair}
+.pr-bg{fill:var(--m-rough)}
+.pm-you{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);line-height:1.2;font:600 var(--t-micro)/1.2 var(--f-ui);color:var(--m-label);background:var(--m-chip);padding:2px 8px;border-radius:999px;pointer-events:none}
+.pr-path{fill:none;stroke:var(--m-ball);stroke-width:.45;stroke-linecap:round}
+.pr-aim{fill:none;stroke:#EF9F27;stroke-width:.4;stroke-dasharray:.9 .7}
+.pr-aimdot{fill:none;stroke:#EF9F27;stroke-width:.35}
+.pr-cup{fill:#0B1A0C}
+.pr-flag{fill:#D33B2C;stroke:#0B1A0C;stroke-width:.2}
+.pr-ball{fill:#FFFFFF;stroke:#0B1A0C;stroke-width:.25}
+.prows{display:grid;gap:6px}
+.prow{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;align-items:baseline;padding:8px 12px;border-radius:var(--r-m);background:var(--c-surface);box-shadow:var(--c-shadow)}
+.prow b{font:600 var(--t-small)/1.4 var(--f-ui)}
+.sheet .seg button small{display:block;font-size:var(--t-micro);font-weight:500;color:var(--c-muted)}
+.maphint.preadbtn{pointer-events:auto;border:0;cursor:pointer;min-height:32px}
 /* caddy-css:end */
 </style>
 <style id="apple-skin">
@@ -951,7 +966,7 @@ function learnedDist(){
 function exportCode(){const rounds={};Object.entries(S.rounds).forEach(([id,r])=>{if(!r.example)rounds[id]=r;});return 'PSC1.'+btoa(unescape(encodeURIComponent(JSON.stringify({v:1,rounds}))));}
 function importCode(txt){const m=String(txt||'').replace(/\s+/g,'').match(/PSC1\.([A-Za-z0-9+/=]+)/);if(!m)return -1;let j;try{j=JSON.parse(decodeURIComponent(escape(atob(m[1]))));}catch(e){return -1;}
   let n=0;Object.entries(j.rounds||{}).forEach(([id,r])=>{if(!r||!Array.isArray(r.h)||!/^[A-Za-z0-9_-]{1,40}$/.test(id))return;const loc=S.rounds[id];if(!loc||(r.updated||0)>(loc.updated||0)){S.rounds[id]=r;touch(id);n++;}});return n;}
-const S={cad:{},cadId:null,ng:null,cadHole:null,rounds:{},cur:null,hole:0,view:'rounds',db:null,dbState:'loading',canWrite:true,confirmDel:null,sheet:null,qs:{s:null,p:null},newHoles:18,newCourse:'',staleOk:null,justTapped:false};
+const S={putt:null,cad:{},cadId:null,ng:null,cadHole:null,rounds:{},cur:null,hole:0,view:'rounds',db:null,dbState:'loading',canWrite:true,confirmDel:null,sheet:null,qs:{s:null,p:null},newHoles:18,newCourse:'',staleOk:null,justTapped:false};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -1224,7 +1239,7 @@ function dropHTML(h){
 function puttHTML(h){
   const c=strokesOf(h),k=(h.putts||0)+1,first=k===1;
   return `${strip(c.n+c.p+1,'On the green',first?'First putt':'Putt '+k,h)}
-    <div class="greenw fitg">${greenSVG(h)}</div>
+    <div class="greenw fitg" style="position:relative">${greenSVG(h)}${(()=>{const {r,i}=curHole(),G=r?gHole(r,i):null;return G&&G.hd.gr?`<button class="maphint preadbtn" data-act="putt">Read this putt ›</button>`:'';})()}</div>
     ${first?`<div class="pgrid" role="group" aria-label="First putt length, optional">${PUTT_LEN.map(([v,l])=>`<button class="pl" data-act="fp" data-v="${v}" aria-pressed="${h.fp===v}">${l}</button>`).join('')}</div>`:''}
     <div class="acts three"><button class="act big" data-act="putt" data-v="miss"><b>Missed</b></button><button class="act big go" data-act="putt" data-v="made" style="grid-column:span 2"><b>Made it</b></button></div>
     <button class="lk" data-act="qs" style="align-self:center;margin-top:-6px">Lost count? Enter the score</button>`;
@@ -1257,13 +1272,14 @@ function doneHTML(r,i,h){
 function renderSheet(){
   const w=$('sheet'),b=$('sheetBody');
   if(!S.sheet){w.hidden=true;b.innerHTML='';return;}
-  const {r,i,h}=curHole();if(!r&&S.sheet!=='import'&&S.sheet!=='export'&&S.sheet!=='cad'){S.sheet=null;w.hidden=true;return;}
+  const {r,i,h}=curHole();if(!r&&S.sheet!=='import'&&S.sheet!=='export'&&S.sheet!=='cad'&&S.sheet!=='putt'){S.sheet=null;w.hidden=true;return;}
   if(S.sheet==='qs')b.innerHTML=qsHTML(r,i,h);
   else if(S.sheet==='holes')b.innerHTML=holesHTML(r,i);
   else if(S.sheet==='plan')b.innerHTML=planHTML(r,i,h);
   else if(S.sheet==='import')b.innerHTML=importHTML();
   else if(S.sheet==='export')b.innerHTML=exportHTML();
   else if(S.sheet==='cad')b.innerHTML=cadHoleSheet();
+  else if(S.sheet==='putt')b.innerHTML=puttSheetHTML();
   w.hidden=false;
 }
 function sheetHead(cap,title){return `<div class="sh-h"><div><span class="cap">${cap}</span><h2 class="t2">${title}</h2></div><button class="x" data-act="close" aria-label="Close">${IC.x}</button></div>`;}
@@ -1617,6 +1633,7 @@ function holeCardHTML(G,opt){
         ${elev?`<p class="cd-s">${elev}</p>`:''}</div></div>
     ${hd.tip?`<p class="cd-tip">${esc(hd.tip)}</p>`:''}
     <section class="cd-green"><div class="cd-gh"><span class="cap">The green</span><span class="cd-s">${greenNote(G)}</span></div>
+      ${hd.gr?`<button class="cta sec" data-act="putt" data-id="${c.id}" data-nine="${G.nine}" data-n="${G.n}">Read a putt on this green</button>`:''}
       ${gr?`<div class="cd-gw">${greenMapSVG(hd)}<ul>${gr.lines.map(l=>`<li>${l}</li>`).join('')}</ul></div>
       <p class="cd-s">Darker is lower; the arrow runs downhill, from high to low. Faster greens curve more, so on fast days aim farther out. Front is the end of the green nearest you, back is the far end; left and right are as you face the flag. Short means in front of the green, long means past it. Green speed isn’t published, so roll a few on the practice green.</p>`:''}</section>
   </div>`;
@@ -1677,10 +1694,103 @@ function newGuideHTML(){
 /* The hole number on the course's own card (a round can start on 10) */
 function holeNo(r,i){const G=gHole(r,i);return G&&G.hd.n?G.hd.n:i+1;}
 function ordn(n){const t=n%100,e=n%10;return n+(t>10&&t<14?'th':e===1?'st':e===2?'nd':e===3?'rd':'th');}
+/* ---------- Putt reader: tap the flag and your ball on the real green, get the aim point and the pace ----------
+   Surface: the green's 1 m lidar grid (3 yd cells, cm). Slope near the putt comes from a plane fitted to the cells around
+   the line. The roll is simulated: green friction from the green speed (Stimpmeter feet), gravity from the slope
+   (a rolling ball feels 5/7 of it). We search the start direction and speed that roll the ball over the hole and
+   about 1½ ft past it. Directions are in the approach frame: x to the right, y away from you (yards). */
+const PSPEED={slow:[8,'Slow'],med:[10,'Medium'],fast:[12,'Fast']};
+function gSurf(hd){const g=hd.gr&&hd.gr.gz;return g?{x0:g.x0,y0:g.y0,st:g.st,nx:g.nx,ny:g.ny,v:g.v}:null;}
+function gCell(gs,i,j){return i<0||j<0||i>=gs.nx||j>=gs.ny?null:gs.v[j*gs.nx+i];}
+function gZ(gs,x,y){/* cm at a point, bilinear between cell centres */
+  const fx=(x-gs.x0)/gs.st-.5,fy=(y-gs.y0)/gs.st-.5,i=Math.floor(fx),j=Math.floor(fy),tx=fx-i,ty=fy-j;
+  const c=[[i,j,(1-tx)*(1-ty)],[i+1,j,tx*(1-ty)],[i,j+1,(1-tx)*ty],[i+1,j+1,tx*ty]];let z=0,w=0;
+  c.forEach(([a,b,k])=>{const v=gCell(gs,a,b);if(v!=null&&k>0){z+=v*k;w+=k;}});return w?z/w:null;}
+function gPlane(gs,a,b,hd){/* rise per run (x, y) from cells within 4 yd of the putt line; whole-green plane if too few */
+  const pts=[];for(let j=0;j<gs.ny;j++)for(let i=0;i<gs.nx;i++){const v=gCell(gs,i,j);if(v==null)continue;
+    const x=gs.x0+(i+.5)*gs.st,y=gs.y0+(j+.5)*gs.st,dx=b[0]-a[0],dy=b[1]-a[1],L=dx*dx+dy*dy||1,t=Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/L));
+    if(Math.hypot(x-a[0]-t*dx,y-a[1]-t*dy)<=4.5)pts.push([x,y,v]);}
+  if(pts.length<5){const f=hd.gr.fall,s=hd.gr.sl/100;return[-f[1]*s,-f[0]*s];}
+  let n=0,sx=0,sy=0,sz=0,sxx=0,syy=0,sxy=0,sxz=0,syz=0;pts.forEach(([x,y,z])=>{n++;sx+=x;sy+=y;sz+=z;sxx+=x*x;syy+=y*y;sxy+=x*y;sxz+=x*z;syz+=y*z;});
+  const mx=sx/n,my=sy/n,mz=sz/n,cxx=sxx/n-mx*mx,cyy=syy/n-my*my,cxy=sxy/n-mx*my,cxz=sxz/n-mx*mz,cyz=syz/n-my*mz,det=cxx*cyy-cxy*cxy;
+  if(Math.abs(det)<1e-6){const f=hd.gr.fall,s=hd.gr.sl/100;return[-f[1]*s,-f[0]*s];}
+  const gx=(cxz*cyy-cyz*cxy)/det,gy=(cyz*cxx-cxz*cxy)/det;return[gx*.01/.9144,gy*.01/.9144];}
+function rollPutt(b,ang,v0,slope,stimp,maxT){/* feet; returns path and stop point */
+  const af=36/(2*stimp),G=(5/7)*32.2,dt=.01;let x=b[0],y=b[1],vx=v0*Math.cos(ang),vy=v0*Math.sin(ang);const path=[[x,y]];
+  for(let t=0;t<(maxT||25);t+=dt){const v=Math.hypot(vx,vy);if(v<.05)break;
+    vx+=(-af*vx/v-G*slope[0])*dt;vy+=(-af*vy/v-G*slope[1])*dt;x+=vx*dt;y+=vy*dt;if(path.length<400&&Math.round(t*100)%3===0)path.push([x,y]);}
+  path.push([x,y]);return{path,stop:[x,y]};}
+function readPutt(hd,flag,ball,speed){/* flag, ball in yards (approach frame) */
+  const gs=gSurf(hd);if(!gs)return null;
+  const slope=gPlane(gs,ball,flag,hd),stimp=PSPEED[speed||'med'][0];
+  const B=[ball[0]*3,ball[1]*3],H=[flag[0]*3,flag[1]*3],dx=H[0]-B[0],dy=H[1]-B[1],d=Math.hypot(dx,dy);if(d<1)return null;
+  const base=Math.atan2(dy,dx),ux=dx/d,uy=dy/d;
+  /* how far along the line and how far to the side a roll ends up, relative to the hole */
+  const along=p=>(p[0]-B[0])*ux+(p[1]-B[1])*uy,side=p=>-(p[0]-B[0])*uy+(p[1]-B[1])*ux;
+  const speedFor=ang=>{let lo=.3,hi=40;for(let k=0;k<26;k++){const m=(lo+hi)/2,r=rollPutt(B,ang,m,slope,stimp);if(along(r.stop)<d+1.5)lo=m;else hi=m;}return(lo+hi)/2;};
+  const missAt=ang=>{const v=speedFor(ang),r=rollPutt(B,ang,v,slope,stimp);let best=null;
+    for(let k=1;k<r.path.length;k++){const p0=r.path[k-1],p1=r.path[k],a0=along(p0)-d,a1=along(p1)-d;if(a0<=0&&a1>=0){const t=a1===a0?0:-a0/(a1-a0);best=side(p0)+(side(p1)-side(p0))*t;break;}}
+    return{v,r,miss:best==null?side(r.stop):best};};
+  /* scan for a start direction where the miss changes side, then narrow it down */
+  let lo=null,hi=null,mLo=null,prev=null,res=null;
+  for(let a=-1.1;a<=1.1001;a+=.1){const m=missAt(base+a).miss;if(prev&&(m>0)!==(prev.m>0)&&Math.abs(m-prev.m)<30){if(lo==null||Math.abs(a-.05)<Math.abs((lo+hi)/2)){lo=prev.a;hi=a;mLo=prev.m;}}prev={a,m};}
+  if(lo==null)return{d,fail:true,riseIn:null};
+  for(let k=0;k<26;k++){const m=(lo+hi)/2,o=missAt(base+m);res=Object.assign(o,{ang:m});if(Math.abs(o.miss)<.02)break;if((o.miss>0)===(mLo>0)){lo=m;mLo=o.miss;}else hi=m;}
+  if(Math.abs(res.miss)>.4)return{d,fail:true,riseIn:null};
+  const aimIn=Math.tan(res.ang)*d*12,flatFt=res.v*res.v/(2*36/(2*stimp))-1.5,zb=gZ(gs,ball[0],ball[1]),zh=gZ(gs,flag[0],flag[1]);
+  return{d,aimIn,flatFt,riseIn:zb!=null&&zh!=null?(zh-zb)/2.54:null,path:res.r.path,slope,stimp,ang:res.ang};}
+function puttWords(rp,hd){
+  if(rp.fail)return[{k:'Putt',v:`${Math.round(rp.d)} ft`},{k:'Read',v:'Too steep or bumpy to read from here: no line keeps the ball near the hole. Just roll it to finish below the hole, then make the short uphill one.'}];
+  const ft=Math.round(rp.d),hw=Math.abs(rp.aimIn)/4.25,side=rp.aimIn>0?'left':'right',out=[],ai=Math.abs(rp.aimIn),amt=ai<24?`${Math.round(ai)} in`:`${Math.round(ai/6)/2} ft`;
+  /* aimIn > 0 means the start line turns left of the hole as you face it (counter-clockwise) */
+  const rise=rp.riseIn==null?null:Math.round(rp.riseIn*2)/2;
+  out.push({k:'Putt',v:`${ft} ft, ${rise==null||Math.abs(rise)<.5?'about level':rise>0?`uphill (rises ${Math.abs(rise)} in)`:`downhill (drops ${Math.abs(rise)} in)`}`});
+  out.push({k:'Aim',v:ai<1.5?'straight at the hole: it barely curves':`${amt} ${side} of the hole, looking from your ball${hw<12?` (${hw<.75?'about the edge':hw<1.25?'about 1 hole-width':`about ${Math.round(hw*2)/2} hole-widths`})`:''}. It curves ${side==='left'?'right':'left'} into the hole: follow the orange line.`});
+  const fl=Math.max(1,Math.round(rp.flatFt));
+  if(hd&&hd.gr&&hd.gr.relief>=30)out.push({k:'Note',v:'This green has big humps or tiers, so the read is rough: trust your eyes on the tier line.'});
+  out.push({k:'Pace',v:Math.abs(fl-ft)<=1?`a normal ${ft}-foot stroke, rolling about 1½ ft past if it misses`:`hit it like a ${fl}-foot putt on flat ground${fl<ft?': it rolls fast':': it needs more push'}`});
+  return out;}
+function puttSVG(hd,st){
+  const gr=hd.gr;if(!gr||!gr.g)return '';
+  const pts=[];for(let i=0;i<gr.g.length;i+=2)pts.push([gr.g[i],-gr.g[i+1]]);
+  const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),pad=3,x0=Math.min(...xs)-pad,y0=Math.min(...ys)-pad,W=Math.max(...xs)-x0+pad,H=Math.max(...ys)-y0+pad;
+  const X=x=>(x-x0).toFixed(2),Y=y=>(-y-y0).toFixed(2),id='pc'+(hd.n||0);
+  const d=pts.map((p,i)=>(i?'L':'M')+(p[0]-x0).toFixed(2)+' '+(p[1]-y0).toFixed(2)).join('')+'Z';
+  const v=gr.gz.v.filter(x=>x!=null),lo=Math.min(...v),hi=Math.max(...v),rng=Math.max(8,hi-lo);let cells='';
+  for(let j=0;j<gr.gz.ny;j++)for(let i=0;i<gr.gz.nx;i++){const z=gr.gz.v[j*gr.gz.nx+i];if(z==null)continue;cells+=`<rect x="${X(gr.gz.x0+i*gr.gz.st)}" y="${Y(gr.gz.y0+(j+1)*gr.gz.st)}" width="${gr.gz.st+.15}" height="${gr.gz.st+.15}" fill-opacity="${(.5*(hi-z)/rng).toFixed(2)}"/>`;}
+  const f=st.flag,b=st.ball,rp=b?readPutt(hd,f,b,st.speed):null;
+  let over='';
+  if(rp&&!rp.fail){const aimPt=[b[0]+(f[0]-b[0])*Math.cos(rp.ang)-(f[1]-b[1])*Math.sin(rp.ang),b[1]+(f[0]-b[0])*Math.sin(rp.ang)+(f[1]-b[1])*Math.cos(rp.ang)];
+    over+=`<path class="pr-path" d="${rp.path.map((p,i)=>(i?'L':'M')+X(p[0]/3)+' '+Y(p[1]/3)).join('')}"/>`;
+    over+=`<path class="pr-aim" d="M${X(b[0])} ${Y(b[1])}L${X(aimPt[0])} ${Y(aimPt[1])}"/><circle class="pr-aimdot" cx="${X(aimPt[0])}" cy="${Y(aimPt[1])}" r=".9"/>`;}
+  over+=`<circle class="pr-cup" cx="${X(f[0])}" cy="${Y(f[1])}" r=".7"/><path class="pr-flag" d="M${X(f[0])} ${Y(f[1])}v-4.2l2.6 .9-2.6 .9"/>`;
+  if(b)over+=`<circle class="pr-ball" cx="${X(b[0])}" cy="${Y(b[1])}" r=".85"/>`;
+  return{svg:`<svg id="puttsvg" class="pmap" viewBox="0 0 ${W.toFixed(1)} ${H.toFixed(1)}" data-x0="${x0.toFixed(2)}" data-y0="${y0.toFixed(2)}" role="img" aria-label="Green. Tap to place your ball or the flag.">
+    <defs><clipPath id="${id}"><path d="${d}"/></clipPath><filter id="${id}b" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="1.1"/></filter></defs><rect x="0" y="0" width="${W.toFixed(1)}" height="${H.toFixed(1)}" class="pr-bg"/>
+    <path class="gm-g" d="${d}"/><g class="gm-sh" clip-path="url(#${id})"><g filter="url(#${id}b)" shape-rendering="crispEdges">${cells}</g></g><path class="gm-edge" d="${d}"/>${over}</svg>`,rp};
+}
+function puttSheetHTML(){
+  const st=S.putt;if(!st)return '';const c=GUIDES[st.id],hd=c&&c.nines[st.nine]&&c.nines[st.nine][st.n-1];if(!hd||!hd.gr)return '';
+  const out=puttSVG(hd,st),rows=out.rp?puttWords(out.rp,hd):null;
+  return `${sheetHead(`${esc(c.name)} · hole ${hd.n}`,'Read a putt')}
+    <div class="seg" role="group" aria-label="What a tap places"><button data-act="pmode" data-v="ball" aria-pressed="${st.mode==='ball'}">Tap places: ball</button><button data-act="pmode" data-v="flag" aria-pressed="${st.mode==='flag'}">Tap places: flag</button></div>
+    <div class="pmapw">${out.svg}<span class="pm-you">you came from here ↑</span></div>
+    ${rows?`<div class="prows">${rows.map(r=>`<div class="prow"><span class="cap">${r.k}</span><b>${r.v}</b></div>`).join('')}</div>`
+      :`<p class="sub">${st.ball?'Move the ball a bit farther from the flag.':'Tap where your ball is. If the flag isn’t in the middle, switch to “flag” and tap where it is.'}</p>`}
+    <div class="seg" role="group" aria-label="Green speed">${Object.entries(PSPEED).map(([k,[sv,l]])=>`<button data-act="pspeed" data-v="${k}" aria-pressed="${(st.speed||'med')===k}">${l}<small>Stimp ${sv}</small></button>`).join('')}</div>
+    <p class="cd-s">A starting read from 1 m lidar and a green-speed guess: check it with your eyes, and roll a few on the practice green to pick the speed. Darker is lower.</p>`;
+}
+function openPutt(id,nine,n){const prev=S.putt&&S.putt.id===id&&S.putt.nine===nine&&S.putt.n===n?S.putt:null;S.putt=prev||{id,nine,n,flag:[0,0],ball:null,mode:'ball',speed:(S.putt&&S.putt.speed)||'med'};S.sheet='putt';renderSheet();}
+function puttTap(ev,svg){
+  const pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const m=svg.getScreenCTM();if(!m)return;const q=pt.matrixTransform(m.inverse());
+  const x=q.x+(+svg.dataset.x0),y=-(q.y+(+svg.dataset.y0)),st=S.putt;if(!st)return;
+  if(st.mode==='flag'){st.flag=[x,y];st.mode='ball';}else st.ball=[x,y];renderSheet();
+}
 /* caddy:end */
 /* ---------- actions ---------- */
 function tapped(h,msg){S.justTapped=true;S.staleOk=null;if(!isQuick(h))derive(h);touch(S.cur);render();S.justTapped=false;toast(msg,true);}
 document.addEventListener('click',ev=>{
+  const ps=ev.target.closest('#puttsvg');if(ps){puttTap(ev,ps);return;}
   const go=ev.target.closest('[data-go]');if(go){S.sheet=null;renderSheet();setView(go.dataset.go);return;}
   const b=ev.target.closest('[data-act]');if(!b)return;
   const act=b.dataset.act,{r,i,h}=curHole();
@@ -1691,6 +1801,9 @@ document.addEventListener('click',ev=>{
     case 'pages':{const g=$('gmOpen');if(g)g.click();break;}
     case 'cad':{const G=gHole(r,i);if(G){S.cadHole=[G.nine,G.n];S.sheet='cad';renderSheet();}break;}
     case 'cadhole':S.cadHole=[b.dataset.nine,+b.dataset.n];S.sheet='cad';renderSheet();break;
+    case 'putt':{if(b.dataset.id)openPutt(b.dataset.id,b.dataset.nine,+b.dataset.n);else{const G=gHole(r,i);if(G)openPutt(G.c.id,G.nine,G.n);}break;}
+    case 'pmode':if(S.putt){S.putt.mode=b.dataset.v;renderSheet();}break;
+    case 'pspeed':if(S.putt){S.putt.speed=b.dataset.v;renderSheet();}break;
     case 'cadcourse':{const v=b.dataset.v;S.cadId=v;if(S.cad.id!==v){S.cad={id:v};saveCad();}render();window.scrollTo(0,0);break;}
     case 'cadnine':{const st=cadState();if(!st||st.r)break;let gn=st.gn.slice();const v=b.dataset.v;gn=gn.includes(v)?(gn.length>1?gn.filter(x=>x!==v):gn):gn.concat(v).slice(-2);S.cad=Object.assign({},S.cad,{id:st.c.id,gn});saveCad();render();break;}
     case 'cadtee':case 'cadtemp':{const st=cadState();if(!st)break;const k=act==='cadtee'?'tee':'temp';
