@@ -342,6 +342,7 @@ ol.stp li small{color:var(--c-muted);font-size:var(--t-cap);white-space:nowrap}
 .hero .big{font:800 var(--t-num-l)/1 var(--f-num);letter-spacing:-.03em}
 .hero .big small{font:600 var(--t-small) var(--f-ui);letter-spacing:0;margin-left:6px;color:var(--c-muted)}
 .hero p{margin:0;font-size:var(--t-body);line-height:1.45}
+.hero .why3{padding-top:8px;margin-top:2px;border-top:1px solid var(--c-hair);font-size:var(--t-small);color:var(--c-ink)}.hero .why3 b{font-weight:700}
 .vs{display:flex;flex-direction:column;gap:14px}
 .vs-r{display:flex;flex-direction:column;gap:6px}
 .vs-l{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:var(--t-small)}
@@ -1037,11 +1038,11 @@ function isQuick(h){return !!h.quick||(!h.sh&&h.s!=null);}
 function prevFrom(h){let from='T',last='T';(h.sh||[]).forEach(e=>{if(e.drop){from=e.drop;return;}last=from;from=e.to;});return last;}
 function lastT(h){const a=h.sh||[];for(let j=a.length-1;j>=0;j--)if(a[j].t)return a[j].t;return 0;}
 function derive(h){
-  let from='T',n=0,pen=0,putts=0,chip=0,sand=0,girAt=null,teeTo=null,club=null,sg=null,sgGS=false,trN=0,trOk=0,gsN=0,gsOn=0,chN=0,chOn=0,pickOn=null;
+  let from='T',n=0,pen=0,putts=0,chip=0,sand=0,girAt=null,teeTo=null,club=null,sg=null,sgGS=false,trN=0,trOk=0,gsN=0,gsOn=0,chN=0,chOn=0,pickOn=null,fm=null;const pm=[0,0];
   (h.sh||[]).forEach(e=>{
     if(e.drop){from=e.drop;return;}
     n++;const to=e.to,on=to==='G'||to==='H';
-    if(from==='G')putts++;
+    if(from==='G'){putts++;if(to==='G'&&(e.m==='p'||e.m==='s')){pm[e.m==='p'?0:1]++;if(putts===1)fm=e.m;}}
     else if(from==='N'){chip++;chN++;if(on)chOn++;}
     else if(from==='GS'){sand++;gsN++;if(on)gsOn++;}
     if((from==='N'||from==='GS')&&sg==null&&girAt==null){sg=n-1+pen;sgGS=from==='GS';}
@@ -1057,7 +1058,7 @@ function derive(h){
   h.tee=h.par>=4&&teeTo?(TEEMAP[teeTo]||null):null;h.club=h.par>=4?club:null;
   h.gir=done?(girAt!=null&&girAt<=h.par-2):null;
   h.ud=done&&sg!=null?(n+pen-sg<=2):null;h.udGS=sgGS;
-  h.tr=[trN,trOk];h.gs=[gsN,gsOn];h.ch=[chN,chOn];h.pickOn=pickOn;
+  h.tr=[trN,trOk];h.gs=[gsN,gsOn];h.ch=[chN,chOn];h.pickOn=pickOn;h.pm=pm;h.fm=fm;
 }
 
 /* ---------- local copy (works with no signal on the course) ---------- */
@@ -1116,7 +1117,7 @@ function liveHole(r){let j=-1;r.h.forEach((x,k)=>{if(x.s!=null||(x.sh||[]).lengt
 function roundStats(r){
   const o={score:0,par:0,n:0,putts:0,puttHoles:0,three:0,threeH:0,one:0,fwHit:0,fwTries:0,gir:0,girTries:0,pen:0,extraShort:0,topped:0,scrTries:0,scrMade:0,dbl:0,
     udTries:0,udMade:0,ssTries:0,ssMade:0,trN:0,trOk:0,gsN:0,gsOn:0,chN:0,chOn:0,teeBad:0,
-    tee:{fw:0,left:0,right:0,sand:0,trouble:0,short:0,pen:0},miss:{short:0,long:0,left:0,right:0},parType:{3:[0,0],4:[0,0],5:[0,0]},fp:{},teeClub:{}};
+    tee:{fw:0,left:0,right:0,sand:0,trouble:0,short:0,pen:0},miss:{short:0,long:0,left:0,right:0},parType:{3:[0,0],4:[0,0],5:[0,0]},fp:{},teeClub:{},pm:{p:0,s:0},tp:{p:0,s:0}};
   const BADTEE=['pen','short','trouble','sand'];
   r.h.forEach(h=>{
     if(!holeDone(h))return;
@@ -1124,7 +1125,9 @@ function roundStats(r){
     if(h.s-h.par>=2)o.dbl++;
     o.pen+=h.pen||0;
     if(h.putts!=null){o.putts+=h.putts;o.puttHoles++;if(h.putts>=3){o.three+=h.putts-2;o.threeH++;}if(h.putts===1)o.one++;
-      if(h.fp){const b=o.fp[h.fp]||(o.fp[h.fp]={holes:0,putts:0,three:0});b.holes++;b.putts+=h.putts;if(h.putts>=3)b.three++;}}
+      if(h.pm){o.pm.p+=h.pm[0];o.pm.s+=h.pm[1];}
+      if(h.fm&&h.putts>=3)o.tp[h.fm]++;
+      if(h.fp){const b=o.fp[h.fp]||(o.fp[h.fp]={holes:0,putts:0,three:0,p:0,s:0});b.holes++;b.putts+=h.putts;if(h.putts>=3)b.three++;if(h.fm)b[h.fm]++;}}
     if(h.ud!=null){o.udTries++;if(h.ud)o.udMade++;if(h.udGS){o.ssTries++;if(h.ud)o.ssMade++;}}
     if(h.tr){o.trN+=h.tr[0];o.trOk+=h.tr[1];}
     if(h.gs){o.gsN+=h.gs[0];o.gsOn+=h.gs[1];}
@@ -1142,7 +1145,8 @@ function sumStats(list){
     'udTries','udMade','ssTries','ssMade','trN','trOk','gsN','gsOn','chN','chOn','teeBad'].forEach(k=>t[k]+=o[k]);
     Object.keys(o.tee).forEach(k=>t.tee[k]+=o.tee[k]);Object.keys(o.miss).forEach(k=>t.miss[k]+=o.miss[k]);
     [3,4,5].forEach(p=>{t.parType[p][0]+=o.parType[p][0];t.parType[p][1]+=o.parType[p][1];});
-    Object.entries(o.fp).forEach(([k,b])=>{const x=t.fp[k]||(t.fp[k]={holes:0,putts:0,three:0});x.holes+=b.holes;x.putts+=b.putts;x.three+=b.three;});
+    ['p','s'].forEach(k=>{t.pm[k]+=o.pm[k];t.tp[k]+=o.tp[k];});
+    Object.entries(o.fp).forEach(([k,b])=>{const x=t.fp[k]||(t.fp[k]={holes:0,putts:0,three:0,p:0,s:0});x.holes+=b.holes;x.putts+=b.putts;x.three+=b.three;x.p+=b.p;x.s+=b.s;});
     Object.entries(o.teeClub).forEach(([k,b])=>{const x=t.teeClub[k]||(t.teeClub[k]={n:0,fw:0,bad:0});x.n+=b.n;x.fw+=b.fw;x.bad+=b.bad;});});
   return t;
 }
@@ -1215,7 +1219,10 @@ function mapSVG(h,mode,kk){
 function greenSVG(h){
   /* the whole green always shows (no cropping when the box gets taller): rough all round, then fringe, then the green */
   const k=h.putts||0,P=[[92,122],[196,104],[222,94],[232,91],[236,90]];
-  const b=P[Math.min(k,P.length-1)],prev=P.slice(0,Math.min(k,P.length-1)+1);
+  /* a putt tagged Past is drawn beyond the cup (mirrored through it) */
+  const ms=[];{let from='T';(h.sh||[]).forEach(e=>{if(e.drop){from=e.drop;return;}if(from==='G'&&e.to==='G')ms.push(e.m||'');from=e.to;});}
+  const prev=[P[0]];for(let j=1;j<=Math.min(k,P.length-1);j++){const q=P[j];prev.push(ms[j-1]==='p'?[480-q[0],180-q[1]]:q);}
+  const b=prev[prev.length-1];
   const pop=S.justTapped?' pop':'';
   return `<svg class="map" viewBox="0 0 340 200" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${k?k+' putts missed so far':'On the green'}">
     <rect class="m-rough" x="-600" y="-600" width="1540" height="1400"/>
@@ -1329,7 +1336,7 @@ function puttHTML(h){
   return `${strip(c.n+c.p+1,'On the green',first?'First putt':'Putt '+k,h)}
     <div class="greenw fitg" style="position:relative">${greenSVG(h)}${(()=>{const {r,i}=curHole(),G=r?gHole(r,i):null;return G&&G.hd.gr?`<button class="maphint preadbtn" data-act="pread">Read this putt ›</button>`:'';})()}</div>
     ${first?`<div class="pgrid" role="group" aria-label="First putt length, optional">${PUTT_LEN.map(([v,l])=>`<button class="pl" data-act="fp" data-v="${v}" aria-pressed="${h.fp===v}">${l}</button>`).join('')}</div>`:''}
-    <div class="acts three"><button class="act big" data-act="putt" data-v="miss"><b>Missed</b></button><button class="act big go" data-act="putt" data-v="made" style="grid-column:span 2"><b>Made it</b></button></div>
+    <div class="acts three" role="group" aria-label="How did the putt finish?"><button class="act big" data-act="putt" data-v="short" aria-label="Missed, stopped short"><b>Short</b><small>didn’t reach</small></button><button class="act big" data-act="putt" data-v="past" aria-label="Missed, rolled past"><b>Past</b><small>rolled by</small></button><button class="act big go" data-act="putt" data-v="made"><b>Made it</b></button></div>
     <button class="lk" data-act="qs" style="align-self:center;margin-top:-6px">Lost count? Enter the score</button>`;
 }
 function historyHTML(h){
@@ -1337,7 +1344,7 @@ function historyHTML(h){
   let from='T';const out=[];
   a.forEach(e=>{
     if(e.drop){out.push('Drop: '+(e.drop==='T'?'tee':LBL[e.drop].toLowerCase()));from=e.drop;return;}
-    let t=from==='G'?(e.to==='H'?'Made putt':'Missed putt'):(e.to==='H'?'Holed out':LBL[e.to]);
+    let t=from==='G'?(e.to==='H'?'Made putt':e.m==='s'?'Missed short':e.m==='p'?'Missed past':'Missed putt'):(e.to==='H'?'Holed out':LBL[e.to]);
     if(e.c)t=CLUBN[e.c]+': '+t;if(e.f)t+=' (added)';
     out.push(t);from=e.to;
   });
@@ -1505,13 +1512,19 @@ function viewStats(){
     const max=isPct?100:Math.max(sc*2,(y||0)*1.15);
     return `<div class="vs-r"><div class="vs-l"><span>${k}</span><span class="vs-n"><b class="num">${fmt(y)}</b><small>scratch ${isPct?sc+'%':sc}</small></span></div>${y==null?'<div class="meter"></div>':meter(y,sc,max,good)}</div>`;}).join('');
   const teeTot=Object.values(o.tee).reduce((a,b)=>a+b,0);
-  const fpRows=PUTT_LEN.filter(([k])=>o.fp[k]).map(([k,l])=>{const b=o.fp[k];return `<tr><td class="l">${l}</td><td>${b.holes}</td><td>${(b.putts/b.holes).toFixed(1)}</td><td>${pct(b.three,b.holes)}</td></tr>`;}).join('');
+  const fpPS=PUTT_LEN.some(([k])=>o.fp[k]&&(o.fp[k].p||o.fp[k].s));
+  const fpRows=PUTT_LEN.filter(([k])=>o.fp[k]).map(([k,l])=>{const b=o.fp[k];return `<tr><td class="l">${l}</td><td>${b.holes}</td><td>${(b.putts/b.holes).toFixed(1)}</td><td>${pct(b.three,b.holes)}</td>${fpPS?`<td>${b.p||b.s?`${b.s||0} · ${b.p||0}`:'–'}</td>`:''}</tr>`;}).join('');
+  const why3=top[2]!=='three'?'':(()=>{const p=o.tp.p,s=o.tp.s,n=p+s;
+    if(n<4)return `<p class="why3">${n?`${n} of your 3-putts ${n===1?'is':'are'} tagged so far. After 4, this shows which way they miss.`:'When a putt misses, tap Short or Past. After a few 3-putts, this shows which way they miss.'}</p>`;
+    if(p>=.7*n)return `<p class="why3"><b>Your 3-putts start long.</b> The first putt rolled past ${p} of ${n} times. Soften it: 1 to 2 feet past, no more.</p>`;
+    if(s>=.7*n)return `<p class="why3"><b>Your 3-putts start short.</b> The first putt stopped short ${s} of ${n} times. Hit it firmer, so every first putt reaches the hole.</p>`;
+    return `<p class="why3"><b>No one-way miss yet.</b> On your 3-putts the first putt was short ${s} times and past ${p} times.</p>`;})();
   const clubRows=TCLUB.filter(([k])=>o.teeClub[k]).map(([k,l])=>{const b=o.teeClub[k];return `<tr><td class="l">${l}</td><td>${b.n}</td><td>${pct(b.fw,b.n)}</td><td>${pct(b.bad,b.n)}</td></tr>`;}).join('');
   const parRows=[3,4,5].filter(p=>o.parType[p][1]).map(p=>`<tr><td class="l">Par ${p}</td><td>${o.parType[p][1]}</td><td>${(o.parType[p][0]/o.parType[p][1]>=0?'+':'')+(o.parType[p][0]/o.parType[p][1]).toFixed(2)}</td></tr>`).join('');
   const teeRows=TEE.filter(([k])=>k!=='short'||o.tee.short).map(([k,l])=>`<tr><td class="l">${l}</td><td>${o.tee[k]||0}</td><td>${pct(o.tee[k]||0,teeTot)}</td></tr>`).join('');
   return `<div><h1 class="t1">Stats</h1><p class="sub">${use.length} ${use.length===1?'round':'rounds'} · ${holes} holes${!real.length?' · example round':''}</p></div>
     ${!real.length?'<p class="notex">These numbers come from the example round. Your own rounds replace it as soon as you play one.</p>':''}
-    ${holes<9?`<section class="hero"><span class="cap">Biggest leak</span><h2 class="t2">Too early to call</h2><p>Log ${9-holes} more ${9-holes===1?'hole':'holes'} and this names the one thing costing you the most shots.</p></section>`:top[1]<.05?`<section class="hero"><span class="cap">Biggest leak</span><h2 class="t2">No leak stands out</h2><p>No penalties, 3-putts or wasted chips so far. Keep logging rounds.</p></section>`:`<section class="hero"><span class="cap">Biggest leak</span><h2 class="t2">${top[0]}</h2><div class="big num">${d1(top[1])}<small>shots per 18</small></div><p>${fz[0]}</p><a class="lnk" href="${fz[1]}" target="_blank" rel="noopener">Open ${fz[2]} ↗</a></section>`}
+    ${holes<9?`<section class="hero"><span class="cap">Biggest leak</span><h2 class="t2">Too early to call</h2><p>Log ${9-holes} more ${9-holes===1?'hole':'holes'} and this names the one thing costing you the most shots.</p></section>`:top[1]<.05?`<section class="hero"><span class="cap">Biggest leak</span><h2 class="t2">No leak stands out</h2><p>No penalties, 3-putts or wasted chips so far. Keep logging rounds.</p></section>`:`<section class="hero"><span class="cap">Biggest leak</span><h2 class="t2">${top[0]}</h2><div class="big num">${d1(top[1])}<small>shots per 18</small></div><p>${fz[0]}</p>${why3}<a class="lnk" href="${fz[1]}" target="_blank" rel="noopener">Open ${fz[2]} ↗</a></section>`}
     <section class="box"><h2 class="t3">You vs a scratch golfer</h2><div class="key"><span><i></i>You</span><span><em></em>Scratch</span></div><div class="vs">${vsRows}</div>
       ${holes<18?`<p class="src">Small sample: ${holes} ${holes===1?'hole':'holes'} so far. These settle after a few rounds.</p>`:''}<p class="src">Scratch averages from Shot Scope and Arccos data, reported by Golf Monthly.</p></section>
     <section class="box"><h2 class="t3">Where your shots go</h2><p class="sub">Per 18 holes</p>
@@ -1526,7 +1539,7 @@ function viewStats(){
     <details class="more"><summary>More numbers</summary><div class="more-b">
       <div><h3>Tee shots, par 4s and 5s</h3><div class="tw"><table class="dt"><thead><tr><th class="l">Result</th><th>Shots</th><th>Share</th></tr></thead><tbody>${teeRows}</tbody></table></div></div>
       ${clubRows?`<div><h3>Tee shots by club</h3><div class="tw"><table class="dt"><thead><tr><th class="l">Club</th><th>Shots</th><th>Fairway</th><th>Trouble</th></tr></thead><tbody>${clubRows}</tbody></table></div></div>`:''}
-      <div><h3>Putting by first-putt length</h3>${fpRows?`<div class="tw"><table class="dt"><thead><tr><th class="l">First putt</th><th>Holes</th><th>Putts</th><th>3-putts</th></tr></thead><tbody>${fpRows}</tbody></table></div>`:'<p class="sub">Tap the first-putt length on the green to fill this in.</p>'}</div>
+      <div><h3>Putting by first-putt length</h3>${fpRows?`<div class="tw"><table class="dt"><thead><tr><th class="l">First putt</th><th>Holes</th><th>Putts</th><th>3-putts</th>${fpPS?'<th>Short · past</th>':''}</tr></thead><tbody>${fpRows}</tbody></table></div>${fpPS?'<p class="src">Short · past counts first putts that missed.</p>':''}`:'<p class="sub">Tap the first-putt length on the green to fill this in.</p>'}</div>
       ${(()=>{const L=learnedDist(),ks=Object.keys(YC).filter(k=>L[k]);return ks.length?`<div><h3>Club distances on the course (GPS)</h3><div class="tw"><table class="dt"><thead><tr><th class="l">Club</th><th>Shots</th><th>Course</th><th>Bay</th></tr></thead><tbody>${ks.map(k=>`<tr><td class="l">${YNAME[k]}</td><td>${L[k].n}</td><td>${Math.round(L[k].avg)}</td><td>${Math.round(YC[k].mid)}</td></tr>`).join('')}</tbody></table></div></div>`:'';})()}
       ${cardCheck(use)}
       <div><h3>Scoring by par</h3><div class="tw"><table class="dt"><thead><tr><th class="l">Hole type</th><th>Holes</th><th>Average vs par</th></tr></thead><tbody>${parRows}</tbody></table></div></div>
@@ -2023,7 +2036,7 @@ document.addEventListener('click',ev=>{
     case 'drop':{const v=b.dataset.v,e=stamp(v==='same'?{drop:prevFrom(h),same:1,t:Date.now()}:{drop:v,t:Date.now()});
       const svg=b.closest('svg');const pt=svg?svgPt(svg,ev):null;if(pt){e.x=pt[0];e.y=pt[1];}
       h.sh.push(e);if(h.cond)h.cond=Object.assign({},h.cond,{l:lieFor(e.drop)});tapped(h,`Playing from ${v==='same'?'the same spot':LBL[v].toLowerCase()}`);break;}
-    case 'putt':{if(!h.sh)h.sh=[];const k=(h.putts||0)+1;if(k===1)learnGreen(r,i);h.sh.push(stamp({to:b.dataset.v==='made'?'H':'G',t:Date.now()}));tapped(h,b.dataset.v==='made'?`Holed on putt ${k}`:`Putt ${k} missed`);if(pos(h)==='H')window.scrollTo(0,0);break;}
+    case 'putt':{if(!h.sh)h.sh=[];const k=(h.putts||0)+1,v=b.dataset.v,made=v==='made';if(k===1)learnGreen(r,i);const e={to:made?'H':'G',t:Date.now()};if(v==='short')e.m='s';else if(v==='past')e.m='p';h.sh.push(stamp(e));tapped(h,made?`Holed on putt ${k}`:v==='short'?`Putt ${k} short`:v==='past'?`Putt ${k} past`:`Putt ${k} missed`);if(pos(h)==='H')window.scrollTo(0,0);break;}
     case 'plus1':{if(!h.sh)h.sh=[];h.sh.push(stamp({to:pos(h),f:1,t:Date.now()}));const c=strokesOf(h);tapped(h,`Added a shot. Now on shot ${c.n+c.p+1}`);break;}
     case 'behind':toast(b.dataset.v==='green'?'You’re by the green: tap the green, around it, or a bunker':'That’s behind your ball: tap ahead of it');break;
     case 'undo':{$('toast').hidden=true;if(h&&h.sh&&h.sh.length&&!isQuick(h)){h.sh.pop();redo();}break;}
