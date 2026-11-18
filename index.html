@@ -184,6 +184,14 @@ body[data-view="play"] #main{flex:1 1 auto;min-height:0}
 .td{fill:var(--m-line);opacity:.9}
 .ball{fill:var(--m-ball);stroke:rgba(0,0,0,.28);stroke-width:1}
 .halo{fill:var(--m-ball);opacity:.28}
+.m-water{fill:var(--m-water);stroke:var(--m-water-edge);stroke-width:1.2}
+.m-near{fill:var(--m-fringe);stroke:var(--m-fringe);stroke-linejoin:round;opacity:.42}
+.m-collar{fill:var(--m-fringe);stroke:var(--m-fringe);stroke-linejoin:round}
+.rmap .m-green{stroke:var(--m-green-hi);stroke-width:1}
+.tapz{fill:transparent;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
+.trw{fill:none;stroke:var(--c-bad);stroke-width:2.2;stroke-dasharray:2 5;stroke-linecap:round}
+.wx{fill:none;stroke:var(--c-bad);stroke-width:2.6;stroke-linecap:round}
+.rcut text{font-size:10.5px}
 .penb rect{fill:var(--c-bad)}.penb text{fill:#fff;font:700 12px var(--f-num);text-anchor:middle}
 @media (prefers-reduced-motion:no-preference){.ball.pop,.halo.pop{animation:bpop .25s var(--spring) both;transform-box:fill-box;transform-origin:center}}
 @keyframes bpop{0%{transform:scale(1.5);opacity:0}100%{transform:scale(1)}}
@@ -517,6 +525,9 @@ html.gm-framed body[data-view="play"] .app{padding-block:calc(64px + env(safe-ar
 html.gm-framed .sheet{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
 html.gm-framed .toast{top:calc(70px + env(safe-area-inset-top,0px));bottom:auto}
 /* caddy-css:end */
+
+.cd-card.nomap{grid-template-columns:minmax(0,1fr)}
+.cd-clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 
 .cd-card.nomap{grid-template-columns:minmax(0,1fr)}
 .cd-clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
@@ -985,6 +996,7 @@ function remainingYd(h){
   if(p==='G'||p==='H')return null;
   if(h.ydN===n&&h.yd)return{yd:h.yd,src:'set'};
   const g=gpsYards();if(g)return{yd:g.mid,src:'gps',g};
+  const ml=mapLeft(h);if(ml!=null)return{yd:ml,src:'map'};
   let base=null,from=0;
   if(h.ydN!=null&&h.ydN<n&&h.yd){base=h.yd;from=h.ydN;}else if(h.len){base=h.len;from=0;}
   if(base==null)return null;
@@ -1034,12 +1046,12 @@ function planBarHTML(r,h){
   const p=pos(h),c=strokesOf(h),tee=c.n===0&&p==='T',rem=remainingYd(h);
   if(!rem)return `<button class="sp set" id="planbar" data-act="plan"><b>${tee?'Set hole yards':'Set yards'}</b><small>Get a club for this shot ›</small></button>`;
   const pl=planFor(h,rem.yd),rest=pl.steps.slice(1).map(s=>SHORTN[s.k]).join(' → ');
-  return `<button class="sp${rem.src==='gps'?' gps':''}" id="planbar" data-act="plan" aria-label="Plan: ${rem.yd} yards, ${esc(stepName(pl.steps[0]))}"><b>${stepName(pl.steps[0])}</b><small><span class="num">${rem.yd}</span> ${rem.src==='gps'?'yd · GPS':rem.src==='est'?'yd, about':'yd'}${rest?' · then '+rest:''}</small></button>`;
+  return `<button class="sp${rem.src==='gps'?' gps':''}" id="planbar" data-act="plan" aria-label="Plan: ${rem.yd} yards, ${esc(stepName(pl.steps[0]))}"><b>${stepName(pl.steps[0])}</b><small><span class="num">${rem.yd}</span> ${rem.src==='gps'?'yd · GPS':rem.src==='est'?'yd, about':rem.src==='map'?'yd · map':'yd'}${rest?' · then '+rest:''}</small></button>`;
 }
 function planHTML(r,i,h){
   const c=strokesOf(h),p=pos(h),tee=c.n===0&&p==='T',cond=h.cond||defCond(h),yd=S.planYd;
   const rem=remainingYd(h),src=S.planSrc||(rem?rem.src:'none');
-  const srcTxt=src==='gps'?'GPS yards to the middle of the green':src==='est'?'About this far: slide to the real yards':src==='none'?(tee?'Slide to the hole’s yards (scorecard or tee sign)':'Slide to the yards to the green'):ydNote(h,tee,yd);
+  const srcTxt=src==='gps'?'GPS yards to the middle of the green':src==='est'?'About this far: slide to the real yards':src==='map'?'From where you tapped on the map':src==='none'?(tee?'Slide to the hole’s yards (scorecard or tee sign)':'Slide to the yards to the green'):ydNote(h,tee,yd);
   return `${sheetHead(`Hole ${holeNo(r,i)} · Par ${h.par} · Shot ${c.n+c.p+1}`,tee?'Plan this hole':'Plan this shot')}
     ${tee?`<div class="parline"><span class="cap">Par</span><div class="seg" role="group" aria-label="Par">${[3,4,5].map(v=>`<button data-act="par" data-v="${v}" aria-pressed="${h.par===v}">Par ${v}</button>`).join('')}</div></div>`:''}
     <div class="ydbig"><button class="ghost" data-act="pstep" data-d="-5" aria-label="5 yards less">−5</button>
@@ -1317,6 +1329,7 @@ function mapPts(h){
   return{pts,cur,pen};
 }
 function mapSVG(h,mode,kk){
+  const RG=realG(h);if(RG)return realMapSVG(h,mode,RG);
   const k=kk||S.mapK||1,Y=v=>+(v*k).toFixed(1),VH=Y(330),rk=Math.min(k,1.2);
   const live=mode==='shot'||mode==='drop',act=mode==='drop'?'drop':'res';
   /* No tapping behind the ball: from mid-hole, everything farther back than your ball is shaded off; from near the green,
@@ -1377,11 +1390,146 @@ function greenSVG(h){
     <circle class="halo${pop}" cx="${b[0]}" cy="${b[1]}" r="14"/><circle class="ball${pop}" cx="${b[0]}" cy="${b[1]}" r="7.5"/></g>
   </svg>`;
 }
+/* ---------- the real hole (a round on a course with a guide) ----------
+   Your ball sits at the bottom and the green at the top, turned so "up" points straight at the flag, like standing
+   behind your ball. Shapes come from the course map (yards: x to the right, y toward the green). Every tap is a real
+   spot: what it landed in (green, bunker, water, fairway, rough or trees) is read from the shapes, and the yards left
+   are measured from it. Holes tapped on the old drawing keep that drawing. */
+const NEAR_YD=18,GSB_YD=25,VIEW_MAX=285;
+const HK=new Map();
+function uvec(a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1;return[dx/l,dy/l];}
+function holeK(G){
+  const key=G.c.id+'|'+G.nine+'|'+G.n+'|'+G.tee;if(HK.has(key))return HK.get(key);
+  const g=holeGeo(G),m=G.hd.m;if(!g)return null;
+  /* your green: the one the hole's line ends on (a map can hold a neighbour's green too) */
+  const green=(m.g||[]).slice().sort((a,b)=>polyDist(g.end,a)-polyDist(g.end,b))[0]||null;
+  /* trees: outside a lane along the hole as wide as the fairway's outer edges plus 24 yd a side (at least 34);
+     the maps don't hold trees, so this is where they usually start */
+  const fw=G.hd.fw||[],hl=Math.max(34,(fw.length?-Math.min(...fw.map(w=>w[1])):10)+24),hr=Math.max(34,(fw.length?Math.max(...fw.map(w=>w[2])):10)+24);
+  const L=g.line.map(p=>p.slice()),d0=uvec(L[0],L[1]),d1=uvec(L[L.length-2],L[L.length-1]);
+  L.unshift([L[0][0]-d0[0]*80,L[0][1]-d0[1]*80]);L.push([L[L.length-1][0]+d1[0]*80,L[L.length-1][1]+d1[1]*80]);
+  const lp=[],rp=[];L.forEach((p,i)=>{const d=uvec(L[Math.max(0,i-1)],L[Math.min(L.length-1,i+1)]),nl=[-d[1],d[0]];lp.push(p[0]+nl[0]*hl,p[1]+nl[1]*hl);rp.unshift(p[0]-nl[0]*hr,p[1]-nl[1]*hr);});
+  const k=Object.assign({},g,{green,corr:lp.concat(rp)});HK.set(key,k);return k;
+}
+/* How far along the hole's line (from its first point) the spot nearest P is */
+function alongLine(line,P){let best=1e9,at=0,acc=0;for(let i=0;i<line.length-1;i++){const a=line[i],b=line[i+1],dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1;let t=((P[0]-a[0])*dx+(P[1]-a[1])*dy)/(l*l);t=Math.max(0,Math.min(1,t));const d=Math.hypot(P[0]-a[0]-dx*t,P[1]-a[1]-dy*t);if(d<best){best=d;at=acc+t*l;}acc+=l;}return at;}
+/* -1 left of the hole's line (facing the green), +1 right */
+function sideOf(line,P){let best=1e9,sg=1;for(let i=0;i<line.length-1;i++){const a=line[i],b=line[i+1],dx=b[0]-a[0],dy=b[1]-a[1],l2=dx*dx+dy*dy||1;let t=((P[0]-a[0])*dx+(P[1]-a[1])*dy)/l2;t=Math.max(0,Math.min(1,t));const d=Math.hypot(P[0]-a[0]-dx*t,P[1]-a[1]-dy*t);if(d<best){best=d;sg=dx*(P[1]-a[1])-dy*(P[0]-a[0])>0?-1:1;}}return sg;}
+/* What a spot is: G green, GS greenside bunker (within 25 yd of the green), B fairway bunker, W water, N near the
+   green (within 18 yd of it), F fairway, X trees (outside the lane), else L / R rough by side */
+function zoneAt(G,P){
+  const k=holeK(G),m=G.hd.m,inA=a=>(a||[]).some(q=>inPoly(P,q));
+  if(k.green&&inPoly(P,k.green))return 'G';
+  const gd=k.green?polyDist(P,k.green):1e9;
+  if(inA(m.b))return gd<=GSB_YD?'GS':'B';
+  if(inA(m.w))return 'W';
+  if(gd<=NEAR_YD)return 'N';
+  if(inA(m.f))return 'F';
+  if(!inPoly(P,k.corr))return 'X';
+  return sideOf(k.line,P)<0?'L':'R';
+}
+/* The real map is used when the round has a guide with a mapped hole and the hole wasn't tapped on the old drawing */
+function realG(h){const G=gFor(h);if(!G||!G.hd.m||!G.hd.m.line||!(G.hd.m.g||[]).length)return null;if((h.sh||[]).some(e=>e.x!=null&&!e.p))return null;return holeK(G)?G:null;}
+/* Every spot on the hole so far, in map yards; exact = the ball's spot came from a tap */
+function realPts(h,G){
+  const k=holeK(G);let cur=k.teeP.slice(),from='T',prevStart=cur,pen=false,wet=null,exact=false;const pts=[cur.slice()];
+  (h.sh||[]).forEach(e=>{
+    if(e.drop){const p=e.p?e.p.slice():e.same?prevStart.slice():cur.slice();exact=!!e.p||(!!e.same&&exact);cur=p;pts.push(p);from=e.drop;pen=false;wet=null;return;}
+    if(from==='G'&&e.to==='G')return;
+    const start=cur;
+    if(e.to==='P'){prevStart=start;from='P';pen=true;wet=e.p?e.p.slice():null;return;}
+    let p;
+    if(e.to==='H')p=k.end.slice();
+    else if(e.p){p=e.p.slice();exact=true;}
+    else{/* a forgotten shot (+1) or one with no spot: a short step toward the green */const d=Math.hypot(k.end[0]-cur[0],k.end[1]-cur[1])||1,t=Math.min(1,(e.f?12:Math.min(e.d||30,d*.8))/d);p=[cur[0]+(k.end[0]-cur[0])*t,cur[1]+(k.end[1]-cur[1])*t];exact=false;}
+    prevStart=start;cur=p;pts.push(p);from=e.to;
+  });
+  return{pts,cur,pen,wet,prevStart,exact,k};
+}
+/* Yards from your ball's tapped spot to the middle of the green (null on the tee or without a tapped spot) */
+function mapLeft(h){const G=realG(h);if(!G)return null;const p=pos(h);if(p==='T'||p==='G'||p==='H'||p==='P')return null;const o=realPts(h,G);if(!o.exact)return null;return Math.max(1,Math.round(Math.hypot(o.k.end[0]-o.cur[0],o.k.end[1]-o.cur[1])));}
+function realMapSVG(h,mode,G){
+  const o=realPts(h,G),k=o.k,m=G.hd.m,[bw,bh]=S.mapBox||[380,470],live=mode==='shot'||mode==='drop',done=pos(h)==='H';
+  const tee=(h.sh||[]).length===0;
+  /* camera: from the ball (the tee, or where the penalty shot was played from), facing where you'd aim: the green
+     when it's within 240 yd, else the hole's line 220 yd ahead (so a dogleg's fairway runs straight up the screen) */
+  const A=mode==='view'?k.teeP:mode==='drop'?o.prevStart:o.cur,B=k.end;
+  let L=Math.hypot(B[0]-A[0],B[1]-A[1]),aim=B;
+  if(mode!=='view'&&L>240){const s0=alongLine(k.line,A);aim=k.at(s0+220+k.off);}
+  let u=Math.hypot(aim[0]-A[0],aim[1]-A[1])>4?uvec(A,aim):uvec(k.line[k.line.length-2],k.end);if(L<=4)L=4;
+  const r=[u[1],-u[0]],vx=P=>(P[0]-A[0])*r[0]+(P[1]-A[1])*r[1],vy=P=>(P[0]-A[0])*u[0]+(P[1]-A[1])*u[1];
+  let lo=mode==='drop'?-30:-14,hi=Math.max(vy(B),40)+24;
+  if(mode==='view')o.pts.forEach(p=>{lo=Math.min(lo,vy(p)-14);hi=Math.max(hi,vy(p)+14);});
+  if(mode==='drop'&&o.wet)lo=Math.min(lo,vy(o.wet)-20);
+  /* a long view is cut at 285 yd ahead (less on a short screen) so the shapes stay big enough to tap; a tag at the top
+     says how far the green is and which way */
+  const vmax=Math.max(220,Math.min(VIEW_MAX,(bh-58)*.7)),cut=mode!=='view'&&hi-lo>vmax+14;if(cut)hi=lo+vmax+14;
+  if(hi-lo<60){const ex=(60-(hi-lo))/2;lo-=ex;hi+=ex;}
+  const topPx=mode==='view'?30:mode==='drop'?14:50,botPx=8,s=(bh-topPx-botPx)/(hi-lo);
+  const SX=P=>bw/2+vx(P)*s,SY=P=>bh-botPx-(vy(P)-lo)*s,f1=v=>v.toFixed(1);
+  const path=a=>{let d='';for(let i=0;i<a.length;i+=2){const P=[a[i],a[i+1]];d+=(i?'L':'M')+f1(SX(P))+' '+f1(SY(P));}return d+'Z';};
+  const toYd=(sx,sy)=>{const x=(sx-bw/2)/s,y=lo+(bh-botPx-sy)/s;return[A[0]+r[0]*x+u[0]*y,A[1]+r[1]*x+u[1]*y];};
+  const zAt=(sx,sy)=>zoneAt(G,toYd(sx,sy));
+  const gp=k.green?path(k.green):'',fws=(m.f||[]).map(path).join(' ');
+  let stripes='';for(let y=bh;y>-26;y-=26)stripes+=`<rect class="m-stripe" x="0" y="${f1(y-13)}" width="${bw}" height="13"/>`;
+  const end=[SX(B),SY(B)],flag=!cut||SY(B)>topPx?`<g class="deco"><circle class="cup" cx="${f1(end[0])}" cy="${f1(end[1])}" r="3"/><path class="pin" d="M${f1(end[0])} ${f1(end[1])}v-26"/><path class="flag" d="M${f1(end[0]+.7)} ${f1(end[1]-25.5)}l12 4-12 4z"/></g>`:'';
+  /* trail, ball, a red mark where a ball went in the water */
+  const sp=o.pts.map(p=>[SX(p),SY(p)]),cu=[SX(o.cur),SY(o.cur)],pop=S.justTapped?' pop':'';
+  const trail=sp.length>1?`<path class="tr" d="M${sp.map(p=>f1(p[0])+' '+f1(p[1])).join(' L')}"/>`+sp.slice(0,-1).map(p=>`<circle class="td" cx="${f1(p[0])}" cy="${f1(p[1])}" r="3.4"/>`).join(''):'';
+  const wq=o.wet&&o.pen?[SX(o.wet),SY(o.wet)]:null;
+  const wet=wq?`<path class="trw" d="M${f1(cu[0])} ${f1(cu[1])}L${f1(wq[0])} ${f1(wq[1])}"/><path class="wx" d="M${f1(wq[0]-5)} ${f1(wq[1]-5)}l10 10m0-10l-10 10"/>`:'';
+  const ball=done?'':`<circle class="halo${pop}" cx="${f1(cu[0])}" cy="${f1(cu[1])}" r="13"/><circle class="ball${pop}" cx="${f1(cu[0])}" cy="${f1(cu[1])}" r="7"/>`;
+  const penb=o.pen?`<g class="penb"><rect x="${f1(cu[0]+10)}" y="${f1(cu[1]-26)}" width="32" height="20" rx="10"/><text x="${f1(cu[0]+26)}" y="${f1(cu[1]-11.5)}">+1</text></g>`:'';
+  /* labels, live maps only: one per kind of ground, never on the ball, the flag, the top bar or each other */
+  let labs='';
+  if(live){
+    const bx=[[0,0,bw,topPx],[cu[0]-15,cu[1]-15,cu[0]+15,cu[1]+15],[end[0]-4,end[1]-30,end[0]+16,end[1]+4]];if(cut)bx.push([bw/2-48,topPx+2,bw/2+48,topPx+26]);if(wq)bx.push([wq[0]-8,wq[1]-8,wq[0]+8,wq[1]+8]);
+    const hit=b=>bx.some(q=>b[0]<q[2]+4&&b[2]>q[0]-4&&b[1]<q[3]+3&&b[3]>q[1]-3);
+    const lab=(x,y,t,rot)=>{const w=t.length*7.4+14,hw=rot?9:w/2,hh=rot?w/2:9;x=Math.max(hw+3,Math.min(bw-hw-3,x));const b=[x-hw,y-hh,x+hw,y+hh];if(y-hh<topPx||y+hh>bh-3||hit(b))return false;bx.push(b);labs+=pill(x,y,t,rot);return true;};
+    /* runs of one kind of ground along a row of the map, from the middle outward */
+    const runs=(y,dir,want)=>{let a=null,best=null;for(let x=bw/2;x>=0&&x<=bw;x+=dir*5){const z=zAt(x,y);if(want.includes(z)){if(a==null)a=x;}else if(a!=null){best={a,b:x-dir*5};break;}}if(!best&&a!=null)best={a,b:dir<0?0:bw};return best?{c:(best.a+best.b)/2,w:Math.abs(best.b-best.a)}:null;};
+    if(k.green){let gx0=1e9,gx1=-1e9,gy0=1e9,gy1=-1e9;for(let i=0;i<k.green.length;i+=2){const P=[k.green[i],k.green[i+1]],x=SX(P),y=SY(P);gx0=Math.min(gx0,x);gx1=Math.max(gx1,x);gy0=Math.min(gy0,y);gy1=Math.max(gy1,y);}
+      if(gy1>topPx){const gc=(gx0+gx1)/2,gm=(gy0+gy1)/2;[[end[0]-44,end[1]-8],[end[0]+46,end[1]+12],[gc,gy0-12],[gc,gm+14]].some(([x,y])=>lab(x,y,'Green'));
+        lab(gc,gy1+Math.min(NEAR_YD*s*.55,34)+4,'Near the green');}}
+    const ws=(m.w||[]).map(a=>{const c=polyMid(a);return{c:[SX(c),SY(c)],a:a.length};}).filter(w=>w.c[0]>20&&w.c[0]<bw-20&&w.c[1]>topPx+12&&w.c[1]<bh-12&&zAt(w.c[0],w.c[1])==='W').sort((x,y)=>y.a-x.a);
+    if(ws[0]){const c=ws[0].c;[[c[0],c[1]],[c[0]+50,c[1]],[c[0]-50,c[1]],[c[0],c[1]-24]].some(([x,y])=>lab(x,y,'Water'));}
+    const yMid=Math.max(topPx+30,Math.min(bh-40,(SY(B)+cu[1])/2));
+    for(const t of[.55,.45,.65,.35,.75]){const y=cu[1]+(SY(B)-cu[1])*t;if(y<topPx+14)continue;const lr=runs(y,-1,['F']),rr=runs(y,1,['F']);if(lr||rr){const a=lr?lr.c-lr.w/2:bw/2,b=rr?rr.c+rr.w/2:bw/2;if(lab((a+b)/2,y,'Fairway'))break;}}
+    const bs=(m.b||[]).map(a=>{const c=polyMid(a);return{c:[SX(c),SY(c)],a:a.length};}).filter(q=>q.c[0]>16&&q.c[0]<bw-16&&q.c[1]>topPx+20&&q.c[1]<bh-14).sort((x,y)=>y.a-x.a);
+    for(const q of bs.slice(0,3)){if(lab(q.c[0],q.c[1]-16,'Bunker')||lab(q.c[0],q.c[1]+16,'Bunker'))break;}
+    let rx0=null;[-1,1].forEach(d=>{for(const y of[yMid,yMid+40,yMid-40,yMid+80]){const q=runs(y,d,['L','R']);if(q&&q.w>=24&&(rx0==null||Math.abs(q.c-rx0)>110)&&lab(q.c,y,'Rough',q.w<58)){rx0=q.c;break;}}});
+    [[-1,'X'],[1,'X']].forEach(([d])=>{for(const y of[yMid+20,yMid-30]){let x=d<0?6:bw-6,a=null,b=null;for(;x>0&&x<bw;x-=d*5){if(zAt(x,y)==='X'){if(a==null)a=x;b=x;}else if(a!=null)break;}if(a!=null&&Math.abs(b-a)>=20&&lab((a+b)/2,y,'Trees',1))break;}});
+  }
+  const toGreen=cut?`<g class="ml rcut"><rect x="${bw/2-46}" y="${topPx+4}" width="92" height="20" rx="10"/><text x="${bw/2}" y="${topPx+17.6}">GREEN ${(()=>{const g=Math.atan2(vx(B),vy(B))*180/Math.PI;return g<-18?'↖':g>18?'↗':'↑';})()} ${Math.round(L)} YD</text></g>`:'';
+  const act=mode==='shot'?'res':mode==='drop'?'drop':'';
+  return `<svg class="map rmap" viewBox="0 0 ${bw} ${bh}" data-ax="${A[0].toFixed(2)}" data-ay="${A[1].toFixed(2)}" data-ux="${u[0].toFixed(5)}" data-uy="${u[1].toFixed(5)}" data-s="${s.toFixed(4)}" data-lo="${lo.toFixed(2)}" data-bot="${botPx}" role="group" aria-label="Map of the hole, turned toward the green. Tap where your ball is.">
+    <defs><pattern id="rtp" width="16" height="14" patternUnits="userSpaceOnUse"><circle class="m-tree" cx="4" cy="4" r="4.4"/><circle class="m-tree" cx="12" cy="11" r="4.4"/></pattern>${fws?`<clipPath id="rfc"><path d="${fws}"/></clipPath>`:''}</defs>
+    <rect class="m-trees" x="0" y="0" width="${bw}" height="${bh}"/><rect x="0" y="0" width="${bw}" height="${bh}" fill="url(#rtp)" opacity=".55"/>
+    <path class="m-rough" d="${path(k.corr)}"/>
+    ${(m.w||[]).map(a=>`<path class="m-water" d="${path(a)}"/>`).join('')}
+    ${fws?`<path class="m-fair" d="${fws}"/><g clip-path="url(#rfc)">${stripes}</g>`:''}
+    ${k.box?`<path class="m-tee" d="${path(k.box.a)}"/>`:''}
+    ${gp?`<path class="m-near" d="${gp}" stroke-width="${f1(2*NEAR_YD*s)}"/><path class="m-collar" d="${gp}" stroke-width="${f1(Math.max(3,5*s))}"/>`:''}
+    ${(m.b||[]).map(a=>`<path class="m-sand" d="${path(a)}"/>`).join('')}
+    ${gp?`<path class="m-green" d="${gp}"/>`:''}
+    ${flag}${labs}${toGreen}<g class="deco">${trail}${wet}${ball}${penb}</g>
+    ${act?`<rect class="tapz" x="0" y="0" width="${bw}" height="${bh}" data-act="${act}" data-v="auto" role="button" tabindex="0" aria-label="${mode==='drop'?'Tap where you play from now':'Tap where your ball ended up'}"/>`:''}
+  </svg>`;
+}
+/* A tap on the real map, in map yards */
+function realTapPt(svg,ev){
+  if(!ev||!svg.getScreenCTM)return null;const M=svg.getScreenCTM();if(!M)return null;const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const q=p.matrixTransform(M.inverse());
+  const d=svg.dataset,s=+d.s,lo=+d.lo,ux=+d.ux,uy=+d.uy,bw=svg.viewBox.baseVal.width,bh=svg.viewBox.baseVal.height,x=(q.x-bw/2)/s,y=lo+(bh-(+d.bot)-q.y)/s;
+  return[+(+d.ax+uy*x+ux*y).toFixed(1),+(+d.ay-ux*x+uy*y).toFixed(1)];
+}
 function svgPt(svg,ev){if(!ev||!ev.detail||!svg.getScreenCTM)return null;const m=svg.getScreenCTM();if(!m)return null;const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const q=p.matrixTransform(m.inverse()),k=(svg.viewBox&&svg.viewBox.baseVal&&svg.viewBox.baseVal.height||330)/330;return[Math.round(q.x),Math.round(q.y/k)];}
 /* Size the map to the space left on screen, so Play never needs a scroll */
 function fitMap(){
   const box=document.querySelector('.mapw.fit');if(!box)return;
   const w=box.clientWidth,hh=box.clientHeight;if(!w||!hh)return;
+  /* the real map draws at the box's own size, so it redraws when the box changes */
+  const rs=box.querySelector('svg.rmap');
+  if(rs){const vb=rs.viewBox.baseVal;if(Math.abs(vb.width-w)<2&&Math.abs(vb.height-hh)<2)return;S.mapBox=[Math.round(w),Math.round(hh)];const {h}=curHole();if(h)rs.outerHTML=mapSVG(h,box.dataset.mode);return;}
   const k=Math.max(.7,Math.min(1.7,(hh/w)*(340/330)));
   const svg=box.querySelector('svg.map');if(!svg)return;
   const cur=(svg.viewBox.baseVal.height||330)/330;if(Math.abs(k-cur)<.02){S.mapK=k;return;}
@@ -1502,7 +1650,7 @@ function doneHTML(r,i,h){
         <div class="res-t"><span class="pillx ${toneCls(d)}">${scoreName(d)}</span><span class="sub">${info}</span></div></div>
       ${quick?'':`${last?'':`<div class="mapw fit mini" data-mode="view">${mapSVG(h,'view')}</div>`}${historyHTML(h)}`}
     </section>
-    ${last?`${recapHTML(r)}<button class="cta" data-act="finish">Finish round ${IC.arrow}</button>`:`<div class="nx"><span class="t3">Hole ${i+2}</span><div class="seg big" role="group" aria-label="Hole ${i+2} par">${[3,4,5].map(v=>`<button data-act="npar" data-v="${v}" aria-pressed="${nx.par===v}">Par ${v}</button>`).join('')}</div></div>
+    ${last?`${recapHTML(r)}<button class="cta" data-act="finish">Finish round ${IC.arrow}</button>`:`<div class="nx"><span class="t3">Hole ${holeNo(r,i+1)}</span><div class="seg big" role="group" aria-label="Hole ${holeNo(r,i+1)} par">${[3,4,5].map(v=>`<button data-act="npar" data-v="${v}" aria-pressed="${nx.par===v}">Par ${v}</button>`).join('')}</div></div>
     <button class="cta" data-act="next">Next hole ${IC.arrow}</button>`}
     <div class="links">${quick?`<button class="lk" data-act="qs">Change score</button><button class="lk" data-act="tap">Tap shots instead</button>`:`<button class="lk" data-act="undo">Undo last tap</button><button class="lk" data-act="qs">Change score</button>`}</div>`;
 }
@@ -1922,14 +2070,20 @@ function caddyLine(G,h){
 function inPoly(q,a){let t=false;for(let i=0,j=a.length-2;i<a.length;j=i,i+=2){const xi=a[i],yi=a[i+1],xj=a[j],yj=a[j+1];if((yi>q[1])!==(yj>q[1])&&q[0]<(xj-xi)*(q[1]-yi)/(yj-yi)+xi)t=!t;}return t;}
 function polyDist(q,a){if(inPoly(q,a))return 0;let m=1e9;for(let i=0;i<a.length;i+=2){const j=(i+2)%a.length,ax=a[i],ay=a[i+1],bx=a[j],by=a[j+1],l2=(bx-ax)**2+(by-ay)**2||1;let t=((q[0]-ax)*(bx-ax)+(q[1]-ay)*(by-ay))/l2;t=Math.max(0,Math.min(1,t));m=Math.min(m,Math.hypot(q[0]-ax-t*(bx-ax),q[1]-ay-t*(by-ay)));}return m;}
 function polyMid(a){let x=0,y=0;const n=a.length/2;for(let i=0;i<a.length;i+=2){x+=a[i];y+=a[i+1];}return[x/n,y/n];}
-function holeMapSVG(G,opt){
-  opt=opt||{};const {c,hd,tee}=G,m=hd.m;if(!m)return '';
+/* The hole in map yards (x to the right, y toward the green): its line, the point d yards from your tee along it, and
+   your tee: the box you play from, when one is mapped within 15 yd of where your yards put it (the spot is its centre) */
+function holeGeo(G){
+  const {c,hd,tee}=G,m=hd.m;if(!m||!m.line)return null;
   const off=ydOf(c,hd,tee)-hd.line,line=[];for(let i=0;i<m.line.length;i+=2)line.push([m.line[i],m.line[i+1]]);
   const at=d=>{let left=d-off;for(let i=0;i<line.length-1;i++){const a=line[i],b=line[i+1],l=Math.hypot(b[0]-a[0],b[1]-a[1]);if(left<=l||i===line.length-2){const t=left/l;return[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];}left-=l;}return line[line.length-1];};
-  const any=(q,arr)=>(arr||[]).some(a=>inPoly(q,a));
-  /* Your tee: the box you play from, when one is mapped within 15 yd of where your yards put it; only that box is drawn */
   let teeP=at(0),box=null;(m.t||[]).forEach(a=>{const d=polyDist(teeP,a);if(d<=15&&(!box||d<box.d))box={a,d};});
   if(box){const q=polyMid(box.a);if(inPoly(q,box.a))teeP=q;}
+  return{m,line,off,at,teeP,box,end:line[line.length-1]};
+}
+function holeMapSVG(G,opt){
+  opt=opt||{};const {hd}=G,m=hd.m;if(!m)return '';
+  const geo=holeGeo(G),{line,at,box}=geo,teeP=geo.teeP;
+  const any=(q,arr)=>(arr||[]).some(a=>inPoly(q,a));
   /* Plan dots: each one where that club's average shot ends along the hole. A dot that would sit on (or touch, at map
      size) water or sand turns to the nearest fairway at the same distance within 40 degrees (that's where you'd aim);
      sand can also settle for plain rough within 20 (and, with the guide's aim side, anything dry within 45); a dot in the
@@ -2267,18 +2421,25 @@ document.addEventListener('click',ev=>{
     case 'par':h.par=+b.dataset.v;h.parSet=1;if(h.par===3){h.tee=null;h.club=null;}redo();if(S.sheet==='plan')renderSheet();break;
     case 'npar':{const nx=r.h[i+1];if(nx){nx.par=+b.dataset.v;if(!isQuick(nx)&&nx.sh&&nx.sh.length)derive(nx);}touch(S.cur);render();break;}
     case 'tclub':r.tc=b.dataset.v;h.tc=b.dataset.v;touch(S.cur);render();break;
-    case 'res':{if(!h.sh)h.sh=[];const c=strokesOf(h),e=stamp({to:b.dataset.v,t:Date.now()});
+    case 'res':{if(!h.sh)h.sh=[];const c=strokesOf(h);let v=b.dataset.v,P=null;
+      /* a tap on the real map: what it landed in comes from the shapes under the finger (water = a penalty) */
+      if(v==='auto'){const svg=b.closest('svg'),G=realG(h);P=svg&&G?realTapPt(svg,ev):null;if(!P)break;const z=zoneAt(G,P);v=z==='W'?'P':z;}
+      const e=stamp({to:v,t:Date.now()});
       if(c.n===0&&pos(h)==='T'&&h.par>=4)e.c=teeClubFor(r,h);
       const nx=h.nextPk&&h.nextPk.n===c.n?h.nextPk:null;
       if(nx){e.pk=nx.k;e.d=nx.d;}
       else if(e.c&&CODE2YC[e.c]){e.pk=CODE2YC[e.c];e.d=Math.round(clubMid(e.pk,planCtx()));}
       else{const rem=remainingYd(h);if(rem){const s0=planFor(h,rem.yd).steps[0];e.d=stepDist(s0);}}
-      const svg=b.closest('svg');const pt=svg?svgPt(svg,ev):null;if(pt){e.x=pt[0];e.y=pt[1];}
+      if(P)e.p=P;else{const svg=b.closest('svg');const pt=svg?svgPt(svg,ev):null;if(pt){e.x=pt[0];e.y=pt[1];}}
       h.sh.push(e);if(h.cond)h.cond=Object.assign({},h.cond,{l:lieFor(e.to),s:'flat'});
-      tapped(h,`Shot ${c.n+c.p+1}: ${e.to==='H'?'holed':LBL[e.to].toLowerCase()}`);break;}
-    case 'drop':{const v=b.dataset.v,e=stamp(v==='same'?{drop:prevFrom(h),same:1,t:Date.now()}:{drop:v,t:Date.now()});
-      const svg=b.closest('svg');const pt=svg?svgPt(svg,ev):null;if(pt){e.x=pt[0];e.y=pt[1];}
-      h.sh.push(e);if(h.cond)h.cond=Object.assign({},h.cond,{l:lieFor(e.drop)});tapped(h,`Playing from ${v==='same'?'the same spot':LBL[v].toLowerCase()}`);break;}
+      const left=P&&e.to!=='G'&&e.to!=='P'?mapLeft(h):null;
+      tapped(h,`Shot ${c.n+c.p+1}: ${e.to==='H'?'holed':P&&e.to==='P'?'in the water, +1':LBL[e.to].toLowerCase()}${left?` · ${left} yd to go`:''}`);break;}
+    case 'drop':{let v=b.dataset.v,P=null;
+      if(v==='auto'){const svg=b.closest('svg'),G=realG(h);P=svg&&G?realTapPt(svg,ev):null;if(!P)break;const z=zoneAt(G,P);
+        if(z==='W'){toast('That’s in the water: tap dry land');break;}if(z==='G'){toast('Drops can’t go on the green: tap beside it');break;}v=z;}
+      const e=stamp(v==='same'?{drop:prevFrom(h),same:1,t:Date.now()}:{drop:v,t:Date.now()});
+      if(P)e.p=P;else{const svg=b.closest('svg');const pt=svg?svgPt(svg,ev):null;if(pt){e.x=pt[0];e.y=pt[1];}}
+      h.sh.push(e);if(h.cond)h.cond=Object.assign({},h.cond,{l:lieFor(e.drop)});const left=mapLeft(h);tapped(h,`Playing from ${v==='same'?'the same spot':LBL[v].toLowerCase()}${left?` · ${left} yd to go`:''}`);break;}
     case 'putt':{if(!h.sh)h.sh=[];const k=(h.putts||0)+1,v=b.dataset.v,made=v==='made';if(k===1)learnGreen(r,i);const e={to:made?'H':'G',t:Date.now()};if(v==='short')e.m='s';else if(v==='past')e.m='p';if(h.pst!=null){e.st=h.pst;delete h.pst;r.stepFt=stepFt();}h.sh.push(stamp(e));tapped(h,made?`Holed on putt ${k}`:v==='short'?`Putt ${k} short`:v==='past'?`Putt ${k} past`:`Putt ${k} missed`);if(pos(h)==='H')window.scrollTo(0,0);break;}
     case 'plus1':{if(!h.sh)h.sh=[];h.sh.push(stamp({to:pos(h),f:1,t:Date.now()}));const c=strokesOf(h);tapped(h,`Added a shot. Now on shot ${c.n+c.p+1}`);break;}
     case 'behind':toast(b.dataset.v==='green'?'You’re by the green: tap the green, around it, or a bunker':'That’s behind your ball: tap ahead of it');break;
