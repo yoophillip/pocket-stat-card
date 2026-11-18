@@ -184,6 +184,10 @@ body[data-view="play"] #main{flex:1 1 auto;min-height:0}
 .td{fill:var(--m-line);opacity:.9}
 .ball{fill:var(--m-ball);stroke:rgba(0,0,0,.28);stroke-width:1}
 .halo{fill:var(--m-ball);opacity:.28}
+.missq{gap:8px;padding:10px 12px}.missq>b{font-size:var(--t-label)}.missq .nums.six .nb{min-height:44px;background:var(--c-surface)}
+.mq-l{display:flex;justify-content:space-between;margin:-4px -4px -6px}
+.gapq{gap:8px;padding:10px 12px}.gapq .seg button{min-height:38px}
+.skp{font-size:var(--t-micro);color:var(--c-muted);font-weight:600}
 .m-water{fill:var(--m-water);stroke:var(--m-water-edge);stroke-width:1.2}
 .m-near{fill:var(--m-fringe);stroke:var(--m-fringe);stroke-linejoin:round;opacity:.42}
 .m-collar{fill:var(--m-fringe);stroke:var(--m-fringe);stroke-linejoin:round}
@@ -191,7 +195,7 @@ body[data-view="play"] #main{flex:1 1 auto;min-height:0}
 .tapz{fill:transparent;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
 .trw{fill:none;stroke:var(--c-bad);stroke-width:2.2;stroke-dasharray:2 5;stroke-linecap:round}
 .wx{fill:none;stroke:var(--c-bad);stroke-width:2.6;stroke-linecap:round}
-.rcut text{font-size:10.5px}
+.rtag{cursor:pointer}.rtag rect{fill:var(--m-chip);stroke:var(--m-label);stroke-opacity:.18}.rtag text{fill:var(--m-label);font:700 10.5px var(--f-ui);letter-spacing:.06em;text-anchor:middle;pointer-events:none}.rtag:active rect{fill:#fff}
 .penb rect{fill:var(--c-bad)}.penb text{fill:#fff;font:700 12px var(--f-num);text-anchor:middle}
 @media (prefers-reduced-motion:no-preference){.ball.pop,.halo.pop{animation:bpop .25s var(--spring) both;transform-box:fill-box;transform-origin:center}}
 @keyframes bpop{0%{transform:scale(1.5);opacity:0}100%{transform:scale(1)}}
@@ -1200,7 +1204,7 @@ function derive(h){
     else if(from==='GS'){sand++;gsN++;if(on)gsOn++;}
     if((from==='N'||from==='GS')&&sg==null&&girAt==null){sg=n-1+pen;sgGS=from==='GS';}
     if(from==='B'||from==='X'){trN++;if(INPLAY.has(to))trOk++;}
-    if(n===1){teeTo=to;club=e.c||null;}
+    if(n===1){teeTo=e.f?null:to;club=e.c||null;}
     if(h.pickAt!=null&&n===h.pickAt+1)pickOn=on;
     if(to==='P')pen++;
     if(girAt==null&&on)girAt=n+pen;
@@ -1266,7 +1270,9 @@ function editingText(){const a=document.activeElement;return a&&a.tagName==='INP
 
 /* ---------- stats ---------- */
 function holeDone(h){return h.s!=null;}
-function liveHole(r){let j=-1;r.h.forEach((x,k)=>{if(x.s!=null||(x.sh||[]).length)j=k;});if(j<0)return 0;return holeDone(r.h[j])&&j<r.h.length-1?j+1:j;}
+/* a hole still waiting for a score (one you marked "didn't play" isn't) */
+function holeOpen(h){return h.s==null&&!h.skip;}
+function liveHole(r){let j=-1;r.h.forEach((x,k)=>{if(x.s!=null||x.skip||(x.sh||[]).length)j=k;});if(j<0)return 0;return !holeOpen(r.h[j])&&j<r.h.length-1?j+1:j;}
 function roundStats(r){
   const o={score:0,par:0,n:0,putts:0,puttHoles:0,three:0,threeH:0,one:0,fwHit:0,fwTries:0,gir:0,girTries:0,pen:0,extraShort:0,topped:0,scrTries:0,scrMade:0,dbl:0,
     udTries:0,udMade:0,ssTries:0,ssMade:0,trN:0,trOk:0,gsN:0,gsOn:0,chN:0,chOn:0,teeBad:0,
@@ -1441,7 +1447,8 @@ function realPts(h,G){
     let p;
     if(e.to==='H')p=k.end.slice();
     else if(e.p){p=e.p.slice();exact=true;}
-    else{/* a forgotten shot (+1) or one with no spot: a short step toward the green */const d=Math.hypot(k.end[0]-cur[0],k.end[1]-cur[1])||1,t=Math.min(1,(e.f?12:Math.min(e.d||30,d*.8))/d);p=[cur[0]+(k.end[0]-cur[0])*t,cur[1]+(k.end[1]-cur[1])*t];exact=false;}
+    else if(e.f)p=cur.slice();/* +1: a shot you forgot to tap; the ball stays at your last spot */
+    else{/* a shot with no spot: a step toward the green */const d=Math.hypot(k.end[0]-cur[0],k.end[1]-cur[1])||1,t=Math.min(1,Math.min(e.d||30,d*.8)/d);p=[cur[0]+(k.end[0]-cur[0])*t,cur[1]+(k.end[1]-cur[1])*t];exact=false;}
     prevStart=start;cur=p;pts.push(p);from=e.to;
   });
   return{pts,cur,pen,wet,prevStart,exact,k};
@@ -1455,7 +1462,9 @@ function realMapSVG(h,mode,G){
      when it's within 240 yd, else the hole's line 220 yd ahead (so a dogleg's fairway runs straight up the screen) */
   const A=mode==='view'?k.teeP:mode==='drop'?o.prevStart:o.cur,B=k.end;
   let L=Math.hypot(B[0]-A[0],B[1]-A[1]),aim=B;
-  if(mode!=='view'&&L>240){const s0=alongLine(k.line,A);aim=k.at(s0+220+k.off);}
+  /* "Show the green": the whole rest of the hole, facing the green, until your next tap (for a ball you forgot to tap) */
+  const wide=mode!=='view'&&S.mapWide===wideKey(h);
+  if(mode!=='view'&&!wide&&L>240){const s0=alongLine(k.line,A);aim=k.at(s0+220+k.off);}
   let u=Math.hypot(aim[0]-A[0],aim[1]-A[1])>4?uvec(A,aim):uvec(k.line[k.line.length-2],k.end);if(L<=4)L=4;
   const r=[u[1],-u[0]],vx=P=>(P[0]-A[0])*r[0]+(P[1]-A[1])*r[1],vy=P=>(P[0]-A[0])*u[0]+(P[1]-A[1])*u[1];
   let lo=mode==='drop'?-30:-14,hi=Math.max(vy(B),40)+24;
@@ -1463,7 +1472,7 @@ function realMapSVG(h,mode,G){
   if(mode==='drop'&&o.wet)lo=Math.min(lo,vy(o.wet)-20);
   /* a long view is cut at 285 yd ahead (less on a short screen) so the shapes stay big enough to tap; a tag at the top
      says how far the green is and which way */
-  const vmax=Math.max(220,Math.min(VIEW_MAX,(bh-58)*.7)),cut=mode!=='view'&&hi-lo>vmax+14;if(cut)hi=lo+vmax+14;
+  const vmax=Math.max(220,Math.min(VIEW_MAX,(bh-58)*.7)),cut=mode!=='view'&&!wide&&hi-lo>vmax+14;if(cut)hi=lo+vmax+14;
   if(hi-lo<60){const ex=(60-(hi-lo))/2;lo-=ex;hi+=ex;}
   const topPx=mode==='view'?30:mode==='drop'?14:50,botPx=8,s=(bh-topPx-botPx)/(hi-lo);
   const SX=P=>bw/2+vx(P)*s,SY=P=>bh-botPx-(vy(P)-lo)*s,f1=v=>v.toFixed(1);
@@ -1483,7 +1492,7 @@ function realMapSVG(h,mode,G){
   /* labels, live maps only: one per kind of ground, never on the ball, the flag, the top bar or each other */
   let labs='';
   if(live){
-    const bx=[[0,0,bw,topPx],[cu[0]-15,cu[1]-15,cu[0]+15,cu[1]+15],[end[0]-4,end[1]-30,end[0]+16,end[1]+4]];if(cut)bx.push([bw/2-48,topPx+2,bw/2+48,topPx+26]);if(wq)bx.push([wq[0]-8,wq[1]-8,wq[0]+8,wq[1]+8]);
+    const bx=[[0,0,bw,topPx],[cu[0]-15,cu[1]-15,cu[0]+15,cu[1]+15],[end[0]-4,end[1]-30,end[0]+16,end[1]+4]];if(cut)bx.push([bw/2-62,topPx,bw/2+62,topPx+28]);if(wide)bx.push([6,bh-42,116,bh-10]);if(wq)bx.push([wq[0]-8,wq[1]-8,wq[0]+8,wq[1]+8]);
     const hit=b=>bx.some(q=>b[0]<q[2]+4&&b[2]>q[0]-4&&b[1]<q[3]+3&&b[3]>q[1]-3);
     const lab=(x,y,t,rot)=>{const w=t.length*7.4+14,hw=rot?9:w/2,hh=rot?w/2:9;x=Math.max(hw+3,Math.min(bw-hw-3,x));const b=[x-hw,y-hh,x+hw,y+hh];if(y-hh<topPx||y+hh>bh-3||hit(b))return false;bx.push(b);labs+=pill(x,y,t,rot);return true;};
     /* runs of one kind of ground along a row of the map, from the middle outward */
@@ -1500,7 +1509,8 @@ function realMapSVG(h,mode,G){
     let rx0=null;[-1,1].forEach(d=>{for(const y of[yMid,yMid+40,yMid-40,yMid+80]){const q=runs(y,d,['L','R']);if(q&&q.w>=24&&(rx0==null||Math.abs(q.c-rx0)>110)&&lab(q.c,y,'Rough',q.w<58)){rx0=q.c;break;}}});
     [[-1,'X'],[1,'X']].forEach(([d])=>{for(const y of[yMid+20,yMid-30]){let x=d<0?6:bw-6,a=null,b=null;for(;x>0&&x<bw;x-=d*5){if(zAt(x,y)==='X'){if(a==null)a=x;b=x;}else if(a!=null)break;}if(a!=null&&Math.abs(b-a)>=20&&lab((a+b)/2,y,'Trees',1))break;}});
   }
-  const toGreen=cut?`<g class="ml rcut"><rect x="${bw/2-46}" y="${topPx+4}" width="92" height="20" rx="10"/><text x="${bw/2}" y="${topPx+17.6}">GREEN ${(()=>{const g=Math.atan2(vx(B),vy(B))*180/Math.PI;return g<-18?'↖':g>18?'↗':'↑';})()} ${Math.round(L)} YD</text></g>`:'';
+  /* the green tag is a button: tap it to see the whole hole (and tap again for the closer view) */
+  const tw=wide?96:118,tx=wide?12+tw/2:bw/2,ty=wide?bh-38:topPx+2,toGreen=cut||wide?`<g class="rtag" data-act="wide" role="button" tabindex="0" aria-label="${wide?'Closer view':'Show the whole hole to the green'}"><rect x="${tx-tw/2}" y="${ty}" width="${tw}" height="24" rx="12"/><text x="${tx}" y="${ty+15.8}">${wide?'CLOSER VIEW':`GREEN ${(()=>{const g=Math.atan2(vx(B),vy(B))*180/Math.PI;return g<-18?'↖':g>18?'↗':'↑';})()} ${Math.round(L)} YD ›`}</text></g>`:'';
   const act=mode==='shot'?'res':mode==='drop'?'drop':'';
   return `<svg class="map rmap" viewBox="0 0 ${bw} ${bh}" data-ax="${A[0].toFixed(2)}" data-ay="${A[1].toFixed(2)}" data-ux="${u[0].toFixed(5)}" data-uy="${u[1].toFixed(5)}" data-s="${s.toFixed(4)}" data-lo="${lo.toFixed(2)}" data-bot="${botPx}" role="group" aria-label="Map of the hole, turned toward the green. Tap where your ball is.">
     <defs><pattern id="rtp" width="16" height="14" patternUnits="userSpaceOnUse"><circle class="m-tree" cx="4" cy="4" r="4.4"/><circle class="m-tree" cx="12" cy="11" r="4.4"/></pattern>${fws?`<clipPath id="rfc"><path d="${fws}"/></clipPath>`:''}</defs>
@@ -1512,10 +1522,11 @@ function realMapSVG(h,mode,G){
     ${gp?`<path class="m-near" d="${gp}" stroke-width="${f1(2*NEAR_YD*s)}"/><path class="m-collar" d="${gp}" stroke-width="${f1(Math.max(3,5*s))}"/>`:''}
     ${(m.b||[]).map(a=>`<path class="m-sand" d="${path(a)}"/>`).join('')}
     ${gp?`<path class="m-green" d="${gp}"/>`:''}
-    ${flag}${labs}${toGreen}<g class="deco">${trail}${wet}${ball}${penb}</g>
-    ${act?`<rect class="tapz" x="0" y="0" width="${bw}" height="${bh}" data-act="${act}" data-v="auto" role="button" tabindex="0" aria-label="${mode==='drop'?'Tap where you play from now':'Tap where your ball ended up'}"/>`:''}
+    ${flag}${labs}<g class="deco">${trail}${wet}${ball}${penb}</g>
+    ${act?`<rect class="tapz" x="0" y="0" width="${bw}" height="${bh}" data-act="${act}" data-v="auto" role="button" tabindex="0" aria-label="${mode==='drop'?'Tap where you play from now':'Tap where your ball ended up'}"/>`:''}${toGreen}
   </svg>`;
 }
+function wideKey(h){return S.cur+':'+S.hole+':'+(h.sh||[]).length;}
 /* A tap on the real map, in map yards */
 function realTapPt(svg,ev){
   if(!ev||!svg.getScreenCTM)return null;const M=svg.getScreenCTM();if(!M)return null;const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const q=p.matrixTransform(M.inverse());
@@ -1575,13 +1586,16 @@ function viewPlay(){
   if(!r)return `<section class="empty"><div class="empty-ic">${IC.flag}</div><h1 class="t1">No round going</h1><p class="sub">Start one on the first tee. Each shot is one tap on a map of the hole.</p><button class="cta" data-go="rounds">Start a round</button></section>`;
   const o=roundStats(r),p=pos(h);
   let body;
-  if(isQuick(h)||p==='H')body=doneHTML(r,i,h);
+  if(h.skip)body=skipHTML(r,i,h);
+  else if(isQuick(h)||p==='H')body=doneHTML(r,i,h);
   else if(p==='P')body=dropHTML(h);
   else if(p==='G')body=puttHTML(h);
   else body=shotHTML(r,i,h);
   const tp=o.n?`<button class="hd-pill${o.score-o.par<0?' u':''}" data-act="card" aria-haspopup="dialog" aria-label="${vsPar(o.score-o.par)} through ${o.n}. Show the scorecard"><b class="num">${vsPar(o.score-o.par)}</b><span class="thru"> thru ${o.n}</span></button>`:'';
   const n=r.h.length,live=liveHole(r),no=holeNo(r,i);
-  const back=i!==live&&r.status!=='done'?`<button class="golive" data-act="hole" data-v="${live}"><span>Looking at hole ${no}. You're playing hole ${holeNo(r,live)}.</span><b>Back to it ›</b></button>`:'';
+  /* one question at a time: a missed-shot question on this hole comes before an earlier hole's score */
+  const miss=r.status!=='done'&&!gapHTML(h)?missHTML(r,i,live):'';
+  const back=!miss&&i!==live&&r.status!=='done'?`<button class="golive" data-act="hole" data-v="${live}"><span>Looking at hole ${no}. You're playing hole ${holeNo(r,live)}.</span><b>Back to it ›</b></button>`:'';
   const sl=S.slide;S.slide=null;
   return `<div class="play${sl?' sl-'+sl:''}"><header class="hd">
       <div class="hpager" role="group" aria-label="Hole">
@@ -1591,8 +1605,31 @@ function viewPlay(){
       </div>
       ${tp}<span class="sdot" id="sdot" aria-hidden="true"></span>
       <div class="hd-par"><span class="cap">Par</span><div class="seg par" role="group" aria-label="Par">${[3,4,5].map(v=>`<button data-act="par" data-v="${v}" aria-pressed="${h.par===v}" aria-label="Par ${v}">${v}</button>`).join('')}</div></div>
-    </header>${back}${body}</div>`;
+    </header>${back}${miss}${body}</div>`;
 }
+/* Forgot to log: an earlier hole with no score gets a one-tap score card. It shows for the hole you left when you're
+   already on a later one (once you've tapped there, or 12+ minutes after the last tap on it), and for any earlier
+   hole with no score while you play this one: most recent first, then the next. */
+function missHTML(r,i,live){
+  let j=-1;const L=r.h[live];
+  if(i>live&&L&&holeOpen(L)&&(!(L.sh||[]).length||Date.now()-lastT(L)>=12*60000))j=live;
+  else if(i===live){for(let k=i-1;k>=0;k--)if(holeOpen(r.h[k])){j=k;break;}}
+  if(j<0)return '';
+  const x=r.h[j],no=holeNo(r,j),started=(x.sh||[]).length>0,base=Math.max(1,x.par-1);
+  return `<div class="stale missq" role="group" aria-label="Score for hole ${no}"><b>Hole ${no} ${started?'isn’t finished':'has no score'}. What did you make?</b>
+    <div class="nums six">${Array.from({length:6},(_,k)=>base+k).map(n=>`<button class="nb${n===x.par?' par':''}" data-act="fillq" data-i="${j}" data-v="${n}" aria-label="${n} on hole ${no}"><span class="num">${n}</span><small>${scoreShort(n-x.par)}</small></button>`).join('')}</div>
+    <div class="mq-l"><button class="lk" data-act="skiph" data-i="${j}">I didn’t play it</button><button class="lk" data-act="hole" data-v="${j}">Go to hole ${no} ›</button></div></div>`;
+}
+/* Forgot to tap a shot: a tap farther than your longest club goes (x1.25 + 15 yd) asks how many shots it took */
+function reachYd(){const ctx=planCtx();let m=0;['Driver','3Wood','3Hybrid'].forEach(k=>{if(YC[k])m=Math.max(m,clubMid(k,ctx));});return Math.round((m||200)*1.25+15);}
+function gapHTML(h){const g=h.gap;if(!g||!(h.sh||[]).some(e=>e.t===g.t))return '';
+  return `<div class="stale gapq" role="group" aria-label="Missed shots"><div><b>That’s ${g.d} yd from your last spot.</b><span>Did it take more than one shot to get there?</span></div>
+    <div class="seg full" role="group"><button data-act="gap" data-v="1">Just 1</button><button data-act="gap" data-v="2">2 shots</button><button data-act="gap" data-v="3">3 shots</button></div></div>`;}
+/* A hole you marked "didn't play": left out of the score and stats until you enter one */
+function skipHTML(r,i,h){const last=i>=r.h.length-1;
+  return `<section class="res"><div class="res-top"><div class="mk big num" aria-hidden="true">–</div><div class="res-t"><span class="pillx">Not played</span><span class="sub">Left out of your score and stats.</span></div></div>
+      <div class="r2"><button class="cta sec" data-act="unskip" data-v="qs">Enter a score</button><button class="cta sec" data-act="unskip" data-v="tap">Tap shots</button></div></section>
+    ${last?`<button class="cta" data-act="finish">Finish round ${IC.arrow}</button>`:`<button class="cta" data-act="next">Next hole ${IC.arrow}</button>`}`;}
 function strip(n,title,sub,h,opt){
   opt=opt||{};const any=(h.sh||[]).length;
   return `<div class="strip"><div class="sn${opt.pen?' pen':''}"><span class="num">${n}</span><small>shot</small></div>
@@ -1613,19 +1650,20 @@ function shotHTML(r,i,h){
   const clubs=tee&&h.par>=4?`<div class="teeclubs" role="group" aria-label="Club off the tee">${TCLUB.map(([v,l])=>`<button data-act="tclub" data-v="${v}" aria-pressed="${tc===v}">${v==='3W'?'3-wood':l}</button>`).join('')}</div>`:'';
   const askMiss=h.pickOn===false&&h.pickAt!=null&&c.n===h.pickAt+1&&YNAME[h.pick]?`<div class="ask"><span class="cap">Your ${YNAME[h.pick]} missed the green. Which way? Optional</span><div class="pills">${MISS.map(([v,l])=>`<button class="pl" data-act="miss" data-v="${v}" aria-pressed="${h.miss===v}">${l}</button>`).join('')}</div></div>`:'';
   const G=gHole(r,i),cl=G?caddyLine(G,h):'';
-  return `${staleHTML(i,h)}${strip(n,'','',h,{mid:planBarHTML(r,h)})}${cl?`<button class="cadl" data-act="cad"><span class="t">${cl}</span></button>`:''}${askMiss}
+  const gq=gapHTML(h);
+  return `${staleHTML(i,h)}${strip(n,'','',h,{mid:planBarHTML(r,h)})}${gq}${cl&&!gq?`<button class="cadl" data-act="cad"><span class="t">${cl}</span></button>`:''}${askMiss}
     <div class="mapw fit" data-mode="shot">${clubs||`<span class="maphint">Tap where it ended up</span>`}${mapSVG(h,'shot')}</div>
     <div class="acts three"><button class="act bad" data-act="res" data-v="P"><b>Penalty</b><small>water, OB, lost</small></button><button class="act good" data-act="res" data-v="H"><b>Holed it</b><small>off the green</small></button><button class="act" data-act="qs"><b>Lost count</b><small>enter score</small></button></div>`;
 }
 function dropHTML(h){
   const c=strokesOf(h);
-  return `${strip(c.n+c.p+1,'Penalty, 1 stroke added','Tap where you play from now',h,{plus:false,pen:true})}
+  return `${strip(c.n+c.p+1,'Penalty, 1 stroke added','Tap where you play from now',h,{plus:false,pen:true})}${gapHTML(h)}
     <div class="mapw fit" data-mode="drop">${mapSVG(h,'drop')}</div>
     <div class="acts one"><button class="act" data-act="drop" data-v="same"><b>Same spot again</b><small>re-tee or replay the shot</small></button></div>`;
 }
 function puttHTML(h){
   const c=strokesOf(h),k=(h.putts||0)+1,first=k===1;
-  return `${strip(c.n+c.p+1,'On the green',first?'First putt':'Putt '+k,h)}
+  return `${strip(c.n+c.p+1,'On the green',first?'First putt':'Putt '+k,h)}${gapHTML(h)}
     <div class="greenw fitg" style="position:relative">${greenSVG(h)}${(()=>{const {r,i}=curHole(),G=r?gHole(r,i):null;return G&&G.hd.gr?`<button class="maphint preadbtn" data-act="pread">Read this putt ›</button>`:'';})()}<button class="maphint pacebtn${h.pst!=null?' on':''}" data-act="pace">${h.pst!=null?`${h.pst} ${h.pst===1?'step':'steps'} · about ${ftOf(h.pst)} ft`:`Pace it: steps to the hole ›`}</button></div>
     ${first?`<div class="pgrid" role="group" aria-label="First putt length, optional">${PUTT_LEN.map(([v,l])=>`<button class="pl" data-act="fp" data-v="${v}" aria-pressed="${h.fp===v}">${l}</button>`).join('')}</div>`:''}
     <div class="acts three" role="group" aria-label="How did the putt finish?"><button class="act big" data-act="putt" data-v="short" aria-label="Missed, stopped short"><b>Short</b><small>didn’t reach</small></button><button class="act big" data-act="putt" data-v="past" aria-label="Missed, rolled past"><b>Past</b><small>rolled by</small></button><button class="act big go" data-act="putt" data-v="made"><b>Made it</b></button></div>
@@ -1657,7 +1695,7 @@ function doneHTML(r,i,h){
 
 /* The round at a glance, shown as soon as the last hole has a score */
 function recapHTML(r){
-  const o=roundStats(r),d=o.score-o.par,miss=r.h.map((x,j)=>x.s==null?j:-1).filter(j=>j>=0);
+  const o=roundStats(r),d=o.score-o.par,miss=r.h.map((x,j)=>holeOpen(x)?j:-1).filter(j=>j>=0);
   const ds=r.h.filter(x=>x.s!=null).map(x=>x.s-x.par),cnt=f=>ds.filter(f).length;
   const dist=[['eagle',cnt(v=>v<=-2)],['birdie',cnt(v=>v===-1)],['par',cnt(v=>v===0)],['bogey',cnt(v=>v===1)],['double+',cnt(v=>v>=2)]].filter(x=>x[1]);
   let bi=-1,bd=0;r.h.forEach((x,j)=>{if(x.s!=null&&x.s-x.par<bd){bd=x.s-x.par;bi=j;}});
@@ -1721,8 +1759,8 @@ function qsHTML(r,i,h){
     <button class="cta" data-act="qssave"${S.qs.s==null?' disabled':''}>Save hole ${holeNo(r,i)}</button>`;
 }
 function holesHTML(r,i){
-  const cells=r.h.map((x,j)=>{const d=x.s!=null?x.s-x.par:null,open=x.s==null&&(x.sh||[]).length;
-    return `<button class="hb${open?' open':''}" data-act="hole" data-v="${j}" aria-current="${j===i}" aria-label="Hole ${holeNo(r,j)}${x.s!=null?', score '+x.s:open?', not finished':''}"><small>${holeNo(r,j)}</small><span class="num">${x.s!=null?`<span class="mk ${markCls(d)}" style="width:24px;height:24px">${x.s}</span>`:'–'}</span></button>`;}).join('');
+  const cells=r.h.map((x,j)=>{const d=x.s!=null?x.s-x.par:null,open=holeOpen(x)&&(x.sh||[]).length;
+    return `<button class="hb${open?' open':''}" data-act="hole" data-v="${j}" aria-current="${j===i}" aria-label="Hole ${holeNo(r,j)}${x.s!=null?', score '+x.s:x.skip?', not played':open?', not finished':''}"><small>${holeNo(r,j)}</small><span class="num">${x.s!=null?`<span class="mk ${markCls(d)}" style="width:24px;height:24px">${x.s}</span>`:x.skip?'<small class="skp">skip</small>':'–'}</span></button>`;}).join('');
   return `${sheetHead(esc(r.course||'Round'),'Holes')}
     <div class="hgrid">${cells}</div>
     <div class="legend"><span><i></i>Started, no score yet</span><span>Hold a hole to enter its score</span></div>
@@ -1747,7 +1785,7 @@ function viewRounds(){
   const rows=sortedRounds();
   const live=rows.find(([,r])=>r.status!=='done'&&!r.example);
   const recent=[...new Set(rows.filter(([,r])=>!r.example&&r.course).map(([,r])=>r.course.trim()).concat(courseOrder().map(c=>c.name)))].slice(0,5);
-  const resume=live?(()=>{const [id,r]=live;const j=r.h.findIndex(x=>!holeDone(x));return `<button class="resume" data-act="open" data-id="${id}"><span><b>Keep playing</b><small>${esc(r.course||'Round')} · hole ${holeNo(r,j<0?r.h.length-1:j)}</small></span>${IC.arrow}</button>`;})():'';
+  const resume=live?(()=>{const [id,r]=live;const j=r.h.findIndex(holeOpen);return `<button class="resume" data-act="open" data-id="${id}"><span><b>Keep playing</b><small>${esc(r.course||'Round')} · hole ${holeNo(r,j<0?r.h.length-1:j)}</small></span>${IC.arrow}</button>`;})():'';
   const list=rows.map(([id,r])=>{const o=roundStats(r),done=r.h.filter(holeDone).length;
     return `<button class="lr" data-act="summary" data-id="${id}"><span><b>${esc(r.course||'Unnamed course')}${r.example?'<span class="tagx">Example</span>':''}</b><small>${esc(fmtDate(r.date))} · ${done===r.h.length?r.h.length+' holes':done+' of '+r.h.length+' holes'}</small></span><span class="num">${o.n?o.score:'–'}</span><span class="pillx ${o.n?toneCls(Math.sign(o.score-o.par)*Math.min(2,Math.abs(o.score-o.par))):''}">${o.n?vsPar(o.score-o.par):'–'}</span></button>`;}).join('');
   return `<h1 class="t1">Rounds</h1>${resume}
@@ -1767,7 +1805,7 @@ function viewRounds(){
 }
 function scorecardHTML(r){
   const nine=(a,b,lab)=>{const hs=r.h.slice(a,b);if(!hs.length)return '';let ts=0,tp=0,tpu=0;
-    const sc=hs.map(h=>{if(h.s!=null){ts+=h.s;tpu+=h.putts||0;}tp+=h.par;const d=h.s==null?null:h.s-h.par;return `<td>${h.s==null?'–':`<span class="mk ${markCls(d)}">${h.s}</span>`}</td>`;}).join('');
+    const sc=hs.map(h=>{if(h.s!=null){ts+=h.s;tpu+=h.putts||0;}tp+=h.par;const d=h.s==null?null:h.s-h.par;return `<td>${h.s==null?(h.skip?'<small class="skp">skip</small>':'–'):`<span class="mk ${markCls(d)}">${h.s}</span>`}</td>`;}).join('');
     return `<div class="scw"><table class="sc"><thead><tr><th class="rl">Hole</th>${hs.map((h,k)=>`<th>${holeNo(r,a+k)}</th>`).join('')}<th>${lab}</th></tr></thead>
       <tbody><tr class="pr"><td class="rl">Par</td>${hs.map(h=>`<td>${h.par}</td>`).join('')}<td>${tp}</td></tr>
       <tr><td class="rl">Score</td>${sc}<td class="tt">${ts||'–'}</td></tr>
@@ -1776,7 +1814,7 @@ function scorecardHTML(r){
 }
 function viewSummary(){
   const r=S.rounds[S.cur];if(!r)return viewRounds();
-  const o=roundStats(r),missing=r.h.map((h,j)=>h.s==null?j:-1).filter(j=>j>=0);
+  const o=roundStats(r),missing=r.h.map((h,j)=>holeOpen(h)?j:-1).filter(j=>j>=0);
   return `<button class="back" data-go="rounds">‹ Rounds</button>
     <header class="sum-h"><div><h1 class="t1">${esc(r.course||'Unnamed course')}${r.example?'<span class="tagx">Example</span>':''}</h1><p class="sub">${esc(fmtDate(r.date))}</p></div>
       <div class="sum-s"><span class="num">${o.n?o.score:'–'}</span>${o.n?`<span class="pillx ${toneCls(Math.sign(o.score-o.par)*Math.min(2,Math.abs(o.score-o.par)))}">${vsPar(o.score-o.par)}</span>`:''}</div></header>
@@ -2379,7 +2417,7 @@ document.addEventListener('click',ev=>{
   const b=ev.target.closest('[data-act]');if(!b)return;
   const act=b.dataset.act,{r,i,h}=curHole();
   if(act!=='del'&&S.confirmDel){S.confirmDel=null;}
-  if(!S.canWrite&&['start','res','drop','putt','undo','plus1','par','npar','tclub','qssave','tap','finish','del','fp','miss','hit','pstep','cond','doimport'].includes(act)){renderBanner();return;}
+  if(!S.canWrite&&['start','res','drop','putt','undo','plus1','par','npar','tclub','qssave','tap','finish','del','fp','miss','hit','pstep','cond','doimport','gap','fillq','skiph','unskip'].includes(act)){renderBanner();return;}
   const redo=()=>{if(h&&!isQuick(h))derive(h);touch(S.cur);render();};
   switch(act){
     case 'pages':{const g=$('gmOpen');if(g)g.click();break;}
@@ -2406,7 +2444,7 @@ document.addEventListener('click',ev=>{
       const gc=courseByName(course),ng=ngState(gc,n);
       if(gc&&ng.gn.length===n/9){const rr=S.rounds[id];rr.g=gc.id;rr.gn=ng.gn.slice();rr.tee=ng.tee;rr.temp=ng.temp;rr.h.forEach((x,j)=>{const G=gHole(rr,j);if(G){x.par=G.hd.par;x.parSet=1;x.len=ydOf(gc,G.hd,rr.tee);}});S.cad={id:gc.id,gn:rr.gn.slice(),tee:rr.tee,temp:rr.temp};saveCad();}
       S.cur=id;S.hole=0;S.newCourse='';touch(id);setView('play');break;}
-    case 'open':{S.cur=b.dataset.id;const rr=S.rounds[S.cur];const k=rr?rr.h.findIndex(x=>!holeDone(x)):0;S.hole=k<0?0:k;saveLocal();setView('play');break;}
+    case 'open':{S.cur=b.dataset.id;const rr=S.rounds[S.cur];const k=rr?rr.h.findIndex(holeOpen):0;S.hole=k<0?0:k;saveLocal();setView('play');break;}
     case 'summary':S.cur=b.dataset.id;saveLocal();setView('summary');break;
     case 'fill':S.hole=+b.dataset.v;saveLocal();S.qs={s:null,p:null};S.sheet='qs';setView('play');renderSheet();break;
     case 'del':{const id=b.dataset.id;if(S.confirmDel!==id){S.confirmDel=id;render();break;}
@@ -2423,8 +2461,9 @@ document.addEventListener('click',ev=>{
     case 'tclub':r.tc=b.dataset.v;h.tc=b.dataset.v;touch(S.cur);render();break;
     case 'res':{if(!h.sh)h.sh=[];const c=strokesOf(h);let v=b.dataset.v,P=null;
       /* a tap on the real map: what it landed in comes from the shapes under the finger (water = a penalty) */
-      if(v==='auto'){const svg=b.closest('svg'),G=realG(h);P=svg&&G?realTapPt(svg,ev):null;if(!P)break;const z=zoneAt(G,P);v=z==='W'?'P':z;}
-      const e=stamp({to:v,t:Date.now()});
+      let from0=null;
+      if(v==='auto'){const svg=b.closest('svg'),G=realG(h);P=svg&&G?realTapPt(svg,ev):null;if(!P)break;const z=zoneAt(G,P);v=z==='W'?'P':z;from0=realPts(h,G).cur;}
+      delete h.gap;const e=stamp({to:v,t:Date.now()});
       if(c.n===0&&pos(h)==='T'&&h.par>=4)e.c=teeClubFor(r,h);
       const nx=h.nextPk&&h.nextPk.n===c.n?h.nextPk:null;
       if(nx){e.pk=nx.k;e.d=nx.d;}
@@ -2432,18 +2471,19 @@ document.addEventListener('click',ev=>{
       else{const rem=remainingYd(h);if(rem){const s0=planFor(h,rem.yd).steps[0];e.d=stepDist(s0);}}
       if(P)e.p=P;else{const svg=b.closest('svg');const pt=svg?svgPt(svg,ev):null;if(pt){e.x=pt[0];e.y=pt[1];}}
       h.sh.push(e);if(h.cond)h.cond=Object.assign({},h.cond,{l:lieFor(e.to),s:'flat'});
+      if(P&&from0){const dd=Math.round(Math.hypot(P[0]-from0[0],P[1]-from0[1]));if(dd>reachYd())h.gap={t:e.t,d:dd,from:[+from0[0].toFixed(1),+from0[1].toFixed(1)]};}
       const left=P&&e.to!=='G'&&e.to!=='P'?mapLeft(h):null;
       tapped(h,`Shot ${c.n+c.p+1}: ${e.to==='H'?'holed':P&&e.to==='P'?'in the water, +1':LBL[e.to].toLowerCase()}${left?` · ${left} yd to go`:''}`);break;}
-    case 'drop':{let v=b.dataset.v,P=null;
+    case 'drop':{let v=b.dataset.v,P=null;delete h.gap;
       if(v==='auto'){const svg=b.closest('svg'),G=realG(h);P=svg&&G?realTapPt(svg,ev):null;if(!P)break;const z=zoneAt(G,P);
         if(z==='W'){toast('That’s in the water: tap dry land');break;}if(z==='G'){toast('Drops can’t go on the green: tap beside it');break;}v=z;}
       const e=stamp(v==='same'?{drop:prevFrom(h),same:1,t:Date.now()}:{drop:v,t:Date.now()});
       if(P)e.p=P;else{const svg=b.closest('svg');const pt=svg?svgPt(svg,ev):null;if(pt){e.x=pt[0];e.y=pt[1];}}
       h.sh.push(e);if(h.cond)h.cond=Object.assign({},h.cond,{l:lieFor(e.drop)});const left=mapLeft(h);tapped(h,`Playing from ${v==='same'?'the same spot':LBL[v].toLowerCase()}${left?` · ${left} yd to go`:''}`);break;}
-    case 'putt':{if(!h.sh)h.sh=[];const k=(h.putts||0)+1,v=b.dataset.v,made=v==='made';if(k===1)learnGreen(r,i);const e={to:made?'H':'G',t:Date.now()};if(v==='short')e.m='s';else if(v==='past')e.m='p';if(h.pst!=null){e.st=h.pst;delete h.pst;r.stepFt=stepFt();}h.sh.push(stamp(e));tapped(h,made?`Holed on putt ${k}`:v==='short'?`Putt ${k} short`:v==='past'?`Putt ${k} past`:`Putt ${k} missed`);if(pos(h)==='H')window.scrollTo(0,0);break;}
-    case 'plus1':{if(!h.sh)h.sh=[];h.sh.push(stamp({to:pos(h),f:1,t:Date.now()}));const c=strokesOf(h);tapped(h,`Added a shot. Now on shot ${c.n+c.p+1}`);break;}
+    case 'putt':{delete h.gap;if(!h.sh)h.sh=[];const k=(h.putts||0)+1,v=b.dataset.v,made=v==='made';if(k===1)learnGreen(r,i);const e={to:made?'H':'G',t:Date.now()};if(v==='short')e.m='s';else if(v==='past')e.m='p';if(h.pst!=null){e.st=h.pst;delete h.pst;r.stepFt=stepFt();}h.sh.push(stamp(e));tapped(h,made?`Holed on putt ${k}`:v==='short'?`Putt ${k} short`:v==='past'?`Putt ${k} past`:`Putt ${k} missed`);if(pos(h)==='H')window.scrollTo(0,0);break;}
+    case 'plus1':{delete h.gap;if(!h.sh)h.sh=[];h.sh.push(stamp({to:pos(h),f:1,t:Date.now()}));const c=strokesOf(h);tapped(h,`Added a shot. Now on shot ${c.n+c.p+1}`);break;}
     case 'behind':toast(b.dataset.v==='green'?'You’re by the green: tap the green, around it, or a bunker':'That’s behind your ball: tap ahead of it');break;
-    case 'undo':{$('toast').hidden=true;if(h&&h.sh&&h.sh.length&&!isQuick(h)){const x=h.sh.pop();if(x&&x.st!=null)h.pst=x.st;redo();}break;}
+    case 'undo':{$('toast').hidden=true;if(h)delete h.gap;if(h&&h.sh&&h.sh.length&&!isQuick(h)){const x=h.sh.pop();if(x&&x.st!=null)h.pst=x.st;redo();}break;}
     case 'pace':S.sheet='pace';renderSheet();break;
     case 'pacen':{const n=+b.dataset.v;if(n>0){h.pst=n;if((h.putts||0)===0)h.fp=fpBand(n*stepFt());}else delete h.pst;S.sheet=null;renderSheet();touch(S.cur);render();if(n>0)toast(`${n} ${n===1?'step':'steps'}, about ${ftOf(n)} ft`,false);break;}
     case 'stepk':{setStepFt(stepFt()+(+b.dataset.v)*0.1);if(h&&(h.putts||0)===0&&h.pst!=null)h.fp=fpBand(h.pst*stepFt());renderSheet();render();break;}
@@ -2453,7 +2493,17 @@ document.addEventListener('click',ev=>{
     case 'qs':S.qs={s:h.s!=null?h.s:null,p:h.s!=null?h.putts:null};S.sheet='qs';renderSheet();break;
     case 'qsn':S.qs.s=+b.dataset.v;renderSheet();break;
     case 'qsp':S.qs.p=S.qs.p===+b.dataset.v?null:+b.dataset.v;renderSheet();break;
-    case 'qssave':{if(S.qs.s==null)break;h.quick=true;h.s=S.qs.s;h.putts=S.qs.p;S.sheet=null;renderSheet();touch(S.cur);render();window.scrollTo(0,0);toast(`Hole ${holeNo(r,i)}: ${h.s} saved`,false);break;}
+    case 'wide':{S.mapWide=S.mapWide===wideKey(h)?null:wideKey(h);render();break;}
+    case 'gap':{const g=h.gap;delete h.gap;const k=+b.dataset.v,j=g?(h.sh||[]).findIndex(e=>e.t===g.t):-1;if(k<2||j<0||!h.sh[j].p){touch(S.cur);render();break;}
+      /* the forgotten shots go in before the tapped one, spaced along the straight line from your last spot */
+      const G=realG(h),e=h.sh[j],add=[];
+      for(let q=1;q<k;q++){const f=q/k,P=[+(g.from[0]+(e.p[0]-g.from[0])*f).toFixed(1),+(g.from[1]+(e.p[1]-g.from[1])*f).toFixed(1)];let z=G?zoneAt(G,P):'F';if(z==='W'||z==='G')z='F';add.push({to:z,p:P,f:1,t:e.t-(k-q)});}
+      if(e.c){add[0].c=e.c;delete e.c;}
+      h.sh.splice(j,0,...add);const c=strokesOf(h);tapped(h,`Added ${k-1} forgotten ${k===2?'shot':'shots'}. Now on shot ${c.n+c.p+1}`);break;}
+    case 'fillq':{const j=+b.dataset.i,x=r.h[j];if(!x)break;x.quick=true;x.s=+b.dataset.v;x.putts=null;delete x.skip;touch(S.cur);render();toast(`Hole ${holeNo(r,j)}: ${x.s} saved`);break;}
+    case 'skiph':{const j=+b.dataset.i,x=r.h[j];if(!x)break;x.skip=1;x.s=null;touch(S.cur);render();toast(`Hole ${holeNo(r,j)} left out of your score`);break;}
+    case 'unskip':delete h.skip;touch(S.cur);if(b.dataset.v==='qs'){S.qs={s:null,p:null};S.sheet='qs';renderSheet();}render();break;
+    case 'qssave':{if(S.qs.s==null)break;delete h.skip;h.quick=true;h.s=S.qs.s;h.putts=S.qs.p;S.sheet=null;renderSheet();touch(S.cur);render();window.scrollTo(0,0);toast(`Hole ${holeNo(r,i)}: ${h.s} saved`,false);break;}
     case 'tap':h.quick=false;if(!h.sh)h.sh=[];redo();break;
     case 'plan':{const rem=remainingYd(h),c=strokesOf(h),tee=c.n===0&&pos(h)==='T';S.planYd=rem?rem.yd:(tee?(h.par===3?150:h.par===5?480:370):150);S.planSrc=null;S.sheet='plan';renderSheet();break;}
     case 'pstep':setPlanYd(S.planYd+(+b.dataset.d),'b');savePlanYd();break;
