@@ -203,6 +203,8 @@ body[data-view="play"] #main{flex:1 1 auto;min-height:0}
 .rsc circle{fill:#5B6B57;stroke:#fff;stroke-width:1.5}.rsc.u circle{fill:var(--c-accent)}.rsc.o circle{fill:#B5652B}.rsc text{fill:#fff;font:700 9.5px var(--f-num);text-anchor:middle}
 .otr .tr{stroke-width:1.8;opacity:.75}.rbhit{fill:transparent;cursor:pointer}
 .hd-par.fixed{gap:6px;padding:0 4px}.hd-par.fixed b{font-size:var(--t-label);font-weight:700}.hd-par.fixed small{font-size:var(--t-cap);color:var(--c-muted);font-weight:600}
+.rg-edge{fill:none;stroke:var(--m-green-hi);stroke-width:1.2}.rg-aim{fill:none;stroke:#fff;stroke-width:1.6;stroke-dasharray:3 5;opacity:.85}
+.pgrid .pl.sug{box-shadow:inset 0 0 0 1.5px var(--c-accent)}
 .m-water{fill:var(--m-water);stroke:var(--m-water-edge);stroke-width:1.2}
 .m-near{fill:var(--m-fringe);stroke:var(--m-fringe);stroke-linejoin:round;opacity:.42}
 .m-collar{fill:var(--m-fringe);stroke:var(--m-fringe);stroke-linejoin:round}
@@ -1537,7 +1539,8 @@ function realMapSVG(h,mode,G){
   const o=realPts(h,G),k=o.k,m=G.hd.m,[bw,bh]=S.mapBox||[380,470],live=mode==='shot'||mode==='drop',done=pos(h)==='H';
   const cam=realCam(h,mode,G,o,bw,bh),{A,u,s,lo,topPx,botPx,cut,L,B}=cam,r=[u[1],-u[0]];
   /* the course view (or pinching out past the whole hole) draws the round's other holes too, with number badges */
-  const rd=S.rounds[S.cur],hi0=rd?rd.h.indexOf(h):-1,showAll=!!cam.crs&&(cam.kind==='course'||(cam.kind==='free'&&s<cam.whole.s*.95));
+  /* the other holes show only on the course view (its button); pinching out stops at this hole */
+  const rd=S.rounds[S.cur],hi0=rd?rd.h.indexOf(h):-1,showAll=!!cam.crs&&cam.kind==='course';
   const others=showAll?cam.list.filter(e=>e.j!==hi0):[];
   const vx=P=>(P[0]-A[0])*r[0]+(P[1]-A[1])*r[1],vy=P=>(P[0]-A[0])*u[0]+(P[1]-A[1])*u[1];
   const SX=P=>bw/2+vx(P)*s,SY=P=>bh-botPx-(vy(P)-lo)*s,f1=v=>v.toFixed(1);
@@ -1588,7 +1591,7 @@ function realMapSVG(h,mode,G){
   const toGreen=cut&&SY(B)<topPx+12?`<g class="rch rtag" data-act="zoom" role="button" aria-label="Show the whole hole"><rect x="${bw/2-58}" y="${topPx+3}" width="116" height="22" rx="11"/><text x="${bw/2}" y="${topPx+18}">Green ${Math.round(L)} yd ${arrow}</text></g>`:'';
   const act=mode==='shot'?'res':mode==='drop'?'drop':'';
   const W3=bw*3,H3=bh*3;
-  return `<svg class="map rmap${live?' live':''}" viewBox="0 0 ${bw} ${bh}" data-key="${S.cur}:${S.hole}"${cam.cf?` data-cf="${cam.cf.join(',')}"`:''} data-ax="${A[0].toFixed(2)}" data-ay="${A[1].toFixed(2)}" data-ux="${u[0].toFixed(5)}" data-uy="${u[1].toFixed(5)}" data-s="${s.toFixed(4)}" data-lo="${lo.toFixed(2)}" data-bot="${botPx}" data-top="${topPx}" data-smin="${(cam.crs?cam.crs.s*.9:cam.whole.s*.85).toFixed(4)}" role="group" aria-label="Map of the hole. Tap where your ball is. Pinch or use the zoom button to see more.">
+  return `<svg class="map rmap${live?' live':''}" viewBox="0 0 ${bw} ${bh}" data-key="${S.cur}:${S.hole}"${cam.cf?` data-cf="${cam.cf.join(',')}"`:''} data-ax="${A[0].toFixed(2)}" data-ay="${A[1].toFixed(2)}" data-ux="${u[0].toFixed(5)}" data-uy="${u[1].toFixed(5)}" data-s="${s.toFixed(4)}" data-lo="${lo.toFixed(2)}" data-bot="${botPx}" data-top="${topPx}" data-smin="${(cam.kind==='course'&&cam.crs?cam.crs.s*.9:cam.whole.s*.85).toFixed(4)}" role="group" aria-label="Map of the hole. Tap where your ball is. Pinch or use the zoom button to see more.">
     <defs><pattern id="rtp" width="14" height="13" patternUnits="userSpaceOnUse"><rect class="m-trees" width="14" height="13"/><circle class="m-tree" cx="3.5" cy="3.5" r="3.6"/><circle class="m-tree" cx="10.5" cy="10" r="3.6"/></pattern>${fws?`<clipPath id="rfc"><path d="${fws}"/></clipPath>`:''}</defs>
     <g class="rw">
     <rect class="m-out" x="${-bw}" y="${-bh}" width="${W3}" height="${H3}"/>
@@ -1666,9 +1669,68 @@ function realTapPt(svg,ev){
   const d=svg.dataset,s=+d.s,lo=+d.lo,ux=+d.ux,uy=+d.uy,bw=svg.viewBox.baseVal.width,bh=svg.viewBox.baseVal.height,x=(q.x-bw/2)/s,y=lo+(bh-(+d.bot)-q.y)/s;
   return[+(+d.ax+uy*x+ux*y).toFixed(1),+(+d.ay-ux*x+uy*y).toFixed(1)];
 }
+/* ---------- the real green on the putting screen ----------
+   The slope data (hd.gr) has its own frame: origin at the green's middle, y pointing away from you along the shot into
+   the green (from 60 m back down the hole line), x to the right. The hole map's green is lined up with it by area
+   centre and that same approach direction, so the spot you tapped on the map becomes your ball on this green. */
+function areaMid(a){let A=0,x=0,y=0;for(let i=0;i<a.length;i+=2){const j=(i+2)%a.length,c=a[i]*a[j+1]-a[j]*a[i+1];A+=c;x+=(a[i]+a[j])*c;y+=(a[i+1]+a[j+1])*c;}return Math.abs(A)>1e-6?[x/(3*A),y/(3*A)]:polyMid(a);}
+const GF=new Map();
+function grFrame(G){
+  const key=G.c.id+'|'+G.nine+'|'+G.n;if(GF.has(key))return GF.get(key);
+  const k=holeK(G),gr=G.hd.gr;let f=null;
+  if(k&&k.green&&gr&&gr.g&&gr.g.length>=6){
+    const cl=areaMid(k.green),cg=areaMid(gr.g),L=k.line;let need=65.6,back=L[0];
+    for(let i=L.length-1;i>0;i--){const a=L[i-1],b=L[i],l=Math.hypot(b[0]-a[0],b[1]-a[1]);if(l>=need){back=[b[0]-(b[0]-a[0])*need/l,b[1]-(b[1]-a[1])*need/l];break;}need-=l;}
+    const u=uvec(back,cl),r=[u[1],-u[0]];
+    f={to:P=>{const dx=P[0]-cl[0],dy=P[1]-cl[1];return[dx*r[0]+dy*r[1]+cg[0],dx*u[0]+dy*u[1]+cg[1]];}};}
+  GF.set(key,f);return f;
+}
+/* Your ball(s) and the flag on the green, in the slope frame (yards). A missed putt tagged Short stops before the
+   hole (a fifth of the way back, at least a yard), one tagged Past rolls about a yard (or an eighth) by it. */
+function greenSpots(h,G){
+  const gf=grFrame(G),gr=G.hd.gr;if(!gf)return null;
+  const o=realPts(h,G),ys=[];for(let i=1;i<gr.g.length;i+=2)ys.push(gr.g[i]);
+  let B=o.exact?gf.to(o.cur):[0,Math.min(...ys)*.55];const F=h.flag||[0,0],balls=[B.slice()];
+  let from='T';(h.sh||[]).forEach(e=>{if(e.drop){from=e.drop;return;}
+    if(from==='G'&&e.to==='G'){const dx=F[0]-B[0],dy=F[1]-B[1],d=Math.hypot(dx,dy)||1,ux=dx/d,uy=dy/d;
+      B=e.m==='p'?[F[0]+ux*Math.max(1,d*.12),F[1]+uy*Math.max(1,d*.12)]:[F[0]-ux*Math.max(1,d*.2),F[1]-uy*Math.max(1,d*.2)];balls.push(B.slice());}
+    from=e.to;});
+  return{B,F,balls,exact:o.exact,ft:Math.round(Math.hypot(F[0]-B[0],F[1]-B[1])*3)};
+}
+function realGreenSVG(h,G){
+  const gr=G.hd.gr,sp=greenSpots(h,G);if(!sp)return '';
+  const [bw,bh]=S.greenBox||[380,250],topR=36,botR=36,pts=[];for(let i=0;i<gr.g.length;i+=2)pts.push([gr.g[i],gr.g[i+1]]);
+  const all=pts.concat(sp.balls,[sp.F]),xs=all.map(p=>p[0]),ys=all.map(p=>p[1]),m=3;
+  const x0=Math.min(...xs)-m,x1=Math.max(...xs)+m,y0=Math.min(...ys)-m,y1=Math.max(...ys)+m,s=Math.min((bw-20)/(x1-x0),(bh-topR-botR)/(y1-y0));
+  const cx=(x0+x1)/2,cy=(y0+y1)/2,midY=topR+(bh-topR-botR)/2,SX=x=>bw/2+(x-cx)*s,SY=y=>midY-(y-cy)*s,f1=v=>v.toFixed(1);
+  const d=pts.map((p,i)=>(i?'L':'M')+f1(SX(p[0]))+' '+f1(SY(p[1]))).join('')+'Z';
+  const gz=gr.gz,url=gz?gShade(gz):'',shade=url?`<image href="${url}" x="${f1(SX(gz.x0))}" y="${f1(SY(gz.y0+gz.ny*gz.st))}" width="${f1(gz.nx*gz.st*s)}" height="${f1(gz.ny*gz.st*s)}" preserveAspectRatio="none"/>`:'';
+  const F=[SX(sp.F[0]),SY(sp.F[1])],B=[SX(sp.B[0]),SY(sp.B[1])],bl=sp.balls.map(p=>[SX(p[0]),SY(p[1])]),pop=S.justTapped?' pop':'';
+  const ph=Math.max(20,Math.min(36,(bh-72)*.24)),done=pos(h)==='H',trail=bl.length>1?`<path class="tr" d="M${bl.map(p=>f1(p[0])+' '+f1(p[1])).join(' L')}"/>`+bl.slice(0,-1).map(p=>`<circle class="td" cx="${f1(p[0])}" cy="${f1(p[1])}" r="3"/>`).join(''):'';
+  /* the distance tag sits beside the putt line (to its right), or under the ball when the putt is short */
+  const lab=`${sp.ft<1?'<1':sp.ft} ft`,lw=lab.length*6.6+16,ld=Math.hypot(F[0]-B[0],F[1]-B[1])||1,nx=-(F[1]-B[1])/ld,ny=(F[0]-B[0])/ld;
+  let mx=(B[0]+F[0])/2-nx*(lw/2+10),my=(B[1]+F[1])/2-ny*16;if(ld<46){mx=B[0];my=B[1]+26;}
+  mx=Math.max(lw/2+6,Math.min(bw-lw/2-6,mx));my=Math.max(14,Math.min(bh-14,my));
+  return `<svg class="map rgreen" viewBox="0 0 ${bw} ${bh}" data-cx="${cx.toFixed(2)}" data-cy="${cy.toFixed(2)}" data-s="${s.toFixed(4)}" data-mid="${midY.toFixed(1)}" role="group" aria-label="Your green, ${lab} to the hole. Tap the green to move the flag.">
+    <defs><clipPath id="rgc"><path d="${d}"/></clipPath></defs>
+    <rect class="m-rough" x="0" y="0" width="${bw}" height="${bh}"/>
+    <path class="m-collar" d="${d}" stroke-width="${f1(Math.max(4,3.2*s))}"/><path class="m-green" d="${d}"/><g clip-path="url(#rgc)">${shade}</g><path class="rg-edge" d="${d}"/>
+    ${done?'':`<path class="rg-aim" d="M${f1(B[0])} ${f1(B[1])}L${f1(F[0])} ${f1(F[1])}"/>`}
+    <g class="deco"><circle class="cup" cx="${f1(F[0])}" cy="${f1(F[1])}" r="4"/><path class="pin" d="M${f1(F[0])} ${f1(F[1])}V${f1(F[1]-ph)}"/><path class="flag" d="M${f1(F[0]+.8)} ${f1(F[1]-ph+.5)}l${f1(ph*.42)} ${f1(ph*.14)}-${f1(ph*.42)} ${f1(ph*.14)}z"/>
+      ${trail}${done?'':`<circle class="halo${pop}" cx="${f1(B[0])}" cy="${f1(B[1])}" r="14"/><circle class="ball${pop}" cx="${f1(B[0])}" cy="${f1(B[1])}" r="7.5"/>`}</g>
+    ${done||sp.ft<1?'':`<g class="rch"><rect x="${f1(mx-lw/2)}" y="${f1(my-10)}" width="${f1(lw)}" height="20" rx="10"/><text x="${f1(mx)}" y="${f1(my+4)}">${lab}</text></g>`}
+    ${h.flag?'':`<g class="rch"><rect x="10" y="10" width="98" height="20" rx="10"/><text x="59" y="24">Tap to set flag</text></g>`}
+    <rect class="tapz" x="0" y="0" width="${bw}" height="${bh}" data-act="pflag" role="button" aria-label="Tap the green where the flag is"/>
+  </svg>`;
+}
+/* A tap on the real green, in the slope frame (yards) */
+function greenTapPt(svg,ev){const M=svg.getScreenCTM();if(!M)return null;const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const q=p.matrixTransform(M.inverse()),d=svg.dataset,bw=svg.viewBox.baseVal.width;
+  return[+((+d.cx)+(q.x-bw/2)/(+d.s)).toFixed(1),+((+d.cy)-(q.y-(+d.mid))/(+d.s)).toFixed(1)];}
 function svgPt(svg,ev){if(!ev||!ev.detail||!svg.getScreenCTM)return null;const m=svg.getScreenCTM();if(!m)return null;const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const q=p.matrixTransform(m.inverse()),k=(svg.viewBox&&svg.viewBox.baseVal&&svg.viewBox.baseVal.height||330)/330;return[Math.round(q.x),Math.round(q.y/k)];}
 /* Size the map to the space left on screen, so Play never needs a scroll */
 function fitMap(){
+  const gb=document.querySelector('.greenw.fitg'),gs=gb&&gb.querySelector('svg.rgreen');
+  if(gs){const w=gb.clientWidth,hh=gb.clientHeight,vb=gs.viewBox.baseVal;if(w&&hh&&(Math.abs(vb.width-w)>=2||Math.abs(vb.height-hh)>=2)){S.greenBox=[Math.round(w),Math.round(hh)];const {h}=curHole();const G=h&&realG(h);if(G)gs.outerHTML=realGreenSVG(h,G);}}
   const box=document.querySelector('.mapw.fit');if(!box)return;
   const w=box.clientWidth,hh=box.clientHeight;if(!w||!hh)return;
   /* the real map draws at the box's own size, so it redraws when the box changes */
@@ -1795,10 +1857,10 @@ function dropHTML(h){
     <div class="acts one"><button class="act" data-act="drop" data-v="same"><b>Same spot again</b><small>re-tee or replay the shot</small></button></div>`;
 }
 function puttHTML(h){
-  const c=strokesOf(h),k=(h.putts||0)+1,first=k===1;
+  const c=strokesOf(h),k=(h.putts||0)+1,first=k===1,RG0=realG(h),RGr=RG0&&RG0.hd.gr&&grFrame(RG0)?RG0:null,sp=RGr?greenSpots(h,RGr):null,sug=first&&h.fp==null&&sp&&sp.exact?fpBand(sp.ft):null;
   return `${strip(c.n+c.p+1,'On the green',first?'First putt':'Putt '+k,h)}${gapHTML(h)}
-    <div class="greenw fitg" style="position:relative">${greenSVG(h)}${(()=>{const {r,i}=curHole(),G=r?gHole(r,i):null;return G&&G.hd.gr?`<button class="maphint preadbtn" data-act="pread">Read this putt ›</button>`:'';})()}<button class="maphint pacebtn${h.pst!=null?' on':''}" data-act="pace">${h.pst!=null?`${h.pst} ${h.pst===1?'step':'steps'} · about ${ftOf(h.pst)} ft`:`Pace it: steps to the hole ›`}</button></div>
-    ${first?`<div class="pgrid" role="group" aria-label="First putt length, optional">${PUTT_LEN.map(([v,l])=>`<button class="pl" data-act="fp" data-v="${v}" aria-pressed="${h.fp===v}">${l}</button>`).join('')}</div>`:''}
+    <div class="greenw fitg" style="position:relative">${RGr?realGreenSVG(h,RGr):greenSVG(h)}${(()=>{const {r,i}=curHole(),G=r?gHole(r,i):null;return G&&G.hd.gr?`<button class="maphint preadbtn" data-act="pread">Read this putt ›</button>`:'';})()}<button class="maphint pacebtn${h.pst!=null?' on':''}" data-act="pace">${h.pst!=null?`${h.pst} ${h.pst===1?'step':'steps'} · about ${ftOf(h.pst)} ft`:`Pace it: steps to the hole ›`}</button></div>
+    ${first?`<div class="pgrid" role="group" aria-label="First putt length, optional">${PUTT_LEN.map(([v,l])=>`<button class="pl${sug===v?' sug':''}" data-act="fp" data-v="${v}" aria-pressed="${h.fp===v}">${l}</button>`).join('')}</div>`:''}
     <div class="acts three" role="group" aria-label="How did the putt finish?"><button class="act big" data-act="putt" data-v="short" aria-label="Missed, stopped short"><b>Short</b><small>didn’t reach</small></button><button class="act big" data-act="putt" data-v="past" aria-label="Missed, rolled past"><b>Past</b><small>rolled by</small></button><button class="act big go" data-act="putt" data-v="made"><b>Made it</b></button></div>
     <button class="lk" data-act="qs" style="align-self:center;margin-top:-6px">Lost count? Enter the score</button>`;
 }
@@ -2551,13 +2613,15 @@ document.addEventListener('click',ev=>{
   const b=ev.target.closest('[data-act]');if(!b)return;
   const act=b.dataset.act,{r,i,h}=curHole();
   if(act!=='del'&&S.confirmDel){S.confirmDel=null;}
-  if(!S.canWrite&&['start','res','drop','putt','undo','plus1','par','npar','tclub','qssave','tap','finish','del','fp','miss','hit','pstep','cond','doimport','gap','fillq','skiph','unskip'].includes(act)){renderBanner();return;}
+  if(!S.canWrite&&['start','res','drop','putt','undo','plus1','par','npar','tclub','qssave','tap','finish','del','fp','miss','hit','pstep','cond','doimport','gap','fillq','skiph','unskip','pflag'].includes(act)){renderBanner();return;}
   const redo=()=>{if(h&&!isQuick(h))derive(h);touch(S.cur);render();};
   switch(act){
     case 'pages':{const g=$('gmOpen');if(g)g.click();break;}
     case 'cad':{const G=gHole(r,i);if(G){S.cadHole=[G.nine,G.n];S.sheet='cad';renderSheet();}break;}
     case 'cadhole':S.cadHole=[b.dataset.nine,+b.dataset.n];S.sheet='cad';renderSheet();break;
-    case 'pread':{if(b.dataset.id)openPutt(b.dataset.id,b.dataset.nine,+b.dataset.n);else{const G=gHole(r,i);if(G)openPutt(G.c.id,G.nine,G.n);}break;}
+    case 'pread':{if(b.dataset.id)openPutt(b.dataset.id,b.dataset.nine,+b.dataset.n);else{const G=gHole(r,i);if(G){openPutt(G.c.id,G.nine,G.n);
+      /* from the putting screen: start the read with your ball and flag where they are on the green */
+      const RG=realG(h),sp=RG&&RG.hd.gr?greenSpots(h,RG):null;if(sp&&S.putt){S.putt.ball=sp.B.slice();S.putt.flag=sp.F.slice();renderSheet();}}}break;}
     case 'pmode':if(S.putt){S.putt.mode=b.dataset.v;renderSheet();}break;
     case 'pspeed':if(S.putt){S.putt.speed=b.dataset.v;renderSheet();}break;
     case 'cadcourse':{const v=b.dataset.v,sl=(b.parentElement||{}).scrollLeft||0;S.cadId=v;if(S.cad.id!==v){S.cad={id:v};saveCad();}render();window.scrollTo(0,0);const row=document.querySelector('.cd-courses');if(row)row.scrollLeft=sl;break;}
@@ -2628,6 +2692,8 @@ document.addEventListener('click',ev=>{
     case 'qsn':S.qs.s=+b.dataset.v;renderSheet();break;
     case 'qsp':S.qs.p=S.qs.p===+b.dataset.v?null:+b.dataset.v;renderSheet();break;
     case 'zoom':case 'wide':{const md=(b.closest('.mapw')||{dataset:{}}).dataset.mode||'shot',key=camKey(h,md);S.camO=S.camO&&S.camO.key===key?null:{key,kind:'hole'};render();break;}
+    case 'pflag':{const svg=b.closest('svg'),G=realG(h);if(!svg||!G||!G.hd.gr)break;const P=greenTapPt(svg,ev);if(!P)break;
+      if(!inPoly(P,G.hd.gr.g)){toast('Tap on the green to set the flag');break;}h.flag=P;touch(S.cur);render();const sp=greenSpots(h,G);toast(`Flag set · ${sp?sp.ft:''} ft to the hole`);break;}
     case 'zoomto':{const md=(b.closest('.mapw')||{dataset:{}}).dataset.mode||'shot',key=camKey(h,md),v=b.dataset.v;S.camO=v==='ball'?null:{key,kind:v};render();break;}
     /* a hole badge on the course view: glide to that hole (its whole-hole view, or your ball if it's the hole you're on) */
     case 'gohole':{const j=+b.dataset.v,nh=r&&r.h[j];if(!nh||j===S.hole)break;S.glideX=true;S.slide=null;S.hole=j;S.sheet=null;saveLocal();
