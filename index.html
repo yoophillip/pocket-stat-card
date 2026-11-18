@@ -29,7 +29,7 @@
   --c-shadow:0 .5px 1px rgba(16,23,18,.06),0 3px 10px -6px rgba(16,23,18,.18);
   --m-rough:#7A9A62;--m-fair:#97BD73;--m-stripe:#9FC47B;--m-fringe:#A6CB83;--m-green:#AFD68C;--m-green-hi:#B7DB96;
   --m-sand:#ECE2C6;--m-sand-edge:#D3C59D;--m-trees:#557447;--m-tree:#4C6A40;--m-line:#FFFFFF;--m-ball:#FFFFFF;
-  --m-label:#132414;--m-chip:rgba(255,255,255,.8);
+  --m-label:#132414;--m-chip:rgba(255,255,255,.8);--m-out:#6F8D5A;
   --f-ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","Apple SD Gothic Neo",system-ui,sans-serif;
   --f-num:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",system-ui,sans-serif;
   --spring:cubic-bezier(.2,.8,.2,1);
@@ -188,6 +188,14 @@ body[data-view="play"] #main{flex:1 1 auto;min-height:0}
 .mq-l{display:flex;justify-content:space-between;margin:-4px -4px -6px}
 .gapq{gap:8px;padding:10px 12px}.gapq .seg button{min-height:38px}
 .skp{font-size:var(--t-micro);color:var(--c-muted);font-weight:600}
+.rmap.live{touch-action:none}.rmap .rw{transform-box:view-box;transform-origin:0 0}
+.m-out{fill:var(--m-out)}.m-band{fill:none;stroke-linejoin:round}
+.rch{pointer-events:none}.rch rect{fill:rgba(255,255,255,.86)}.rch text{fill:var(--m-label);font:600 11px var(--f-ui);text-anchor:middle}
+.rtag{pointer-events:auto;cursor:pointer}.rtag rect{fill:rgba(255,255,255,.94);stroke:rgba(19,36,20,.12)}.rtag text{font-weight:700}
+.mapzoom{position:absolute;right:10px;bottom:10px;z-index:3;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 13px 0 10px;border:0;border-radius:999px;background:rgba(255,255,255,.94);color:var(--m-label);font:650 var(--t-cap) var(--f-ui);box-shadow:0 4px 14px -6px rgba(0,0,0,.4);cursor:pointer}
+.mapzoom svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:currentColor}
+.mapzoom svg path{fill:none}.mapzoom:active{transform:scale(.96)}
+.hd-par.fixed{gap:6px;padding:0 4px}.hd-par.fixed b{font-size:var(--t-label);font-weight:700}.hd-par.fixed small{font-size:var(--t-cap);color:var(--c-muted);font-weight:600}
 .m-water{fill:var(--m-water);stroke:var(--m-water-edge);stroke-width:1.2}
 .m-near{fill:var(--m-fringe);stroke:var(--m-fringe);stroke-linejoin:round;opacity:.42}
 .m-collar{fill:var(--m-fringe);stroke:var(--m-fringe);stroke-linejoin:round}
@@ -631,6 +639,9 @@ html.gm-framed .toast{top:calc(70px + env(safe-area-inset-top,0px));bottom:auto}
 
 .cd-card.nomap{grid-template-columns:minmax(0,1fr)}
 .cd-clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+.cd-card.nomap{grid-template-columns:minmax(0,1fr)}
+.cd-clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 </style>
 <style id="apple-skin">
   /* Shared skin for all golf pages (loads after each page's own styles).
@@ -871,7 +882,7 @@ const CLUBN={D:'Driver','3W':'3-wood','3H':'Hybrid',iron:'Iron'};
 /* clubs:start */
 const YC={"Driver":{"mid":176.4,"band":24.7,"side":26.7,"ss":26.2},"3Wood":{"mid":199.5,"band":20.7,"side":-12.4,"ss":16},"3Hybrid":{"mid":186.1,"band":17.7,"side":-15.3,"ss":20.9},"5Iron":{"mid":157.3,"band":15.3,"side":-2.1,"ss":15.3},"6Iron":{"mid":151.2,"band":15.1,"side":-7.5,"ss":13.2},"7Iron":{"mid":130.2,"band":11.6,"side":-0.6,"ss":12},"8Iron":{"mid":131.2,"band":11.8,"side":-17.4,"ss":7.4},"9Iron":{"mid":121.1,"band":16.3,"side":-20.3,"ss":10.5},"PitchingWedge":{"mid":108.9,"band":13.5,"side":-15.3,"ss":10.3},"56Wedge":{"mid":87.4,"band":12.1,"side":-11.9,"ss":7.9},"56Partial":{"mid":66.1,"band":11.5,"side":-6.8,"ss":3.8}};const YC_THRU="Nov 5";
 /* clubs:end */
-const YNAME={Driver:'Driver','3Wood':'3-wood','3Hybrid':'3-hybrid','5Iron':'5-iron','6Iron':'6-iron','7Iron':'7-iron','8Iron':'8-iron','9Iron':'9-iron',PitchingWedge:'PW','56Wedge':'56°','56Partial':'56°, 3 o’clock swing'};
+const YNAME={Driver:'Driver','3Wood':'3-wood','3Hybrid':'3-hybrid','5Iron':'5-iron','6Iron':'6-iron','7Iron':'7-iron','8Iron':'8-iron','9Iron':'9-iron',PitchingWedge:'PW','56Wedge':'56°','56Partial':'56°, 3 o’clock'};
 const YCODE={'3Wood':'3W','3Hybrid':'3H','5Iron':'5i','6Iron':'6i','7Iron':'7i','8Iron':'8i','9Iron':'9i',PitchingWedge:'PW','56Wedge':'56','56Partial':'56'};
 const YARDAGE_URL='https://claude.ai/artifact/R21VqgaRqjZ4Ueao7tNRoJ';
 const WINDF={calm:1,into:1.1,into2:1.25,behind:0.95,behind2:0.9},LIEF={tee:0,fw:0.02,rough:0.06},SLOPEY={flat:0,up:10,down:-10};
@@ -986,7 +997,7 @@ function planFor(h,yd){
   if(!cad&&lie==='tee'&&h.par>=4&&teeMode()==='driver'&&YC.Driver&&steps[0]&&steps[0].k!=='Driver'){const dm=clubMid('Driver',ctx);if(dm<Reff-15)steps=[{k:'Driver',d:dm,mid:dm}].concat(solve(Reff-dm,'fw',ctx,1,{},G?hzAhead(G,Reff/Math.max(1,yd)):null).steps);}
   return{yd,Reff,lie,steps,ctx,G,cad,ea};
 }
-function stepName(s){return s.k==='chip'?'Chip or putt':s.k==='pitch'?'Pitch with the 56°':s.k==='punch'?'Punch out to the fairway':s.k==='blast'?'Splash it out':s.k==='putt'?'Putt':YNAME[s.k]+(s.soft?', soft swing':'');}
+function stepName(s){return s.k==='chip'?'Chip or putt':s.k==='pitch'?'Pitch with the 56°':s.k==='punch'?'Punch out to the fairway':s.k==='blast'?'Splash it out':s.k==='putt'?'Putt':YNAME[s.k]+(s.soft?' (easy)':'');}
 function stepDist(s){return Math.round(s.mid!=null&&s.k!=='chip'&&s.k!=='pitch'?s.mid:s.d);}
 function teeClubFor(r,h){
   if(h.tc)return h.tc;
@@ -1057,7 +1068,7 @@ function planHTML(r,i,h){
   const rem=remainingYd(h),src=S.planSrc||(rem?rem.src:'none');
   const srcTxt=src==='gps'?'GPS yards to the middle of the green':src==='est'?'About this far: slide to the real yards':src==='map'?'From where you tapped on the map':src==='none'?(tee?'Slide to the hole’s yards (scorecard or tee sign)':'Slide to the yards to the green'):ydNote(h,tee,yd);
   return `${sheetHead(`Hole ${holeNo(r,i)} · Par ${h.par} · Shot ${c.n+c.p+1}`,tee?'Plan this hole':'Plan this shot')}
-    ${tee?`<div class="parline"><span class="cap">Par</span><div class="seg" role="group" aria-label="Par">${[3,4,5].map(v=>`<button data-act="par" data-v="${v}" aria-pressed="${h.par===v}">Par ${v}</button>`).join('')}</div></div>`:''}
+    ${tee&&!gFor(h)?`<div class="parline"><span class="cap">Par</span><div class="seg" role="group" aria-label="Par">${[3,4,5].map(v=>`<button data-act="par" data-v="${v}" aria-pressed="${h.par===v}">Par ${v}</button>`).join('')}</div></div>`:''}
     <div class="ydbig"><button class="ghost" data-act="pstep" data-d="-5" aria-label="5 yards less">−5</button>
       <div class="ydv"><input type="number" id="pl-n" inputmode="numeric" min="5" max="700" value="${yd}" aria-label="Yards to the middle of the green"><small id="pl-src"${srcTxt!==YD_MID&&src==='set'?' class="warn"':''}>${srcTxt}</small></div>
       <button class="ghost" data-act="pstep" data-d="5" aria-label="5 yards more">+5</button></div>
@@ -1401,7 +1412,7 @@ function greenSVG(h){
    behind your ball. Shapes come from the course map (yards: x to the right, y toward the green). Every tap is a real
    spot: what it landed in (green, bunker, water, fairway, rough or trees) is read from the shapes, and the yards left
    are measured from it. Holes tapped on the old drawing keep that drawing. */
-const NEAR_YD=18,GSB_YD=25,VIEW_MAX=285;
+const NEAR_YD=18,GSB_YD=25,VIEW_MAX=260;
 const HK=new Map();
 function uvec(a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l=Math.hypot(dx,dy)||1;return[dx/l,dy/l];}
 function holeK(G){
@@ -1455,33 +1466,47 @@ function realPts(h,G){
 }
 /* Yards from your ball's tapped spot to the middle of the green (null on the tee or without a tapped spot) */
 function mapLeft(h){const G=realG(h);if(!G)return null;const p=pos(h);if(p==='T'||p==='G'||p==='H'||p==='P')return null;const o=realPts(h,G);if(!o.exact)return null;return Math.max(1,Math.round(Math.hypot(o.k.end[0]-o.cur[0],o.k.end[1]-o.cur[1])));}
+/* The camera for the real map: A = the world point the view hangs on, u = "up" on screen, s = px per yard, lo = how
+   far below A (in yards along u) the bottom of the drawing sits. Three ways to look:
+   - your shot (default): from your ball, facing the green when it's within 240 yd, else the hole's line 220 yd ahead,
+     cut at 260 yd ahead (less on a short screen) so the shapes stay big enough to tap;
+   - the whole hole (zoom button, or the green tag): your ball to the green, facing the green;
+   - your own (pinch and drag): any spot and size, until your next tap. */
+function realCam(h,mode,G,o,bw,bh){
+  const k=o.k,B=k.end,A0=mode==='view'?k.teeP:mode==='drop'?o.prevStart:o.cur,topPx=mode==='view'?30:mode==='drop'?14:50,botPx=8;
+  const L=Math.max(4,Math.hypot(B[0]-A0[0],B[1]-A0[1])),ov=mode!=='view'&&S.camO&&S.camO.key===camKey(h,mode)?S.camO:null;
+  const fit=(A,u,lo,hi)=>({A,u,lo,s:(bh-topPx-botPx)/(hi-lo)});
+  const vyOf=(A,u)=>P=>(P[0]-A[0])*u[0]+(P[1]-A[1])*u[1];
+  /* the whole hole from the ball, facing the green */
+  const uG=L>4?uvec(A0,B):uvec(k.line[k.line.length-2],k.end),whole=(()=>{const vy=vyOf(A0,uG);let lo=mode==='drop'?-30:-14,hi=Math.max(vy(B),40)+(mode==='view'?24:36);
+    if(mode==='view')o.pts.forEach(p=>{lo=Math.min(lo,vy(p)-14);hi=Math.max(hi,vy(p)+14);});if(mode==='drop'&&o.wet)lo=Math.min(lo,vy(o.wet)-20);
+    if(hi-lo<60){const ex=(60-(hi-lo))/2;lo-=ex;hi+=ex;}return fit(A0,uG,lo,hi);})();
+  let cam,cut=false;
+  if(mode==='view'||(ov&&ov.kind==='hole'))cam=whole;
+  else if(ov&&ov.kind==='free')cam={A:ov.C,u:ov.u,s:ov.s,lo:0};
+  else{let aim=B;if(L>240){const s0=alongLine(k.line,A0);aim=k.at(s0+220+k.off);}
+    const u=Math.hypot(aim[0]-A0[0],aim[1]-A0[1])>4?uvec(A0,aim):uG,vy=vyOf(A0,u);let lo=mode==='drop'?-30:-14,hi=Math.max(vy(B),40)+24;
+    if(mode==='drop'&&o.wet)lo=Math.min(lo,vy(o.wet)-20);
+    const vmax=Math.max(210,Math.min(VIEW_MAX,(bh-58)*.62));if(hi-lo>vmax+14){hi=lo+vmax+14;cut=true;}
+    /* the drop view always shows where the ball went in, with room above it for the green tag */
+    if(mode==='drop'&&o.wet)hi=Math.max(hi,Math.min(Math.max(vy(B),40)+36,vy(o.wet)+48));
+    if(hi-lo<60){const ex=(60-(hi-lo))/2;lo-=ex;hi+=ex;}cam=fit(A0,u,lo,hi);}
+  /* a "free" camera keeps its centre in the middle of the space under the top bar */
+  if(ov&&ov.kind==='free')cam.lo=-((bh-botPx)-(topPx+(bh-topPx-botPx)/2))/cam.s;
+  return Object.assign(cam,{topPx,botPx,cut,L,whole,B});
+}
+function camKey(h,mode){return S.cur+':'+S.hole+':'+(h.sh||[]).length+':'+mode;}
 function realMapSVG(h,mode,G){
   const o=realPts(h,G),k=o.k,m=G.hd.m,[bw,bh]=S.mapBox||[380,470],live=mode==='shot'||mode==='drop',done=pos(h)==='H';
-  const tee=(h.sh||[]).length===0;
-  /* camera: from the ball (the tee, or where the penalty shot was played from), facing where you'd aim: the green
-     when it's within 240 yd, else the hole's line 220 yd ahead (so a dogleg's fairway runs straight up the screen) */
-  const A=mode==='view'?k.teeP:mode==='drop'?o.prevStart:o.cur,B=k.end;
-  let L=Math.hypot(B[0]-A[0],B[1]-A[1]),aim=B;
-  /* "Show the green": the whole rest of the hole, facing the green, until your next tap (for a ball you forgot to tap) */
-  const wide=mode!=='view'&&S.mapWide===wideKey(h);
-  if(mode!=='view'&&!wide&&L>240){const s0=alongLine(k.line,A);aim=k.at(s0+220+k.off);}
-  let u=Math.hypot(aim[0]-A[0],aim[1]-A[1])>4?uvec(A,aim):uvec(k.line[k.line.length-2],k.end);if(L<=4)L=4;
-  const r=[u[1],-u[0]],vx=P=>(P[0]-A[0])*r[0]+(P[1]-A[1])*r[1],vy=P=>(P[0]-A[0])*u[0]+(P[1]-A[1])*u[1];
-  let lo=mode==='drop'?-30:-14,hi=Math.max(vy(B),40)+24;
-  if(mode==='view')o.pts.forEach(p=>{lo=Math.min(lo,vy(p)-14);hi=Math.max(hi,vy(p)+14);});
-  if(mode==='drop'&&o.wet)lo=Math.min(lo,vy(o.wet)-20);
-  /* a long view is cut at 285 yd ahead (less on a short screen) so the shapes stay big enough to tap; a tag at the top
-     says how far the green is and which way */
-  const vmax=Math.max(220,Math.min(VIEW_MAX,(bh-58)*.7)),cut=mode!=='view'&&!wide&&hi-lo>vmax+14;if(cut)hi=lo+vmax+14;
-  if(hi-lo<60){const ex=(60-(hi-lo))/2;lo-=ex;hi+=ex;}
-  const topPx=mode==='view'?30:mode==='drop'?14:50,botPx=8,s=(bh-topPx-botPx)/(hi-lo);
+  const cam=realCam(h,mode,G,o,bw,bh),{A,u,s,lo,topPx,botPx,cut,L,B}=cam,r=[u[1],-u[0]];
+  const vx=P=>(P[0]-A[0])*r[0]+(P[1]-A[1])*r[1],vy=P=>(P[0]-A[0])*u[0]+(P[1]-A[1])*u[1];
   const SX=P=>bw/2+vx(P)*s,SY=P=>bh-botPx-(vy(P)-lo)*s,f1=v=>v.toFixed(1);
   const path=a=>{let d='';for(let i=0;i<a.length;i+=2){const P=[a[i],a[i+1]];d+=(i?'L':'M')+f1(SX(P))+' '+f1(SY(P));}return d+'Z';};
   const toYd=(sx,sy)=>{const x=(sx-bw/2)/s,y=lo+(bh-botPx-sy)/s;return[A[0]+r[0]*x+u[0]*y,A[1]+r[1]*x+u[1]*y];};
   const zAt=(sx,sy)=>zoneAt(G,toYd(sx,sy));
-  const gp=k.green?path(k.green):'',fws=(m.f||[]).map(path).join(' ');
-  let stripes='';for(let y=bh;y>-26;y-=26)stripes+=`<rect class="m-stripe" x="0" y="${f1(y-13)}" width="${bw}" height="13"/>`;
-  const end=[SX(B),SY(B)],flag=!cut||SY(B)>topPx?`<g class="deco"><circle class="cup" cx="${f1(end[0])}" cy="${f1(end[1])}" r="3"/><path class="pin" d="M${f1(end[0])} ${f1(end[1])}v-26"/><path class="flag" d="M${f1(end[0]+.7)} ${f1(end[1]-25.5)}l12 4-12 4z"/></g>`:'';
+  const gp=k.green?path(k.green):'',fws=(m.f||[]).map(path).join(' '),lane=path(k.corr);
+  let stripes='';for(let y=bh+bh;y>-bh;y-=26)stripes+=`<rect class="m-stripe" x="${-bw}" y="${f1(y-13)}" width="${3*bw}" height="13"/>`;
+  const end=[SX(B),SY(B)],flag=`<g class="deco"><circle class="cup" cx="${f1(end[0])}" cy="${f1(end[1])}" r="3"/><path class="pin" d="M${f1(end[0])} ${f1(end[1])}v-26"/><path class="flag" d="M${f1(end[0]+.7)} ${f1(end[1]-25.5)}l12 4-12 4z"/></g>`;
   /* trail, ball, a red mark where a ball went in the water */
   const sp=o.pts.map(p=>[SX(p),SY(p)]),cu=[SX(o.cur),SY(o.cur)],pop=S.justTapped?' pop':'';
   const trail=sp.length>1?`<path class="tr" d="M${sp.map(p=>f1(p[0])+' '+f1(p[1])).join(' L')}"/>`+sp.slice(0,-1).map(p=>`<circle class="td" cx="${f1(p[0])}" cy="${f1(p[1])}" r="3.4"/>`).join(''):'';
@@ -1489,44 +1514,92 @@ function realMapSVG(h,mode,G){
   const wet=wq?`<path class="trw" d="M${f1(cu[0])} ${f1(cu[1])}L${f1(wq[0])} ${f1(wq[1])}"/><path class="wx" d="M${f1(wq[0]-5)} ${f1(wq[1]-5)}l10 10m0-10l-10 10"/>`:'';
   const ball=done?'':`<circle class="halo${pop}" cx="${f1(cu[0])}" cy="${f1(cu[1])}" r="13"/><circle class="ball${pop}" cx="${f1(cu[0])}" cy="${f1(cu[1])}" r="7"/>`;
   const penb=o.pen?`<g class="penb"><rect x="${f1(cu[0]+10)}" y="${f1(cu[1]-26)}" width="32" height="20" rx="10"/><text x="${f1(cu[0]+26)}" y="${f1(cu[1]-11.5)}">+1</text></g>`:'';
-  /* labels, live maps only: one per kind of ground, never on the ball, the flag, the top bar or each other */
+  /* labels, live maps only: small flat chips, one per kind of ground, never on the ball, the flag, the top bar, the
+     zoom button or each other */
   let labs='';
   if(live){
-    const bx=[[0,0,bw,topPx],[cu[0]-15,cu[1]-15,cu[0]+15,cu[1]+15],[end[0]-4,end[1]-30,end[0]+16,end[1]+4]];if(cut)bx.push([bw/2-62,topPx,bw/2+62,topPx+28]);if(wide)bx.push([6,bh-42,116,bh-10]);if(wq)bx.push([wq[0]-8,wq[1]-8,wq[0]+8,wq[1]+8]);
-    const hit=b=>bx.some(q=>b[0]<q[2]+4&&b[2]>q[0]-4&&b[1]<q[3]+3&&b[3]>q[1]-3);
-    const lab=(x,y,t,rot)=>{const w=t.length*7.4+14,hw=rot?9:w/2,hh=rot?w/2:9;x=Math.max(hw+3,Math.min(bw-hw-3,x));const b=[x-hw,y-hh,x+hw,y+hh];if(y-hh<topPx||y+hh>bh-3||hit(b))return false;bx.push(b);labs+=pill(x,y,t,rot);return true;};
-    /* runs of one kind of ground along a row of the map, from the middle outward */
+    const bx=[[0,0,bw,topPx],[cu[0]-15,cu[1]-15,cu[0]+15,cu[1]+15],[end[0]-4,end[1]-30,end[0]+16,end[1]+4],[bw-128,bh-48,bw,bh]];
+    if(cut)bx.push([bw/2-60,topPx,bw/2+60,topPx+28]);if(wq)bx.push([wq[0]-8,wq[1]-8,wq[0]+8,wq[1]+8]);
+    const hit=b=>bx.some(q=>b[0]<q[2]+3&&b[2]>q[0]-3&&b[1]<q[3]+3&&b[3]>q[1]-3);
+    const lab=(x,y,t)=>{const w=t.length*6.3+16,hw=w/2,hh=10;x=Math.max(hw+4,Math.min(bw-hw-4,x));const b=[x-hw,y-hh,x+hw,y+hh];if(y-hh<topPx||y+hh>bh-4||hit(b))return false;bx.push(b);labs+=`<g class="rch"><rect x="${f1(x-hw)}" y="${f1(y-hh)}" width="${f1(w)}" height="20" rx="10"/><text x="${f1(x)}" y="${f1(y+4)}">${t}</text></g>`;return true;};
     const runs=(y,dir,want)=>{let a=null,best=null;for(let x=bw/2;x>=0&&x<=bw;x+=dir*5){const z=zAt(x,y);if(want.includes(z)){if(a==null)a=x;}else if(a!=null){best={a,b:x-dir*5};break;}}if(!best&&a!=null)best={a,b:dir<0?0:bw};return best?{c:(best.a+best.b)/2,w:Math.abs(best.b-best.a)}:null;};
     if(k.green){let gx0=1e9,gx1=-1e9,gy0=1e9,gy1=-1e9;for(let i=0;i<k.green.length;i+=2){const P=[k.green[i],k.green[i+1]],x=SX(P),y=SY(P);gx0=Math.min(gx0,x);gx1=Math.max(gx1,x);gy0=Math.min(gy0,y);gy1=Math.max(gy1,y);}
-      if(gy1>topPx){const gc=(gx0+gx1)/2,gm=(gy0+gy1)/2;[[end[0]-44,end[1]-8],[end[0]+46,end[1]+12],[gc,gy0-12],[gc,gm+14]].some(([x,y])=>lab(x,y,'Green'));
-        lab(gc,gy1+Math.min(NEAR_YD*s*.55,34)+4,'Near the green');}}
+      if(gy1>topPx&&gy0<bh){const gc=(gx0+gx1)/2,gm=(gy0+gy1)/2;[[end[0]-40,end[1]-8],[end[0]+44,end[1]+12],[gc,gy0-13],[gc,gm+14]].some(([x,y])=>lab(x,y,'Green'));
+        if(NEAR_YD*s>=14)lab(gc,gy1+Math.min(NEAR_YD*s*.55,34)+4,'Near the green');}}
     const ws=(m.w||[]).map(a=>{const c=polyMid(a);return{c:[SX(c),SY(c)],a:a.length};}).filter(w=>w.c[0]>20&&w.c[0]<bw-20&&w.c[1]>topPx+12&&w.c[1]<bh-12&&zAt(w.c[0],w.c[1])==='W').sort((x,y)=>y.a-x.a);
-    if(ws[0]){const c=ws[0].c;[[c[0],c[1]],[c[0]+50,c[1]],[c[0]-50,c[1]],[c[0],c[1]-24]].some(([x,y])=>lab(x,y,'Water'));}
-    const yMid=Math.max(topPx+30,Math.min(bh-40,(SY(B)+cu[1])/2));
-    for(const t of[.55,.45,.65,.35,.75]){const y=cu[1]+(SY(B)-cu[1])*t;if(y<topPx+14)continue;const lr=runs(y,-1,['F']),rr=runs(y,1,['F']);if(lr||rr){const a=lr?lr.c-lr.w/2:bw/2,b=rr?rr.c+rr.w/2:bw/2;if(lab((a+b)/2,y,'Fairway'))break;}}
+    if(ws[0]){const c=ws[0].c;[[c[0],c[1]],[c[0]+48,c[1]],[c[0]-48,c[1]],[c[0],c[1]-24]].some(([x,y])=>lab(x,y,'Water'));}
+    const yMid=Math.max(topPx+30,Math.min(bh-40,(Math.max(topPx,SY(B))+cu[1])/2));
+    for(const t of[.55,.45,.65,.35,.75]){const y=cu[1]+(Math.max(topPx,SY(B))-cu[1])*t;if(y<topPx+14)continue;const lr=runs(y,-1,['F']),rr=runs(y,1,['F']);if(lr||rr){const a=lr?lr.c-lr.w/2:bw/2,b=rr?rr.c+rr.w/2:bw/2;if(lab((a+b)/2,y,'Fairway'))break;}}
     const bs=(m.b||[]).map(a=>{const c=polyMid(a);return{c:[SX(c),SY(c)],a:a.length};}).filter(q=>q.c[0]>16&&q.c[0]<bw-16&&q.c[1]>topPx+20&&q.c[1]<bh-14).sort((x,y)=>y.a-x.a);
-    for(const q of bs.slice(0,3)){if(lab(q.c[0],q.c[1]-16,'Bunker')||lab(q.c[0],q.c[1]+16,'Bunker'))break;}
-    let rx0=null;[-1,1].forEach(d=>{for(const y of[yMid,yMid+40,yMid-40,yMid+80]){const q=runs(y,d,['L','R']);if(q&&q.w>=24&&(rx0==null||Math.abs(q.c-rx0)>110)&&lab(q.c,y,'Rough',q.w<58)){rx0=q.c;break;}}});
-    [[-1,'X'],[1,'X']].forEach(([d])=>{for(const y of[yMid+20,yMid-30]){let x=d<0?6:bw-6,a=null,b=null;for(;x>0&&x<bw;x-=d*5){if(zAt(x,y)==='X'){if(a==null)a=x;b=x;}else if(a!=null)break;}if(a!=null&&Math.abs(b-a)>=20&&lab((a+b)/2,y,'Trees',1))break;}});
+    for(const q of bs.slice(0,3)){if(lab(q.c[0],q.c[1]-17,'Bunker')||lab(q.c[0],q.c[1]+17,'Bunker'))break;}
+    let rx0=null;[-1,1].forEach(d=>{for(const y of[yMid,yMid+40,yMid-40,yMid+80]){const q=runs(y,d,['L','R']);if(q&&q.w>=58&&(rx0==null||Math.abs(q.c-rx0)>110)&&lab(q.c,y,'Rough')){rx0=q.c;break;}}});
+    [-1,1].forEach(d=>{for(const y of[yMid+20,yMid-30,yMid+70]){let x=d<0?4:bw-4,a=null,b=null;for(;x>0&&x<bw;x-=d*5){if(zAt(x,y)==='X'){if(a==null)a=x;b=x;}else if(a!=null)break;}if(a!=null&&Math.abs(b-a)>=54&&lab((a+b)/2,y,'Trees'))break;}});
   }
-  /* the green tag is a button: tap it to see the whole hole (and tap again for the closer view) */
-  const tw=wide?96:118,tx=wide?12+tw/2:bw/2,ty=wide?bh-38:topPx+2,toGreen=cut||wide?`<g class="rtag" data-act="wide" role="button" tabindex="0" aria-label="${wide?'Closer view':'Show the whole hole to the green'}"><rect x="${tx-tw/2}" y="${ty}" width="${tw}" height="24" rx="12"/><text x="${tx}" y="${ty+15.8}">${wide?'CLOSER VIEW':`GREEN ${(()=>{const g=Math.atan2(vx(B),vy(B))*180/Math.PI;return g<-18?'↖':g>18?'↗':'↑';})()} ${Math.round(L)} YD ›`}</text></g>`:'';
+  const arrow=(()=>{const g=Math.atan2(vx(B),vy(B))*180/Math.PI;return g<-18?'↖':g>18?'↗':'↑';})();
+  const toGreen=cut?`<g class="rch rtag" data-act="zoom" role="button" aria-label="Show the whole hole"><rect x="${bw/2-58}" y="${topPx+3}" width="116" height="22" rx="11"/><text x="${bw/2}" y="${topPx+18}">Green ${Math.round(L)} yd ${arrow}</text></g>`:'';
   const act=mode==='shot'?'res':mode==='drop'?'drop':'';
-  return `<svg class="map rmap" viewBox="0 0 ${bw} ${bh}" data-ax="${A[0].toFixed(2)}" data-ay="${A[1].toFixed(2)}" data-ux="${u[0].toFixed(5)}" data-uy="${u[1].toFixed(5)}" data-s="${s.toFixed(4)}" data-lo="${lo.toFixed(2)}" data-bot="${botPx}" role="group" aria-label="Map of the hole, turned toward the green. Tap where your ball is.">
-    <defs><pattern id="rtp" width="16" height="14" patternUnits="userSpaceOnUse"><circle class="m-tree" cx="4" cy="4" r="4.4"/><circle class="m-tree" cx="12" cy="11" r="4.4"/></pattern>${fws?`<clipPath id="rfc"><path d="${fws}"/></clipPath>`:''}</defs>
-    <rect class="m-trees" x="0" y="0" width="${bw}" height="${bh}"/><rect x="0" y="0" width="${bw}" height="${bh}" fill="url(#rtp)" opacity=".55"/>
-    <path class="m-rough" d="${path(k.corr)}"/>
+  const W3=bw*3,H3=bh*3;
+  return `<svg class="map rmap${live?' live':''}" viewBox="0 0 ${bw} ${bh}" data-key="${S.cur}:${S.hole}" data-ax="${A[0].toFixed(2)}" data-ay="${A[1].toFixed(2)}" data-ux="${u[0].toFixed(5)}" data-uy="${u[1].toFixed(5)}" data-s="${s.toFixed(4)}" data-lo="${lo.toFixed(2)}" data-bot="${botPx}" data-top="${topPx}" data-smin="${(cam.whole.s*.85).toFixed(4)}" role="group" aria-label="Map of the hole. Tap where your ball is. Pinch or use the zoom button to see more.">
+    <defs><pattern id="rtp" width="14" height="13" patternUnits="userSpaceOnUse"><rect class="m-trees" width="14" height="13"/><circle class="m-tree" cx="3.5" cy="3.5" r="3.6"/><circle class="m-tree" cx="10.5" cy="10" r="3.6"/></pattern>${fws?`<clipPath id="rfc"><path d="${fws}"/></clipPath>`:''}</defs>
+    <g class="rw">
+    <rect class="m-out" x="${-bw}" y="${-bh}" width="${W3}" height="${H3}"/>
+    <path class="m-band" d="${lane}" stroke="url(#rtp)" stroke-width="${f1(2*14*s)}"/>
+    <path class="m-rough" d="${lane}"/>
     ${(m.w||[]).map(a=>`<path class="m-water" d="${path(a)}"/>`).join('')}
     ${fws?`<path class="m-fair" d="${fws}"/><g clip-path="url(#rfc)">${stripes}</g>`:''}
     ${k.box?`<path class="m-tee" d="${path(k.box.a)}"/>`:''}
     ${gp?`<path class="m-near" d="${gp}" stroke-width="${f1(2*NEAR_YD*s)}"/><path class="m-collar" d="${gp}" stroke-width="${f1(Math.max(3,5*s))}"/>`:''}
     ${(m.b||[]).map(a=>`<path class="m-sand" d="${path(a)}"/>`).join('')}
     ${gp?`<path class="m-green" d="${gp}"/>`:''}
-    ${flag}${labs}<g class="deco">${trail}${wet}${ball}${penb}</g>
+    ${flag}<g class="deco">${trail}${wet}${ball}${penb}</g></g>
+    <g class="rl">${labs}</g>
     ${act?`<rect class="tapz" x="0" y="0" width="${bw}" height="${bh}" data-act="${act}" data-v="auto" role="button" tabindex="0" aria-label="${mode==='drop'?'Tap where you play from now':'Tap where your ball ended up'}"/>`:''}${toGreen}
   </svg>`;
 }
-function wideKey(h){return S.cur+':'+S.hole+':'+(h.sh||[]).length;}
+/* The zoom button over a live real map: whole hole, or back to your ball */
+function zoomBtnHTML(h,mode){const on=S.camO&&S.camO.key===camKey(h,mode);
+  return `<button class="mapzoom" data-act="zoom" aria-label="${on?'Back to your ball':'Show the whole hole'}">${on?'<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.2"/><circle cx="10" cy="10" r="7" fill="none"/></svg>Your ball':'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8V3h5M17 8V3h-5M3 12v5h5M17 12v5h-5" fill="none"/></svg>Whole hole'}</button>`;}
+/* world <-> screen for a rendered map (from its data-* camera) */
+function camOf(svg){const d=svg.dataset,v=svg.viewBox.baseVal;return{A:[+d.ax,+d.ay],u:[+d.ux,+d.uy],s:+d.s,lo:+d.lo,bot:+d.bot,bw:v.width,bh:v.height};}
+function camToScreen(c,P){const r=[c.u[1],-c.u[0]],dx=P[0]-c.A[0],dy=P[1]-c.A[1];return[c.bw/2+(dx*r[0]+dy*r[1])*c.s,c.bh-c.bot-((dx*c.u[0]+dy*c.u[1])-c.lo)*c.s];}
+function camToWorld(c,X){const r=[c.u[1],-c.u[0]],x=(X[0]-c.bw/2)/c.s,y=c.lo+(c.bh-c.bot-X[1])/c.s;return[c.A[0]+r[0]*x+c.u[0]*y,c.A[1]+r[1]*x+c.u[1]*y];}
+/* glide from the old view to the new one: the new drawing starts transformed to look like the old and eases home */
+function glideMap(old){
+  const svg=document.querySelector('svg.rmap');if(!svg||!old||old.key!==svg.dataset.key)return;
+  const c1=camOf(svg),c0=old.cam,P0=camToWorld(c1,[0,0]),P1=camToWorld(c1,[100,0]),P2=camToWorld(c1,[0,100]);
+  const q0=camToScreen(c0,P0),q1=camToScreen(c0,P1),q2=camToScreen(c0,P2),a=(q1[0]-q0[0])/100,b=(q1[1]-q0[1])/100,c=(q2[0]-q0[0])/100,d=(q2[1]-q0[1])/100;
+  if(Math.abs(a-1)<.002&&Math.abs(d-1)<.002&&Math.abs(b)<.002&&Math.abs(q0[0])<.5&&Math.abs(q0[1])<.5)return;
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const w=svg.querySelector('.rw'),l=svg.querySelector('.rl');if(!w)return;
+  w.style.transition='none';w.style.transform=`matrix(${a},${b},${c},${d},${q0[0]},${q0[1]})`;if(l)l.style.opacity='0';
+  void w.getBoundingClientRect();
+  w.style.transition='transform .42s cubic-bezier(.22,.8,.24,1)';w.style.transform='none';
+  if(l){l.style.transition='opacity .25s ease .3s';l.style.opacity='1';}
+}
+/* Pinch to zoom and drag to move the live real map (one finger that moves more than 6 px is a drag, not a tap) */
+const GZ={ids:new Map(),svg:null,moved:false,k:1,t:[0,0],base:null};
+function gzBase(){const p=[...GZ.ids.values()];GZ.base={k:GZ.k,t:GZ.t.slice(),p:p.map(q=>q.slice()),m:p.length>1?[(p[0][0]+p[1][0])/2,(p[0][1]+p[1][1])/2]:p[0].slice(),d:p.length>1?Math.hypot(p[0][0]-p[1][0],p[0][1]-p[1][1]):1};}
+function gzLocal(e){const R=GZ.svg.getBoundingClientRect(),v=GZ.svg.viewBox.baseVal;return[(e.clientX-R.left)*v.width/R.width,(e.clientY-R.top)*v.height/R.height];}
+document.addEventListener('pointerdown',e=>{const svg=e.target.closest&&e.target.closest('svg.rmap.live');if(!svg)return;
+  if(GZ.svg!==svg){GZ.ids.clear();GZ.svg=svg;GZ.k=1;GZ.t=[0,0];GZ.moved=false;}
+  GZ.ids.set(e.pointerId,gzLocal(e));gzBase();});
+document.addEventListener('pointermove',e=>{if(!GZ.svg||!GZ.ids.has(e.pointerId))return;GZ.ids.set(e.pointerId,gzLocal(e));
+  const p=[...GZ.ids.values()],B=GZ.base;if(!B)return;
+  const m=p.length>1?[(p[0][0]+p[1][0])/2,(p[0][1]+p[1][1])/2]:p[0],d=p.length>1?Math.hypot(p[0][0]-p[1][0],p[0][1]-p[1][1]):B.d;
+  if(!GZ.moved&&Math.hypot(m[0]-B.m[0],m[1]-B.m[1])<6&&p.length<2)return;GZ.moved=true;
+  const c=camOf(GZ.svg),smin=+GZ.svg.dataset.smin||.3,smax=10;let k=B.k*(p.length>1&&B.d>0?d/B.d:1);k=Math.max(smin/c.s,Math.min(smax/c.s,k));
+  const c0=[(B.m[0]-B.t[0])/B.k,(B.m[1]-B.t[1])/B.k];GZ.k=k;GZ.t=[m[0]-k*c0[0],m[1]-k*c0[1]];
+  const w=GZ.svg.querySelector('.rw'),l=GZ.svg.querySelector('.rl'),tg=GZ.svg.querySelector('.rtag');
+  if(w){w.style.transition='none';w.style.transform=`matrix(${k},0,0,${k},${GZ.t[0]},${GZ.t[1]})`;}if(l)l.style.opacity='0';if(tg)tg.style.opacity='0';});
+const gzEnd=e=>{if(!GZ.svg||!GZ.ids.has(e.pointerId))return;GZ.ids.delete(e.pointerId);
+  if(GZ.ids.size){gzBase();return;}
+  const svg=GZ.svg;GZ.svg=null;if(!GZ.moved)return;
+  /* a finished gesture becomes your own camera for this shot; the tap that ends it isn't a shot */
+  eatClick();const c=camOf(svg),k=GZ.k,t=GZ.t,top=+svg.dataset.top||0,mid=[c.bw/2,top+(c.bh-top-c.bot)/2];
+  const C=camToWorld(c,[(mid[0]-t[0])/k,(mid[1]-t[1])/k]);const {h}=curHole();if(!h)return;
+  const mode=(svg.closest('.mapw')||{dataset:{}}).dataset.mode||'shot';S.camO={key:camKey(h,mode),kind:'free',C,u:c.u,s:c.s*k};
+  const box=svg.closest('.mapw');if(box){svg.outerHTML=mapSVG(h,mode);const z=box.querySelector('.mapzoom');if(z)z.outerHTML=zoomBtnHTML(h,mode);}};
+document.addEventListener('pointerup',gzEnd);document.addEventListener('pointercancel',gzEnd);
 /* A tap on the real map, in map yards */
 function realTapPt(svg,ev){
   if(!ev||!svg.getScreenCTM)return null;const M=svg.getScreenCTM();if(!M)return null;const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const q=p.matrixTransform(M.inverse());
@@ -1559,14 +1632,14 @@ function render(){
   document.body.dataset.view=S.view;wakeSync();
   if(gpsOn()){if(S.view==='play'&&document.visibilityState!=='hidden')gpsStart();else gpsStop();const d=$('gpsdot');if(d)d.innerHTML=S.view==='play'?gpsDotHTML():'';}
   [['play','play'],['caddy','caddy'],['rounds','rounds'],['stats','stats']].forEach(([v,id])=>{const b=$('tab-'+id);if(b)b.setAttribute('aria-current',(S.view===v||(v==='rounds'&&S.view==='summary'))?'page':'false');});
-  const m=$('main');
+  const m=$('main'),os=document.querySelector('svg.rmap'),oldCam=os?{key:os.dataset.key,cam:camOf(os)}:null;
   if(S.view==='play')m.innerHTML=viewPlay();
   else if(S.view==='stats')m.innerHTML=viewStats();
   else if(S.view==='summary')m.innerHTML=viewSummary();
   else if(S.view==='caddy')m.innerHTML=viewCaddy();
   else m.innerHTML=viewRounds();
   m.querySelectorAll('.hist').forEach(t=>{t.scrollLeft=t.scrollWidth;});
-  fitMap();syncLabel();
+  fitMap();syncLabel();if(S.view==='play')glideMap(oldCam);
 }
 function renderBanner(){
   const b=$('banner');let t='';
@@ -1604,7 +1677,7 @@ function viewPlay(){
         <button class="hp-a" data-act="hole" data-v="${i+1}" aria-label="Next hole"${i>=n-1?' disabled':''}>${IC.chevR}</button>
       </div>
       ${tp}<span class="sdot" id="sdot" aria-hidden="true"></span>
-      <div class="hd-par"><span class="cap">Par</span><div class="seg par" role="group" aria-label="Par">${[3,4,5].map(v=>`<button data-act="par" data-v="${v}" aria-pressed="${h.par===v}" aria-label="Par ${v}">${v}</button>`).join('')}</div></div>
+      ${gHole(r,i)?`<div class="hd-par fixed" aria-label="Par ${h.par}${h.len?`, ${h.len} yards`:''}"><b>Par ${h.par}</b>${h.len?`<small class="num">${h.len} yd</small>`:''}</div>`:`<div class="hd-par"><span class="cap">Par</span><div class="seg par" role="group" aria-label="Par">${[3,4,5].map(v=>`<button data-act="par" data-v="${v}" aria-pressed="${h.par===v}" aria-label="Par ${v}">${v}</button>`).join('')}</div></div>`}
     </header>${back}${miss}${body}</div>`;
 }
 /* Forgot to log: an earlier hole with no score gets a one-tap score card. It shows for the hole you left when you're
@@ -1652,13 +1725,13 @@ function shotHTML(r,i,h){
   const G=gHole(r,i),cl=G?caddyLine(G,h):'';
   const gq=gapHTML(h);
   return `${staleHTML(i,h)}${strip(n,'','',h,{mid:planBarHTML(r,h)})}${gq}${cl&&!gq?`<button class="cadl" data-act="cad"><span class="t">${cl}</span></button>`:''}${askMiss}
-    <div class="mapw fit" data-mode="shot">${clubs||`<span class="maphint">Tap where it ended up</span>`}${mapSVG(h,'shot')}</div>
+    <div class="mapw fit" data-mode="shot">${clubs||`<span class="maphint">Tap where it ended up</span>`}${mapSVG(h,'shot')}${realG(h)?zoomBtnHTML(h,'shot'):''}</div>
     <div class="acts three"><button class="act bad" data-act="res" data-v="P"><b>Penalty</b><small>water, OB, lost</small></button><button class="act good" data-act="res" data-v="H"><b>Holed it</b><small>off the green</small></button><button class="act" data-act="qs"><b>Lost count</b><small>enter score</small></button></div>`;
 }
 function dropHTML(h){
   const c=strokesOf(h);
   return `${strip(c.n+c.p+1,'Penalty, 1 stroke added','Tap where you play from now',h,{plus:false,pen:true})}${gapHTML(h)}
-    <div class="mapw fit" data-mode="drop">${mapSVG(h,'drop')}</div>
+    <div class="mapw fit" data-mode="drop">${mapSVG(h,'drop')}${realG(h)?zoomBtnHTML(h,'drop'):''}</div>
     <div class="acts one"><button class="act" data-act="drop" data-v="same"><b>Same spot again</b><small>re-tee or replay the shot</small></button></div>`;
 }
 function puttHTML(h){
@@ -1688,7 +1761,7 @@ function doneHTML(r,i,h){
         <div class="res-t"><span class="pillx ${toneCls(d)}">${scoreName(d)}</span><span class="sub">${info}</span></div></div>
       ${quick?'':`${last?'':`<div class="mapw fit mini" data-mode="view">${mapSVG(h,'view')}</div>`}${historyHTML(h)}`}
     </section>
-    ${last?`${recapHTML(r)}<button class="cta" data-act="finish">Finish round ${IC.arrow}</button>`:`<div class="nx"><span class="t3">Hole ${holeNo(r,i+1)}</span><div class="seg big" role="group" aria-label="Hole ${holeNo(r,i+1)} par">${[3,4,5].map(v=>`<button data-act="npar" data-v="${v}" aria-pressed="${nx.par===v}">Par ${v}</button>`).join('')}</div></div>
+    ${last?`${recapHTML(r)}<button class="cta" data-act="finish">Finish round ${IC.arrow}</button>`:`<div class="nx"><span class="t3">Hole ${holeNo(r,i+1)}</span>${gHole(r,i+1)?`<span class="sub">Par ${nx.par}${nx.len?` · ${nx.len} yd`:''}</span>`:`<div class="seg big" role="group" aria-label="Hole ${holeNo(r,i+1)} par">${[3,4,5].map(v=>`<button data-act="npar" data-v="${v}" aria-pressed="${nx.par===v}">Par ${v}</button>`).join('')}</div>`}</div>
     <button class="cta" data-act="next">Next hole ${IC.arrow}</button>`}
     <div class="links">${quick?`<button class="lk" data-act="qs">Change score</button><button class="lk" data-act="tap">Tap shots instead</button>`:`<button class="lk" data-act="undo">Undo last tap</button><button class="lk" data-act="qs">Change score</button>`}</div>`;
 }
@@ -2101,7 +2174,8 @@ function caddyLine(G,h){
     const noMap=!G.hd.m&&G.hd.tip?G.hd.tip.split('. ')[0].replace(/\.$/,''):'';
     return `<b>${YNAME[cad.k]}</b> · ${key&&/to carry/.test(key.t)?key.t.replace('Water to carry: ','water to carry '):aim?aimShort(aim):key?key.t:eTxt||noMap||'open tee shot'}`;}
   if(tee&&G.hd.par===3){const cy=carryOf(G);return `<b>Par 3</b> · ${cy?`water to carry ${cy} yd · `:''}${greenNote(G).split('.')[0]}`;}
-  return `<b>Green</b> · ${greenNote(G)}`;
+  /* past the tee, the green in one short line: its best miss, else its first sentence */
+  const gn=greenNote(G),bm=gn.match(/Best miss: ([^.]+)/);return `<b>Green</b> · ${bm?'best miss '+bm[1]:gn.split('. ')[0].replace(/\.$/,'')}`;
 }
 /* Mini map of the real hole: tee at the bottom, green at the top, your shots as dots */
 /* Map helpers (yards, map frame): point in polygon, distance to a polygon, centre of a polygon */
@@ -2493,7 +2567,7 @@ document.addEventListener('click',ev=>{
     case 'qs':S.qs={s:h.s!=null?h.s:null,p:h.s!=null?h.putts:null};S.sheet='qs';renderSheet();break;
     case 'qsn':S.qs.s=+b.dataset.v;renderSheet();break;
     case 'qsp':S.qs.p=S.qs.p===+b.dataset.v?null:+b.dataset.v;renderSheet();break;
-    case 'wide':{S.mapWide=S.mapWide===wideKey(h)?null:wideKey(h);render();break;}
+    case 'zoom':case 'wide':{const md=(b.closest('.mapw')||{dataset:{}}).dataset.mode||'shot',key=camKey(h,md);S.camO=S.camO&&S.camO.key===key?null:{key,kind:'hole'};render();break;}
     case 'gap':{const g=h.gap;delete h.gap;const k=+b.dataset.v,j=g?(h.sh||[]).findIndex(e=>e.t===g.t):-1;if(k<2||j<0||!h.sh[j].p){touch(S.cur);render();break;}
       /* the forgotten shots go in before the tapped one, spaced along the straight line from your last spot */
       const G=realG(h),e=h.sh[j],add=[];
