@@ -111,11 +111,12 @@ button{font-family:var(--f-ui);-webkit-tap-highlight-color:transparent}
 .cta.sec{background:var(--c-fill);color:var(--c-ink)}
 .ghost{min-height:var(--h-ctl);border:0;border-radius:var(--r-m);background:var(--c-fill);color:var(--c-ink);font:600 var(--t-small) var(--f-ui);padding:0 14px;cursor:pointer}
 .ghost.go{background:var(--c-accent);color:var(--c-accent-ink)}.ghost.bad{color:var(--c-bad)}
-.lk{border:0;background:none;color:var(--c-link);font:600 var(--t-small) var(--f-ui);padding:6px 4px;min-height:var(--h-chip);cursor:pointer}
+.lk{border:0;background:none;color:var(--c-link);font:600 var(--t-small) var(--f-ui);padding:6px 4px;min-height:var(--h-chip);cursor:pointer}.lk.bad{color:var(--c-bad)}
 .lnk{font:600 var(--t-small) var(--f-ui);color:var(--c-link);text-decoration:none;min-height:var(--h-chip);display:inline-flex;align-items:center;align-self:flex-start}
 .back{align-self:flex-start;border:0;background:none;color:var(--c-link);font:600 var(--t-body) var(--f-ui);min-height:var(--h-chip);padding:0;cursor:pointer}
 .pills{display:flex;flex-wrap:wrap;gap:6px}
 .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.startw{display:flex;flex-direction:column;gap:6px}.stgrid{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px}.stgrid .pl{padding:0;min-height:34px;font-variant-numeric:tabular-nums}
 .pl{min-height:var(--h-chip);border:0;border-radius:999px;background:var(--c-fill);color:var(--c-ink);font:600 var(--t-small) var(--f-ui);padding:0 13px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-align:center}
 .pl[aria-pressed="true"]{background:var(--c-ink);color:var(--c-bg)}
 .pl.wchip{flex-direction:column;align-items:flex-start;border-radius:var(--r-m);padding:7px 11px;line-height:1.2;width:100%}
@@ -356,6 +357,12 @@ ol.stp li small{color:var(--c-muted);font-size:var(--t-cap);white-space:nowrap}
 .empty .sub{max-width:32ch}
 .empty-ic{width:52px;height:52px;border-radius:var(--r-l);background:var(--c-accent-soft);color:var(--c-accent);display:grid;place-items:center}
 .empty-ic svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fin-top{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-xl);background:var(--c-accent-soft)}
+.fin-ic{flex:none;width:36px;height:36px;border-radius:50%;background:var(--c-accent);display:grid;place-items:center}.fin-ic svg{width:20px;height:20px;fill:none;stroke:var(--c-accent-ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.fin-top>div{display:flex;flex-direction:column;gap:2px}.fin-top b{font:700 var(--t-title)/1.2 var(--f-ui)}.fin-s{font-size:var(--t-cap);color:var(--c-muted)}.fin-s.warn{color:var(--c-warn)}
+.sum-c{display:flex;flex-direction:column;gap:4px}.rc-box{display:flex;flex-direction:column;gap:10px}.rc-next .lnk{white-space:nowrap}.fin-l{justify-content:center}
+.resume.last{background:var(--c-surface);color:var(--c-ink)}.resume.last small{color:var(--c-muted);opacity:1}.resume.last svg{color:var(--c-muted)}.resume.last .pillx{margin-left:6px;vertical-align:1px}
+.golive.edit{background:var(--c-accent-soft)}
 .sum-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
 .sum-h>div:first-child{min-width:0}
 .sum-s{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:none}
@@ -367,6 +374,7 @@ ol.stp li small{color:var(--c-muted);font-size:var(--t-cap);white-space:nowrap}
 .sc .rl{text-align:left;padding-right:10px;font-size:var(--t-cap);color:var(--c-muted);font-weight:600;position:sticky;left:0;background:var(--c-surface);min-width:46px}
 .sc .tt{font-weight:800;font-family:var(--f-num)}
 .sc tr.pr td{color:var(--c-muted)}
+@media (max-width:399px){.sc th,.sc td{min-width:24px;padding:5px 0}.sc .rl{min-width:38px;padding-right:4px}.sc .mk{width:23px;height:23px;font-size:13px}}
 
 /* Stats */
 .hero{background:var(--c-accent-soft);border-radius:var(--r-xl);padding:var(--g-l);display:flex;flex-direction:column;gap:6px}
@@ -1253,19 +1261,21 @@ function derive(h){
 let pending=new Set(),pendingDel=new Set();
 function loadLocal(){try{const r=localStorage.getItem('psc.rounds');if(r)S.rounds=JSON.parse(r)||{};const p=localStorage.getItem('psc.pending');if(p)pending=new Set(JSON.parse(p));const d=localStorage.getItem('psc.del');if(d)pendingDel=new Set(JSON.parse(d));const c=localStorage.getItem('psc.cur');if(c&&S.rounds[c]){S.cur=c;S.hole=+(localStorage.getItem('psc.hole')||0);}
   /* opening the app mid-round lands on the round you're playing, not an old one you looked at */
-  const cr=S.rounds[S.cur];if((!cr||cr.status==='done')&&location.hash!=='#summary'){const lv=Object.entries(S.rounds).filter(([,r])=>r.status!=='done'&&!r.example).sort((a,b)=>(b[1].updated||0)-(a[1].updated||0))[0];if(lv){S.cur=lv[0];const k=lv[1].h.findIndex(holeOpen);S.hole=k<0?0:k;}}}catch(e){}}
+  const cr=S.rounds[S.cur];if((!cr||cr.status==='done')&&location.hash!=='#summary'){const lv=Object.entries(S.rounds).filter(([,r])=>r.status!=='done'&&!r.example).sort((a,b)=>(b[1].updated||0)-(a[1].updated||0))[0];if(lv){S.cur=lv[0];S.hole=liveHole(lv[1]);}}}catch(e){}}
 function saveLocal(){try{localStorage.setItem('psc.rounds',JSON.stringify(S.rounds));localStorage.setItem('psc.pending',JSON.stringify([...pending]));localStorage.setItem('psc.del',JSON.stringify([...pendingDel]));localStorage.setItem('psc.cur',S.cur||'');localStorage.setItem('psc.hole',String(S.hole));}catch(e){}}
 
 /* ---------- saving to your account ---------- */
 let writing=false,flushTimer=null,retryTimer=null;
-function setSync(kind,text){const el=$('sync');el.className='sync '+(kind||'');el.querySelector('span').textContent=text;const d=$('sdot');if(d){d.className='sdot '+(kind||'');d.title=text;}}
+function setSync(kind,text){const el=$('sync');el.className='sync '+(kind||'');el.querySelector('span').textContent=text;const fs=$('fin-sync');if(fs){fs.textContent=text;fs.className='fin-s '+(kind||'');}const d=$('sdot');if(d){d.className='sdot '+(kind||'');d.title=text;}}
 function syncLabel(){
   if(HOSTED){setSync('ok','Saved on this phone');return;}
   if(!S.db){setSync('warn',S.dbState==='loading'?'Connecting…':'On this phone only');return;}
   if(pending.size||pendingDel.size)setSync('warn',writing?'Saving…':'Not saved yet, will retry');
   else setSync('ok','Saved to your account');
 }
-function touch(id){CTX=null;const r=S.rounds[id];if(!r)return;r.updated=Date.now();pending.add(id);saveLocal();clearTimeout(flushTimer);flushTimer=setTimeout(flush,800);syncLabel();}
+function touch(id){CTX=null;const r=S.rounds[id];if(!r)return;r.updated=Date.now();
+  /* the first hole you log is where the round started (shotgun, or going off 10): holes before it come last */
+  if(r.status!=='done'){const dj=[];r.h.forEach((x,k)=>{if(hasData(x))dj.push(k);});if(dj.length===1&&r.start!==dj[0]){r.start=dj[0];if(dj[0]>0){const m=`Starting on ${holeName(r,dj[0])}: ${holeName(r,0)} comes after ${holeName(r,r.h.length-1)}.`;setTimeout(()=>toast(m),2700);}}}pending.add(id);saveLocal();clearTimeout(flushTimer);flushTimer=setTimeout(flush,800);syncLabel();}
 async function flush(){
   if(!S.db||writing||!S.canWrite)return syncLabel();
   const del=[...pendingDel][0],id=del?null:[...pending][0];
@@ -1305,7 +1315,15 @@ function editingText(){const a=document.activeElement;return a&&a.tagName==='INP
 function holeDone(h){return h.s!=null;}
 /* a hole still waiting for a score (one you marked "didn't play" isn't) */
 function holeOpen(h){return h.s==null&&!h.skip;}
-function liveHole(r){let j=-1;r.h.forEach((x,k)=>{if(x.s!=null||x.skip||(x.sh||[]).length)j=k;});if(j<0)return 0;return !holeOpen(r.h[j])&&j<r.h.length-1?j+1:j;}
+/* Play order: a round can start on any hole (r.start, set by your first tap there) and wraps, e.g. 10..18 then 1..9 */
+function playOrder(r){const n=r.h.length,s=Math.max(0,Math.min(n-1,r.start|0));return Array.from({length:n},(_,k)=>(s+k)%n);}
+function ordPos(r,i){return playOrder(r).indexOf(i);}
+function nextIdx(r,i){const o=playOrder(r),p=o.indexOf(i);return p>=0&&p<o.length-1?o[p+1]:-1;}
+function prevIdx(r,i){const o=playOrder(r),p=o.indexOf(i);return p>0?o[p-1]:-1;}
+function isLastHole(r,i){const o=playOrder(r);return o[o.length-1]===i;}
+function firstOpen(r){const j=playOrder(r).find(k=>holeOpen(r.h[k]));return j==null?-1:j;}
+const hasData=x=>x.s!=null||x.skip||(x.sh||[]).length>0;
+function liveHole(r){const o=playOrder(r);let p=-1;o.forEach((k,q)=>{if(hasData(r.h[k]))p=q;});if(p<0)return o[0];return !holeOpen(r.h[o[p]])&&p<o.length-1?o[p+1]:o[p];}
 function roundStats(r){
   const o={score:0,par:0,n:0,putts:0,puttHoles:0,three:0,threeH:0,one:0,fwHit:0,fwTries:0,gir:0,girTries:0,pen:0,extraShort:0,topped:0,scrTries:0,scrMade:0,dbl:0,
     udTries:0,udMade:0,ssTries:0,ssMade:0,trN:0,trOk:0,gsN:0,gsOn:0,chN:0,chOn:0,teeBad:0,
@@ -1801,7 +1819,10 @@ function curHole(){const r=S.rounds[S.cur];if(!r)return{};const i=Math.min(S.hol
 /* Play */
 function viewPlay(){
   const {r,i,h}=curHole();
-  if(!r)return `<section class="empty"><div class="empty-ic">${IC.flag}</div><h1 class="t1">No round going</h1><p class="sub">Start one on the first tee. Each shot is one tap on a map of the hole.</p><button class="cta" data-go="rounds">Start a round</button></section>`;
+  if(!r||(r.status==='done'&&S.edit!==S.cur)){
+    const lr=sortedRounds().find(([,x])=>x.status==='done'&&!x.example),lo=lr?roundStats(lr[1]):null;
+    return `<section class="empty"><div class="empty-ic">${IC.flag}</div><h1 class="t1">No round going</h1><p class="sub">Start one on the first tee. Each shot is one tap on a map of the hole.</p><button class="cta" data-go="rounds">Start a round</button></section>
+    ${lr&&lo.n?`<button class="resume last" data-act="summary" data-id="${lr[0]}"><span><b>Last round: ${lo.score} <span class="pillx ${toneCls(Math.sign(lo.score-lo.par)*Math.min(2,Math.abs(lo.score-lo.par)))}">${vsPar(lo.score-lo.par)}</span></b><small>${esc(lr[1].course||'Round')} · ${esc(fmtDate(lr[1].date))}</small></span>${IC.arrow}</button>`:''}`;}
   const o=roundStats(r),p=pos(h);
   let body;
   if(h.skip)body=skipHTML(r,i,h);
@@ -1814,13 +1835,14 @@ function viewPlay(){
   /* one question at a time: a missed-shot question on this hole comes before an earlier hole's score */
   const miss=r.status!=='done'&&!gapHTML(h)?missHTML(r,i,live):'';
   /* not on a hole you just finished: its Next hole button already goes to the hole you're playing */
-  const back=!miss&&i!==live&&r.status!=='done'&&!(live===i+1&&(isQuick(h)||p==='H'||h.skip))?`<button class="golive" data-act="hole" data-v="${live}"><span>Looking at hole ${no}. You're playing hole ${holeNo(r,live)}.</span><b>Back to it ›</b></button>`:'';
+  const editing=r.status==='done'?`<button class="golive edit" data-act="summary" data-id="${S.cur}"><span>Editing your finished round. Changes save as you go.</span><b>Done ›</b></button>`:'';
+  const back=editing||(!miss&&i!==live&&r.status!=='done'&&!(live===nextIdx(r,i)&&(isQuick(h)||p==='H'||h.skip))?`<button class="golive" data-act="hole" data-v="${live}"><span>Looking at ${holeName(r,i)}. You're playing ${holeName(r,live)}.</span><b>Back to it ›</b></button>`:'');
   const sl=S.slide;S.slide=null;
   return `<div class="play${sl?' sl-'+sl:''}"><header class="hd">
       <div class="hpager" role="group" aria-label="Hole">
-        <button class="hp-a" data-act="hole" data-v="${i-1}" aria-label="Previous hole"${i<=0?' disabled':''}>${IC.chevL}</button>
+        <button class="hp-a" data-act="hole" data-v="${prevIdx(r,i)}" aria-label="Previous hole"${prevIdx(r,i)<0?' disabled':''}>${IC.chevL}</button>
         <button class="hd-hole" data-act="holes" aria-haspopup="dialog" aria-label="Hole ${no}. Show all holes"><span class="hp-c">Hole${IC.chev}</span><b class="num">${no}</b></button>
-        <button class="hp-a" data-act="hole" data-v="${i+1}" aria-label="Next hole"${i>=n-1?' disabled':''}>${IC.chevR}</button>
+        <button class="hp-a" data-act="hole" data-v="${nextIdx(r,i)}" aria-label="Next hole"${nextIdx(r,i)<0?' disabled':''}>${IC.chevR}</button>
       </div>
       ${tp}<span class="sdot" id="sdot" aria-hidden="true"></span>
       ${gHole(r,i)?`<div class="hd-par fixed" aria-label="Par ${h.par}${h.len?`, ${h.len} yards`:''}"><b>Par ${h.par}</b>${h.len?`<small class="num">${h.len} yd</small>`:''}</div>`:`<div class="hd-par"><span class="cap">Par</span><div class="seg par" role="group" aria-label="Par">${[3,4,5].map(v=>`<button data-act="par" data-v="${v}" aria-pressed="${h.par===v}" aria-label="Par ${v}">${v}</button>`).join('')}</div></div>`}
@@ -1830,9 +1852,9 @@ function viewPlay(){
    you've tapped there) for the most recent earlier hole with no score, then the next; and when you only look ahead
    from a hole you started, once its last tap is 12+ minutes old. Looking ahead from a hole you haven't started never asks. */
 function missHTML(r,i,live){
-  let j=-1;const L=r.h[live];
-  if(i>live&&L&&holeOpen(L)&&(L.sh||[]).length&&Date.now()-lastT(L)>=12*60000)j=live;
-  else if(i===live){for(let k=i-1;k>=0;k--)if(holeOpen(r.h[k])){j=k;break;}}
+  let j=-1;const L=r.h[live],o=playOrder(r),pi=o.indexOf(i),pl=o.indexOf(live);
+  if(pi>pl&&L&&holeOpen(L)&&(L.sh||[]).length&&Date.now()-lastT(L)>=12*60000)j=live;
+  else if(i===live){for(let q=pi-1;q>=0;q--)if(holeOpen(r.h[o[q]])){j=o[q];break;}}
   if(j<0)return '';
   const x=r.h[j],no=holeNo(r,j),started=(x.sh||[]).length>0,base=Math.max(1,x.par-1);
   return `<div class="stale missq" role="group" aria-label="Score for hole ${no}"><b>Hole ${no} ${started?'isn’t finished':'has no score'}. What did you make?</b>
@@ -1845,10 +1867,10 @@ function gapHTML(h){const g=h.gap;if(!g||!(h.sh||[]).some(e=>e.t===g.t))return '
   return `<div class="stale gapq" role="group" aria-label="Missed shots"><div><b>That’s ${g.d} yd from your last spot.</b><span>Did it take more than one shot to get there?</span></div>
     <div class="seg full" role="group"><button data-act="gap" data-v="1">Just 1</button><button data-act="gap" data-v="2">2 shots</button><button data-act="gap" data-v="3">3 shots</button></div></div>`;}
 /* A hole you marked "didn't play": left out of the score and stats until you enter one */
-function skipHTML(r,i,h){const last=i>=r.h.length-1;
+function skipHTML(r,i,h){const last=isLastHole(r,i);
   return `<section class="res"><div class="res-top"><div class="mk big num" aria-hidden="true">–</div><div class="res-t"><span class="pillx">Not played</span><span class="sub">Left out of your score and stats.</span></div></div>
       <div class="r2"><button class="cta sec" data-act="unskip" data-v="qs">Enter a score</button><button class="cta sec" data-act="unskip" data-v="tap">Tap shots</button></div></section>
-    ${last?`<button class="cta" data-act="finish">Finish round ${IC.arrow}</button>`:`<button class="cta" data-act="next">Next hole ${IC.arrow}</button>`}`;}
+    ${last?finishBtn(r):`<button class="cta" data-act="next">Next hole ${IC.arrow}</button>`}`;}
 function strip(n,title,sub,h,opt){
   opt=opt||{};const any=(h.sh||[]).length;
   return `<div class="strip"><div class="sn${opt.pen?' pen':''}"><span class="num">${n}</span><small>shot</small></div>
@@ -1900,18 +1922,21 @@ function historyHTML(h){
   return `<div class="hist" aria-label="Every tap on this hole">${out.map(t=>`<span>${esc(t)}</span>`).join('')}</div>`;
 }
 function doneHTML(r,i,h){
-  const d=h.s-h.par,last=i>=r.h.length-1,nx=r.h[i+1],quick=isQuick(h);
+  const d=h.s-h.par,last=isLastHole(r,i),ni=nextIdx(r,i),nx=r.h[ni],quick=isQuick(h);
   const info=[h.putts!=null?`${h.putts} ${h.putts===1?'putt':'putts'}`:'Putts not entered',h.pen?`${h.pen} penalty`:''].filter(Boolean).join(' · ');
   return `<section class="res">
       <div class="res-top"><div class="mk big ${markCls(d)} num" aria-label="Score ${h.s}">${h.s}</div>
         <div class="res-t"><span class="pillx ${toneCls(d)}">${scoreName(d)}</span><span class="sub">${info}</span></div></div>
       ${quick?'':`${last?'':`<div class="mapw fit mini" data-mode="view">${mapSVG(h,'view')}</div>`}${historyHTML(h)}`}
     </section>
-    ${last?`${recapHTML(r)}<button class="cta" data-act="finish">Finish round ${IC.arrow}</button>`:`<div class="nx"><span class="t3">Hole ${holeNo(r,i+1)}</span>${gHole(r,i+1)?`<span class="sub">Par ${nx.par}${nx.len?` · ${nx.len} yd`:''}</span>`:`<div class="seg big" role="group" aria-label="Hole ${holeNo(r,i+1)} par">${[3,4,5].map(v=>`<button data-act="npar" data-v="${v}" aria-pressed="${nx.par===v}">Par ${v}</button>`).join('')}</div>`}</div>
+    ${last?`${r.status==='done'?'':recapHTML(r)}${finishBtn(r)}`:`<div class="nx"><span class="t3">Hole ${holeNo(r,ni)}</span>${gHole(r,ni)?`<span class="sub">Par ${nx.par}${nx.len?` · ${nx.len} yd`:''}</span>`:`<div class="seg big" role="group" aria-label="Hole ${holeNo(r,ni)} par">${[3,4,5].map(v=>`<button data-act="npar" data-v="${v}" aria-pressed="${nx.par===v}">Par ${v}</button>`).join('')}</div>`}</div>
     <button class="cta" data-act="next">Next hole ${IC.arrow}</button>`}
     <div class="links">${quick?`<button class="lk" data-act="qs">Change score</button><button class="lk" data-act="tap">Tap shots instead</button>`:`<button class="lk" data-act="undo">Undo last tap</button><button class="lk" data-act="qs">Change score</button>`}</div>`;
 }
 
+/* Finish: a round with holes left blank asks for a second tap; a finished round you're editing just saves */
+function finishBtn(r,cls){const miss=r.h.filter(holeOpen).length,ask=S.confirmFin===S.cur&&miss&&r.status!=='done';
+  return `<button class="${cls||'cta'}" data-act="finish">${r.status==='done'?'Save changes':ask?`Tap again to finish with ${miss} ${miss===1?'hole':'holes'} blank`:`Finish round ${cls?'':IC.arrow}`}</button>`;}
 /* The round at a glance, shown as soon as the last hole has a score */
 function recapHTML(r){
   const o=roundStats(r),d=o.score-o.par,miss=r.h.map((x,j)=>holeOpen(x)?j:-1).filter(j=>j>=0);
@@ -1983,7 +2008,7 @@ function holesHTML(r,i){
   return `${sheetHead(esc(r.course||'Round'),'Holes')}
     <div class="hgrid">${cells}</div>
     <div class="legend"><span><i></i>Started, no score yet</span><span>Hold a hole to enter its score</span></div>
-    <button class="cta sec" data-act="finish">Finish round</button>`;
+    ${finishBtn(r,'cta sec')}`;
 }
 function importHTML(){return `${sheetHead('From the GPS version','Paste rounds')}
     <p class="sub">In the GPS version, open Rounds and tap Copy rounds. Then paste here.</p>
@@ -2004,7 +2029,7 @@ function viewRounds(){
   const rows=sortedRounds();
   const live=rows.find(([,r])=>r.status!=='done'&&!r.example);
   const recent=[...new Set(rows.filter(([,r])=>!r.example&&r.course).map(([,r])=>r.course.trim()).concat(courseOrder().map(c=>c.name)))].slice(0,5);
-  const resume=live?(()=>{const [id,r]=live;const j=r.h.findIndex(holeOpen);return `<button class="resume" data-act="open" data-id="${id}"><span><b>Keep playing</b><small>${esc(r.course||'Round')} · hole ${holeNo(r,j<0?r.h.length-1:j)}</small></span>${IC.arrow}</button>`;})():'';
+  const resume=live?(()=>{const [id,r]=live;return `<button class="resume" data-act="open" data-id="${id}"><span><b>Keep playing</b><small>${esc(r.course||'Round')} · hole ${holeNo(r,liveHole(r))}</small></span>${IC.arrow}</button>`;})():'';
   const list=rows.map(([id,r])=>{const o=roundStats(r),done=r.h.filter(holeDone).length;
     return `<button class="lr" data-act="summary" data-id="${id}"><span><b>${esc(r.course||'Unnamed course')}${r.example?'<span class="tagx">Example</span>':''}</b><small>${esc(fmtDate(r.date))} · ${r.gn&&r.gn.length?esc(r.gn.join(' + '))+(done===r.h.length?'':` · ${done} of ${r.h.length}`):done===r.h.length?r.h.length+' holes':done+' of '+r.h.length+' holes'}</small></span><span class="num">${o.n?o.score:'–'}</span><span class="pillx ${o.n?toneCls(Math.sign(o.score-o.par)*Math.min(2,Math.abs(o.score-o.par))):''}">${o.n?vsPar(o.score-o.par):'–'}</span></button>`;}).join('');
   return `<h1 class="t1">Rounds</h1>${resume}
@@ -2014,6 +2039,7 @@ function viewRounds(){
       <div class="r2"><div class="seg big" role="group" aria-label="Holes"><button data-act="nh" data-v="18" aria-pressed="${S.newHoles!==9}">18 holes</button><button data-act="nh" data-v="9" aria-pressed="${S.newHoles===9}">9 holes</button></div>
         <input class="inp sm" type="date" id="f-date" value="${today()}" aria-label="Date"></div>
       <div id="ng-box">${newGuideHTML()}</div>
+      <div id="st-box">${startHTML()}</div>
       <button class="cta" data-act="start">Start round</button>
       <p class="sub">Pars copy over from your last round at the same course, or from its course guide.</p></section>
     ${rows.length?`<h2 class="t3">Past rounds</h2><div class="list">${list}</div>`:`<section class="empty"><p class="sub">Your rounds show up here after you start one.</p></section>`}
@@ -2032,24 +2058,53 @@ function scorecardHTML(r){
       <tr class="pr"><td class="rl">Putts</td>${hs.map(h=>`<td>${h.s==null||h.putts==null?'–':h.putts}</td>`).join('')}<td>${tpu||'–'}</td></tr></tbody></table></div>`;};
   return nine(0,9,'Out')+nine(9,18,'In');
 }
+/* The round card: where the round sits against your others, its highlights, and one thing to work on */
+function roundHL(r,o){
+  const others=Object.values(S.rounds).filter(x=>x!==r&&!x.example&&x.status==='done').map(roundStats).filter(x=>x.n>=9);
+  let cmp='';
+  if(o.n>=9&&others.length){const per=x=>(x.score-x.par)/x.n,tp=per(o),ap=others.reduce((t,x)=>t+x.score-x.par,0)/others.reduce((t,x)=>t+x.n,0),d=Math.round((ap-tp)*o.n),best=others.length>=2&&tp<Math.min(...others.map(per))-1e-9;
+    const sh=v=>`${v} ${v===1?'shot':'shots'}`;
+    cmp=best?`<b class="tgood">Your best round yet</b>${d>=1?`: ${sh(d)} better than your average for ${o.n} holes`:''}.`:d>=1?`<b class="tgood">${sh(d)} better</b> than your average for ${o.n} holes.`:d<=-1?`${sh(-d)} more than your average for ${o.n} holes.`:`Right on your average for ${o.n} holes.`;}
+  const ds=r.h.filter(x=>x.s!=null).map(x=>x.s-x.par),cnt=f=>ds.filter(f).length,PL={eagle:'eagles',birdie:'birdies',par:'pars',bogey:'bogeys','double+':'doubles+'};
+  const dist=[['eagle',cnt(v=>v<=-2)],['birdie',cnt(v=>v===-1)],['par',cnt(v=>v===0)],['bogey',cnt(v=>v===1)],['double+',cnt(v=>v>=2)]].filter(x=>x[1]);
+  let bi=-1,bd=99;r.h.forEach((x,j)=>{if(x.s!=null&&x.s-x.par<bd){bd=x.s-x.par;bi=j;}});
+  const tr=o.trN-o.trOk,L=[['pen',o.pen,o.pen===1?'penalty stroke':'penalty strokes'],['three',o.three,o.three===1?'extra putt from a 3-putt':'extra putts from 3-putts'],['short',o.extraShort,o.extraShort===1?'extra chip or bunker shot':'extra chips and bunker shots'],['trouble',tr,tr===1?'shot that stayed in trouble':'shots that stayed in trouble']].filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]);
+  const fz=L[0]&&FOCUS[L[0][0]];
+  const hl=`${dist.length?`<div class="rc-dist">${dist.map(([w,n])=>`<span><b class="num">${n}</b>${n===1?w:PL[w]}</span>`).join('')}</div>`:''}
+    ${bi>=0&&(bd<0||(bd===0&&cnt(v=>v===0)===1))?`<p class="rc-l"><b>Best hole:</b> ${scoreName(bd).toLowerCase()} on ${holeName(r,bi)}.</p>`:''}
+    ${L[0]?`<p class="rc-l"><b>Most shots lost:</b> ${L[0][1]} ${L[0][2]}.</p>`:r.h.some(x=>x.s!=null&&!isQuick(x))?'<p class="rc-l"><b>Clean card:</b> no penalties, 3-putts or extra chips.</p>':''}
+    ${fz?`<p class="rc-l"><b>Next time:</b> ${fz[0]}</p><a class="lnk" href="${fz[1]}" target="_blank" rel="noopener">Open ${fz[2]} ↗</a>`:''}`;
+  return{cmp,hl};
+}
 function viewSummary(){
   const r=S.rounds[S.cur];if(!r)return viewRounds();
-  const o=roundStats(r),missing=r.h.map((h,j)=>holeOpen(h)?j:-1).filter(j=>j>=0);
-  return `<button class="back" data-go="rounds">‹ Rounds</button>
-    <header class="sum-h"><div><h1 class="t1">${esc(r.course||'Unnamed course')}${r.example?'<span class="tagx">Example</span>':''}</h1><p class="sub">${esc(fmtDate(r.date))}${r.gn&&r.gn.length?' · '+esc(r.gn.join(' + ')):''}${(()=>{const t=r.g&&GUIDES[r.g]&&r.tee?GUIDES[r.g].tees.find(x=>x.k===r.tee):null;return t?' · '+esc(t.name)+' tees':'';})()}</p></div>
+  const o=roundStats(r),missing=r.h.map((h,j)=>holeOpen(h)?j:-1).filter(j=>j>=0),fin=S.justDone===S.cur,{cmp,hl}=roundHL(r,o);
+  const tee=(()=>{const t=r.g&&GUIDES[r.g]&&r.tee?GUIDES[r.g].tees.find(x=>x.k===r.tee):null;return t?' · '+esc(t.name)+' tees':'';})();
+  const nines=o.n&&r.h.length===18?(()=>{const a=r.h.slice(0,9),b=r.h.slice(9),t=x=>x.reduce((v,h)=>v+(h.s||0),0);return a.some(h=>h.s!=null)&&b.some(h=>h.s!=null)?`<span class="sub">Out ${t(a)} · In ${t(b)}</span>`:'';})():'';
+  return `${fin?`<div class="fin-top" role="status"><span class="fin-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><div><b>Round saved</b><span id="fin-sync" class="fin-s">Saving…</span></div></div>`:`<button class="back" data-go="rounds">‹ Rounds</button>`}
+    <header class="sum-h"><div><h1 class="t1">${esc(r.course||'Unnamed course')}${r.example?'<span class="tagx">Example</span>':''}</h1><p class="sub">${esc(fmtDate(r.date))}${r.gn&&r.gn.length?' · '+esc(r.gn.join(' + ')):''}${tee}</p></div>
       <div class="sum-s"><span class="num">${o.n?o.score:'–'}</span>${o.n?`<span class="pillx ${toneCls(Math.sign(o.score-o.par)*Math.min(2,Math.abs(o.score-o.par)))}">${vsPar(o.score-o.par)}</span>`:''}</div></header>
-    ${missing.length&&missing.length<r.h.length?`<div class="stale"><div><b>${missing.length} ${missing.length===1?'hole has':'holes have'} no score</b><span>Hole ${missing.map(j=>holeNo(r,j)).join(', ')}. Tap one to enter it.</span></div><div class="pills">${missing.slice(0,9).map(j=>`<button class="pl" data-act="fill" data-v="${j}">Hole ${holeNo(r,j)}</button>`).join('')}</div></div>`:''}
+    ${cmp||nines?`<div class="sum-c">${cmp?`<p class="rc-l">${cmp}</p>`:''}${nines}</div>`:''}
+    ${missing.length&&missing.length<r.h.length?`<div class="stale"><div><b>${missing.length} ${missing.length===1?'hole has':'holes have'} no score</b><span>${missing.map(j=>holeName(r,j,true)).join(', ')}. Tap one to enter it.</span></div><div class="pills">${missing.slice(0,9).map(j=>`<button class="pl" data-act="fill" data-v="${j}">${holeName(r,j,true)}</button>`).join('')}</div></div>`:''}
     <section class="box">${scorecardHTML(r)}</section>
     <div class="bento">
-      <div class="tile"><span class="num">${pct(o.fwHit,o.fwTries)}</span><span>Fairways hit</span></div>
-      <div class="tile"><span class="num">${pct(o.gir,o.girTries)}</span><span>Greens in regulation</span></div>
-      <div class="tile"><span class="num">${o.puttHoles?o.putts:'–'}</span><span>Putts</span></div>
-      <div class="tile"><span class="num">${pct(o.udMade,o.udTries)}</span><span>Up and down</span></div></div>
-    <div class="r2"><button class="cta sec" data-act="open" data-id="${S.cur}">Edit holes</button><button class="ghost bad" data-act="del" data-id="${S.cur}">${S.confirmDel===S.cur?'Tap again to delete':'Delete round'}</button></div>`;
+      <div class="tile"><span class="num">${pct(o.fwHit,o.fwTries)}</span><span>Fairways hit${o.fwTries?` · ${o.fwHit} of ${o.fwTries}`:''}</span></div>
+      <div class="tile"><span class="num">${pct(o.gir,o.girTries)}</span><span>Greens in regulation${o.girTries?` · ${o.gir} of ${o.girTries}`:''}</span></div>
+      <div class="tile"><span class="num">${o.puttHoles?o.putts:'–'}</span><span>Putts${o.puttHoles?` · ${o.threeH?`${o.threeH} ${o.threeH===1?'3-putt':'3-putts'}`:'no 3-putts'}`:''}</span></div>
+      <div class="tile"><span class="num">${pct(o.udMade,o.udTries)}</span><span>Up and down${o.udTries?` · ${o.udMade} of ${o.udTries}`:''}</span></div></div>
+    ${o.n?`<section class="box rc-box">${hl}</section>`:''}
+    ${fin?`${o.n?'':'<p class="sub">No hole has a score yet, so this round doesn’t count in your stats.</p>'}<button class="cta" data-act="findone">Done</button><div class="links fin-l"><button class="lk" data-act="open" data-id="${S.cur}">Edit holes</button>${o.n?'':`<button class="lk bad" data-act="del" data-id="${S.cur}">${S.confirmDel===S.cur?'Tap again to delete':'Delete round'}</button>`}</div>`
+      :`<div class="r2"><button class="cta sec" data-act="open" data-id="${S.cur}">Edit holes</button><button class="ghost bad" data-act="del" data-id="${S.cur}">${S.confirmDel===S.cur?'Tap again to delete':'Delete round'}</button></div>`}`;
 }
 
 /* Stats */
 function meter(you,sc,max,good){const w=Math.max(0,Math.min(100,100*you/max)),s=Math.max(0,Math.min(100,100*sc/max));return `<div class="meter" aria-hidden="true"><i class="${good?'ok':''}" style="width:${w}%"></i><em style="left:${s}%"></em></div>`;}
+/* One thing to work on, by the leak that cost the most */
+const FOCUS={pen:['Off the tee, pick the club you keep in play. Your 3-wood was your straightest long club at the bay. In trouble, take the easy way back to the fairway.','https://claude.ai/artifact/8b6MXTYjy6bSchY3kZzVWk#trouble','Smart plays in trouble'],
+    three:['On long putts, roll the first one to stop 1 to 2 feet past the hole. Speed first, line second.','https://claude.ai/artifact/DE1uvTn7rwDe9e5bKfLoK9#deadly','Putting Lab'],
+    short:['Around the green, pick one shot you trust and get the ball on the green with the first chip, even if it finishes 15 feet away.','https://claude.ai/artifact/8b6MXTYjy6bSchY3kZzVWk#chip','Chip planner'],
+    trouble:['From trees or a fairway bunker, take the widest gap back to the fairway, even sideways. One shot out beats two shots in.','https://claude.ai/artifact/8b6MXTYjy6bSchY3kZzVWk#trouble','Smart plays in trouble'],
+    topped:['A tee shot in play beats a long one. Standing up through the ball is what tops it, so keep your spine angle.','https://claude.ai/artifact/8Z35pNogEvSzqEgLWsseiJ#spine','Car Door Hips']};
 /* Round by round: over par per 18 holes, oldest to newest (rounds of 9 holes or more) */
 function trendHTML(list){
   const rs=list.map(r=>({r,o:roundStats(r)})).filter(x=>x.o.n>=9).sort((a,b)=>(a.r.date||'').localeCompare(b.r.date||'')||(a.r.created||0)-(b.r.created||0)).slice(-8);
@@ -2080,11 +2135,6 @@ function viewStats(){
   const leaks=[['Penalty strokes',per(o.pen),'pen'],['3-putts',per(o.three),'three'],['Extra chips and bunker shots',per(o.extraShort),'short'],['Shots that stayed in trouble',per(o.trN-o.trOk),'trouble']];
   if(o.topped)leaks.push(['Topped or short tee shots',per(o.topped),'topped']);
   leaks.sort((a,b)=>b[1]-a[1]);
-  const FOCUS={pen:['Off the tee, pick the club you keep in play. Your 3-wood was your straightest long club at the bay. In trouble, take the easy way back to the fairway.','https://claude.ai/artifact/8b6MXTYjy6bSchY3kZzVWk#trouble','Smart plays in trouble'],
-    three:['On long putts, roll the first one to stop 1 to 2 feet past the hole. Speed first, line second.','https://claude.ai/artifact/DE1uvTn7rwDe9e5bKfLoK9#deadly','Putting Lab'],
-    short:['Around the green, pick one shot you trust and get the ball on the green with the first chip, even if it finishes 15 feet away.','https://claude.ai/artifact/8b6MXTYjy6bSchY3kZzVWk#chip','Chip planner'],
-    trouble:['From trees or a fairway bunker, take the widest gap back to the fairway, even sideways. One shot out beats two shots in.','https://claude.ai/artifact/8b6MXTYjy6bSchY3kZzVWk#trouble','Smart plays in trouble'],
-    topped:['A tee shot in play beats a long one. Standing up through the ball is what tops it, so keep your spine angle.','https://claude.ai/artifact/8Z35pNogEvSzqEgLWsseiJ#spine','Car Door Hips']};
   const top=leaks[0],fz=FOCUS[top[2]],lmax=Math.max(1,...leaks.map(l=>l[1]));
   const P=(a,b)=>b?100*a/b:null;
   const VS=[['Fairways hit',P(o.fwHit,o.fwTries),50,true],['Greens in regulation',P(o.gir,o.girTries),56,true],['Up and down',P(o.udMade,o.udTries),54,true],
@@ -2534,7 +2584,7 @@ const nearEdge=x=>x<24||x>window.innerWidth-24;/* leave the edges to the phone's
 onSwipe((tg,x)=>S.sheet==='cad'&&!nearEdge(x)&&!!tg.closest&&!!tg.closest('#sheet'),d=>cadStep(d));
 /* Play: swipe anywhere on the hole to change holes */
 onSwipe((tg,x)=>S.view==='play'&&!S.sheet&&!nearEdge(x)&&!!tg.closest&&!!tg.closest('#main .play')&&!tg.closest('input,textarea'),d=>{
-  const r=S.rounds[S.cur];if(!r)return;const j=S.hole+d;if(j<0||j>=r.h.length)return;S.slide=d>0?'l':'r';S.hole=j;saveLocal();render();window.scrollTo(0,0);});
+  const r=S.rounds[S.cur];if(!r||(r.status==='done'&&S.edit!==S.cur))return;const j=d>0?nextIdx(r,S.hole):prevIdx(r,S.hole);if(j<0)return;S.slide=d>0?'l':'r';S.hole=j;saveLocal();render();window.scrollTo(0,0);});
 /* Holes list: hold a hole to enter its score straight away */
 /* The hole lights up once held long enough; letting go opens its score (the list stays put until then, so the finger's
    release can't land on the score buttons) */
@@ -2572,6 +2622,17 @@ function newGuideHTML(){
 }
 /* The hole number on the course's own card (a round can start on 10) */
 function holeNo(r,i){const G=gHole(r,i);return G&&G.hd.n?G.hd.n:i+1;}
+/* First hole for a new round: hole 1, the back nine's first, or any hole (shotgun starts) */
+function startLab(k,short){const n=S.newHoles===9?9:18,c=courseByName(S.newCourse);
+  if(c){const ng=ngState(c,n);if(ng.gn.length===n/9){const nine=ng.gn[Math.floor(k/9)],hd=(c.nines[nine]||[])[k%9],no=hd&&hd.n?hd.n:k+1;return short?String(no):n===18&&!/^(front|back)$/i.test(nine)?`${nine} ${no}`:`Hole ${no}`;}}
+  return short?String(k+1):`Hole ${k+1}`;}
+function startHTML(){
+  const n=S.newHoles===9?9:18,st=Math.min(S.newStart||0,n-1),opts=n===18?[0,9]:[0],odd=!opts.includes(st);
+  const c=courseByName(S.newCourse),ng=c?ngState(c,n):null,named=ng&&ng.gn.length===n/9&&n===18&&!ng.gn.some(x=>/^(front|back)$/i.test(x));
+  const grid=S.startMore?Array.from({length:n/9},(_,b)=>`${named?`<span class="cap">${esc(ng.gn[b])}</span>`:''}<div class="stgrid">${Array.from({length:9},(_,q)=>{const k=b*9+q;return `<button class="pl" data-act="nst" data-v="${k}" aria-pressed="${st===k}" aria-label="Start on ${esc(startLab(k))}">${startLab(k,true)}</button>`;}).join('')}</div>`).join(''):'';
+  return `<div class="startw"><span class="cap">First hole</span><div class="seg" role="group" aria-label="First hole">${opts.map(k=>`<button data-act="nst" data-v="${k}" aria-pressed="${st===k}">${esc(startLab(k))}</button>`).join('')}<button data-act="nstmore" aria-pressed="${odd}" aria-expanded="${!!S.startMore}">${odd?esc(startLab(st)):'Other'}</button></div>${grid}</div>`;}
+/* "North 1" when a round's two nines both number 1 to 9, else "hole 10" */
+function holeName(r,i,cap){const G=gHole(r,i),n=holeNo(r,i);return G&&r.gn&&r.gn.length>1&&!/^(front|back)$/i.test(G.nine)?`${G.nine} ${n}`:(cap?'Hole ':'hole ')+n;}
 function ordn(n){const t=n%100,e=n%10;return n+(t>10&&t<14?'th':e===1?'st':e===2?'nd':e===3?'rd':'th');}
 /* ---------- Putt reader: tap the flag and your ball on the real green, get the aim point and the pace ----------
    Surface: the green's 1 m lidar grid (3 yd cells, cm). Slope near the putt comes from a plane fitted to the cells around
@@ -2672,10 +2733,11 @@ document.addEventListener('click',ev=>{
   const ps=ev.target.closest('#puttsvg');if(ps){puttTap(ev,ps);return;}
   const go=ev.target.closest('[data-go]');if(go){S.sheet=null;renderSheet();
     /* the Play tab goes back to the round you're playing, even after looking at an old round's summary */
-    if(go.dataset.go==='play'){const cr=S.rounds[S.cur];if(!cr||cr.status==='done'||cr.example){const lv=sortedRounds().find(([,r])=>r.status!=='done'&&!r.example);if(lv&&lv[0]!==S.cur){S.cur=lv[0];const k=lv[1].h.findIndex(holeOpen);S.hole=k<0?0:k;saveLocal();}}}
+    if(go.dataset.go==='play'){const cr=S.rounds[S.cur];if(!cr||cr.status==='done'||cr.example){const lv=sortedRounds().find(([,r])=>r.status!=='done'&&!r.example);if(lv&&lv[0]!==S.cur){S.cur=lv[0];S.hole=liveHole(lv[1]);saveLocal();}}}
     setView(go.dataset.go);return;}
   const b=ev.target.closest('[data-act]');if(!b)return;
   const act=b.dataset.act,{r,i,h}=curHole();
+  if(act!=='finish')S.confirmFin=null;
   if(act!=='del'&&S.confirmDel){S.confirmDel=null;}
   if(!S.canWrite&&['start','res','drop','putt','undo','plus1','par','npar','tclub','qssave','tap','finish','del','fp','miss','hit','pstep','cond','doimport','gap','fillq','skiph','unskip','pflag'].includes(act)){renderBanner();return;}
   const redo=()=>{if(h&&!isQuick(h))derive(h);touch(S.cur);render();};
@@ -2697,29 +2759,36 @@ document.addEventListener('click',ev=>{
     case 'teemode':try{localStorage.setItem('psc.tee',b.dataset.v);}catch(e){}CTX=null;render();break;
     case 'ngn':case 'ngtee':case 'ngtemp':{const gc=courseByName(S.newCourse),ng=ngState(gc,S.newHoles===9?9:18);if(!gc)break;
       if(act==='ngn'){const v=b.dataset.v,need=S.newHoles===9?1:2;ng.gn=ng.gn.includes(v)?ng.gn.filter(x=>x!==v):ng.gn.concat(v).slice(-need);}
-      else ng[act==='ngtee'?'tee':'temp']=b.dataset.v;S.ng=ng;const bx=$('ng-box');if(bx)bx.innerHTML=newGuideHTML();break;}
-    case 'nh':S.newHoles=+b.dataset.v;S.ng=null;render();break;
+      else ng[act==='ngtee'?'tee':'temp']=b.dataset.v;S.ng=ng;const bx=$('ng-box');if(bx)bx.innerHTML=newGuideHTML();const sb=$('st-box');if(sb)sb.innerHTML=startHTML();break;}
+    case 'nh':S.newHoles=+b.dataset.v;S.ng=null;S.newStart=0;S.startMore=false;render();break;
+    case 'nst':{S.newStart=+b.dataset.v;S.startMore=false;const bx=$('st-box');if(bx)bx.innerHTML=startHTML();break;}
+    case 'nstmore':{S.startMore=!S.startMore;const bx=$('st-box');if(bx)bx.innerHTML=startHTML();break;}
     case 'pickcourse':S.newCourse=b.dataset.v;S.ng=null;render();break;
     case 'start':{const n=S.newHoles===9?9:18,id='r'+Date.now().toString(36),course=(($('f-course')||{}).value||'').trim();
       const prev=course?sortedRounds().map(x=>x[1]).find(x=>!x.example&&(x.course||'').trim().toLowerCase()===course.toLowerCase()):null;
       S.rounds[id]={course,date:($('f-date')||{}).value||today(),holes:n,h:Array.from({length:n},(_,j)=>{const x=blankHole(prev&&prev.h[j]?prev.h[j].par:4);if(prev&&prev.h[j]&&prev.h[j].len)x.len=prev.h[j].len;if(prev&&prev.h[j]&&prev.h[j].parSet)x.parSet=1;return x;}),status:'playing',created:Date.now(),updated:Date.now()};
       const gc=courseByName(course),ng=ngState(gc,n);
       if(gc&&ng.gn.length===n/9){const rr=S.rounds[id];rr.g=gc.id;rr.gn=ng.gn.slice();rr.tee=ng.tee;rr.temp=ng.temp;rr.h.forEach((x,j)=>{const G=gHole(rr,j);if(G){x.par=G.hd.par;x.parSet=1;x.len=ydOf(gc,G.hd,rr.tee);}});S.cad={id:gc.id,gn:rr.gn.slice(),tee:rr.tee,temp:rr.temp};saveCad();}
-      S.cur=id;S.hole=0;S.newCourse='';touch(id);setView('play');break;}
-    case 'open':{S.cur=b.dataset.id;const rr=S.rounds[S.cur];const k=rr?rr.h.findIndex(holeOpen):0;S.hole=k<0?0:k;saveLocal();setView('play');break;}
-    case 'summary':S.cur=b.dataset.id;saveLocal();setView('summary');break;
+      {const st=Math.max(0,Math.min(n-1,S.newStart||0));S.rounds[id].start=st;S.cur=id;S.hole=st;}S.newStart=0;S.startMore=false;S.edit=null;S.newCourse='';touch(id);setView('play');break;}
+    case 'open':{S.cur=b.dataset.id;const rr=S.rounds[S.cur];const k=rr?(rr.status==='done'?firstOpen(rr):liveHole(rr)):0;S.hole=k<0?(rr?playOrder(rr)[0]:0):k;S.edit=rr&&rr.status==='done'?S.cur:null;saveLocal();setView('play');break;}
+    case 'summary':S.cur=b.dataset.id;S.edit=null;S.justDone=null;S.sheet=null;renderSheet();saveLocal();setView('summary');break;
     case 'fill':S.hole=+b.dataset.v;saveLocal();S.qs={s:null,p:null};S.sheet='qs';setView('play');renderSheet();break;
     case 'del':{const id=b.dataset.id;if(S.confirmDel!==id){S.confirmDel=id;render();break;}
-      S.confirmDel=null;delete S.rounds[id];pending.delete(id);pendingDel.add(id);if(S.cur===id)S.cur=null;saveLocal();clearTimeout(flushTimer);flushTimer=setTimeout(flush,300);syncLabel();setView('rounds');break;}
+      S.confirmDel=null;delete S.rounds[id];pending.delete(id);pendingDel.add(id);if(S.cur===id){S.cur=null;S.justDone=null;S.edit=null;}saveLocal();clearTimeout(flushTimer);flushTimer=setTimeout(flush,300);syncLabel();setView('rounds');break;}
     case 'holes':S.sheet='holes';renderSheet();break;
     case 'card':S.sheet='card';renderSheet();break;
     case 'cadstep':cadStep(+b.dataset.v);break;
-    case 'hole':{const j=+b.dataset.v;S.slide=j>S.hole?'l':j<S.hole?'r':null;}S.hole=+b.dataset.v;S.sheet=null;saveLocal();renderSheet();render();window.scrollTo(0,0);break;
-    case 'next':S.slide='l';S.hole=Math.min(r.h.length-1,S.hole+1);saveLocal();render();window.scrollTo(0,0);break;
-    case 'finish':r.status='done';S.sheet=null;renderSheet();touch(S.cur);setView('summary');break;
+    case 'hole':{const j=+b.dataset.v;if(j<0)break;const a=r?ordPos(r,S.hole):S.hole,c=r?ordPos(r,j):j;S.slide=c>a?'l':c<a?'r':null;}S.hole=+b.dataset.v;S.sheet=null;saveLocal();renderSheet();render();window.scrollTo(0,0);break;
+    case 'next':{const j=nextIdx(r,S.hole);if(j<0)break;S.slide='l';S.hole=j;saveLocal();render();window.scrollTo(0,0);break;}
+    case 'finish':{const miss=r.h.filter(holeOpen).length,was=r.status==='done';
+      if(miss&&!was&&S.confirmFin!==S.cur){S.confirmFin=S.cur;render();if(S.sheet)renderSheet();break;}
+      S.confirmFin=null;r.status='done';if(!was)r.finished=Date.now();S.sheet=null;renderSheet();touch(S.cur);clearTimeout(flushTimer);flush();
+      S.edit=null;S.justDone=was?null:S.cur;setView('summary');break;}
+    /* Done on the round card: leave the round; Play shows no round until you start the next one */
+    case 'findone':S.justDone=null;S.edit=null;S.cur=null;S.hole=0;saveLocal();setView('rounds');toast('Round saved');break;
     case 'close':{const was=S.sheet;if(was==='plan')savePlanYd();S.sheet=null;renderSheet();if(was==='plan')render();break;}
     case 'par':h.par=+b.dataset.v;h.parSet=1;if(h.par===3){h.tee=null;h.club=null;}redo();if(S.sheet==='plan')renderSheet();break;
-    case 'npar':{const nx=r.h[i+1];if(nx){nx.par=+b.dataset.v;if(!isQuick(nx)&&nx.sh&&nx.sh.length)derive(nx);}touch(S.cur);render();break;}
+    case 'npar':{const nx=r.h[nextIdx(r,i)];if(nx){nx.par=+b.dataset.v;if(!isQuick(nx)&&nx.sh&&nx.sh.length)derive(nx);}touch(S.cur);render();break;}
     case 'tclub':r.tc=b.dataset.v;h.tc=b.dataset.v;touch(S.cur);render();break;
     case 'res':{if(!h.sh)h.sh=[];const c=strokesOf(h);let v=b.dataset.v,P=null;
       /* a tap on the real map: what it landed in comes from the shapes under the finger (water = a penalty) */
@@ -2797,7 +2866,7 @@ document.addEventListener('keydown',e=>{
 document.addEventListener('input',e=>{
   if(e.target.id==='pl-r'){setPlanYd(+e.target.value,'s');return;}
   if(e.target.id==='pl-n'){const v=parseInt(e.target.value,10);if(v>0)setPlanYd(v,'n');return;}
-  if(e.target.id==='f-course'){S.newCourse=e.target.value;const bx=$('ng-box');if(bx)bx.innerHTML=newGuideHTML();}
+  if(e.target.id==='f-course'){S.newCourse=e.target.value;const bx=$('ng-box');if(bx)bx.innerHTML=newGuideHTML();const sb=$('st-box');if(sb)sb.innerHTML=startHTML();}
 });
 document.addEventListener('change',e=>{if(e.target.id==='pl-r'||e.target.id==='pl-n')savePlanYd();});
 document.addEventListener('toggle',e=>{if(e.target&&e.target.id==='condd')S.condOpen=e.target.open;},true);
